@@ -242,7 +242,14 @@
         const nextBtn = document.querySelector('.carousel-control.next');
         const dotsContainer = document.querySelector('.carousel-dots');
         const dots = document.querySelectorAll('.dot');
+        const carouselContainer = document.querySelector('.hero-image-carousel');
         let currentIndex = 0;
+
+        // Touch/swipe variables
+        let startX = 0;
+        let endX = 0;
+        let isDragging = false;
+        let startTime = 0;
 
         function showSlide(index) {
             if (index < 0) {
@@ -260,6 +267,7 @@
             });
         }
 
+        // Button controls
         prevBtn.addEventListener('click', () => {
             currentIndex--;
             showSlide(currentIndex);
@@ -275,6 +283,84 @@
                 currentIndex = parseInt(e.target.dataset.slide);
                 showSlide(currentIndex);
             });
+        });
+
+        // Touch events for mobile swipe
+        carouselContainer.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startTime = Date.now();
+            isDragging = true;
+        }, { passive: true });
+
+        carouselContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+        }, { passive: false });
+
+        carouselContainer.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            
+            endX = e.changedTouches[0].clientX;
+            const deltaX = startX - endX;
+            const deltaTime = Date.now() - startTime;
+            const minSwipeDistance = 50;
+            const maxSwipeTime = 300;
+
+            // Check if it's a valid swipe (minimum distance and within time limit)
+            if (Math.abs(deltaX) > minSwipeDistance && deltaTime < maxSwipeTime) {
+                if (deltaX > 0) {
+                    // Swipe left - next slide
+                    currentIndex++;
+                    showSlide(currentIndex);
+                } else {
+                    // Swipe right - previous slide
+                    currentIndex--;
+                    showSlide(currentIndex);
+                }
+            }
+            
+            isDragging = false;
+        }, { passive: true });
+
+        // Mouse events for desktop drag (optional)
+        carouselContainer.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            startTime = Date.now();
+            isDragging = true;
+            carouselContainer.style.cursor = 'grabbing';
+        });
+
+        carouselContainer.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+        });
+
+        carouselContainer.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            
+            endX = e.clientX;
+            const deltaX = startX - endX;
+            const deltaTime = Date.now() - startTime;
+            const minSwipeDistance = 50;
+            const maxSwipeTime = 300;
+
+            if (Math.abs(deltaX) > minSwipeDistance && deltaTime < maxSwipeTime) {
+                if (deltaX > 0) {
+                    currentIndex++;
+                    showSlide(currentIndex);
+                } else {
+                    currentIndex--;
+                    showSlide(currentIndex);
+                }
+            }
+            
+            isDragging = false;
+            carouselContainer.style.cursor = 'grab';
+        });
+
+        carouselContainer.addEventListener('mouseleave', () => {
+            isDragging = false;
+            carouselContainer.style.cursor = 'grab';
         });
 
         // Auto-play carousel (optional)
