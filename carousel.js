@@ -79,8 +79,14 @@ function showSlide(index, smooth = true) {
     
     // Safari 호환성을 위해 translate3d 사용
     const translateX = -currentIndex * 100;
-    carouselInner.style.transform = `translate3d(${translateX}%, 0, 0)`;
-    carouselInner.style.webkitTransform = `translate3d(${translateX}%, 0, 0)`;
+    const transformValue = `translate3d(${translateX}%, 0, 0)`;
+    carouselInner.style.transform = transformValue;
+    carouselInner.style.webkitTransform = transformValue;
+    carouselInner.style.MozTransform = transformValue;
+    carouselInner.style.msTransform = transformValue;
+    
+    // Safari에서 강제 렌더링 트리거
+    carouselInner.offsetHeight;
     
     // 무한 루프 처리 - 전환 완료 후 위치 조정
     if (smooth) {
@@ -89,14 +95,20 @@ function showSlide(index, smooth = true) {
                 // 첫 번째 복제본에서 실제 마지막 슬라이드로 점프
                 currentIndex = totalSlides;
                 carouselInner.style.transition = 'none';
-                carouselInner.style.transform = `translate3d(${-currentIndex * 100}%, 0, 0)`;
-                carouselInner.style.webkitTransform = `translate3d(${-currentIndex * 100}%, 0, 0)`;
+                const jumpTransform = `translate3d(${-currentIndex * 100}%, 0, 0)`;
+                carouselInner.style.transform = jumpTransform;
+                carouselInner.style.webkitTransform = jumpTransform;
+                carouselInner.style.MozTransform = jumpTransform;
+                carouselInner.style.msTransform = jumpTransform;
             } else if (currentIndex === totalSlides + 1) {
                 // 마지막 복제본에서 실제 첫 번째 슬라이드로 점프
                 currentIndex = 1;
                 carouselInner.style.transition = 'none';
-                carouselInner.style.transform = `translate3d(${-currentIndex * 100}%, 0, 0)`;
-                carouselInner.style.webkitTransform = `translate3d(${-currentIndex * 100}%, 0, 0)`;
+                const jumpTransform = `translate3d(${-currentIndex * 100}%, 0, 0)`;
+                carouselInner.style.transform = jumpTransform;
+                carouselInner.style.webkitTransform = jumpTransform;
+                carouselInner.style.MozTransform = jumpTransform;
+                carouselInner.style.msTransform = jumpTransform;
             }
             // 전환 완료 후 플래그 해제
             isTransitioning = false;
@@ -129,9 +141,16 @@ function updateCarouselPosition(offsetPercent) {
         newTranslate = minTranslate;
     }
     
+    // Safari 호환성을 위해 transform 속성을 다양한 방식으로 설정
+    const transformValue = `translate3d(${newTranslate}%, 0, 0)`;
     carouselInner.style.transition = 'none';
-    carouselInner.style.transform = `translate3d(${newTranslate}%, 0, 0)`;
-    carouselInner.style.webkitTransform = `translate3d(${newTranslate}%, 0, 0)`;
+    carouselInner.style.transform = transformValue;
+    carouselInner.style.webkitTransform = transformValue;
+    carouselInner.style.MozTransform = transformValue;
+    carouselInner.style.msTransform = transformValue;
+    
+    // Safari에서 강제 렌더링 트리거
+    carouselInner.offsetHeight;
     
     // 실제 드래그 오프셋 업데이트 (제한된 값 기준)
     dragOffset = newTranslate - baseTranslate;
@@ -407,13 +426,51 @@ document.addEventListener('mouseleave', () => {
 //     showSlide(currentIndex);
 // }, 5000);
 
-// Initialize first slide and set cursor style
-carouselContainer.style.cursor = 'grab';
+// Initialize carousel when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // 잠시 대기 후 초기화 (Safari 렌더링 완료 대기)
+    setTimeout(() => {
+        initializeCarousel();
+    }, 100);
+});
 
-// 첫 번째 실제 슬라이드로 초기화 (복제본 다음)
-carouselInner.style.transition = 'none';
-carouselInner.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
-carouselInner.style.webkitTransform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
-
-// 점 초기화
-dots[0].classList.add('active'); 
+function initializeCarousel() {
+    // 커서 스타일 설정
+    carouselContainer.style.cursor = 'grab';
+    
+    // 모든 활성 클래스 제거
+    carouselItems.forEach(item => item.classList.remove('active'));
+    dots.forEach(dot => dot.classList.remove('active'));
+    
+    // 첫 번째 실제 슬라이드(index 1)를 활성화
+    if (carouselItems[currentIndex]) {
+        carouselItems[currentIndex].classList.add('active');
+    }
+    
+    // 첫 번째 점을 활성화
+    if (dots[0]) {
+        dots[0].classList.add('active');
+    }
+    
+    // Safari 호환성을 위한 강제 리플로우
+    carouselInner.offsetHeight;
+    
+    // 초기 위치 설정
+    carouselInner.style.transition = 'none';
+    const initialTransform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+    carouselInner.style.transform = initialTransform;
+    carouselInner.style.webkitTransform = initialTransform;
+    carouselInner.style.MozTransform = initialTransform;
+    carouselInner.style.msTransform = initialTransform;
+    
+    // Safari에서 두 번의 강제 렌더링 트리거
+    carouselInner.offsetHeight;
+    carouselInner.offsetWidth;
+    
+    // 잠시 후 transition 다시 활성화
+    setTimeout(() => {
+        carouselInner.style.transition = '';
+        // 한 번 더 강제 렌더링
+        carouselInner.offsetHeight;
+    }, 100);
+} 
