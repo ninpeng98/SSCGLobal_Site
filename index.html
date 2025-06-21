@@ -409,20 +409,53 @@
         (function() {
             'use strict';
             
-            // 1. Intersection Observer for enhanced lazy loading
+            // 1. Enhanced image loading handler
+            function handleImageLoad(img) {
+                img.classList.add('loaded');
+                img.style.opacity = '1';
+            }
+
+            function handleImageError(img) {
+                img.classList.add('error');
+                console.warn('Failed to load image:', img.src);
+            }
+
+            // 2. Initialize all images
+            function initializeImages() {
+                document.querySelectorAll('.carousel-item img').forEach(img => {
+                    // Add load event listeners
+                    img.addEventListener('load', () => handleImageLoad(img));
+                    img.addEventListener('error', () => handleImageError(img));
+                    
+                    // Check if image is already loaded (cached)
+                    if (img.complete && img.naturalHeight !== 0) {
+                        handleImageLoad(img);
+                    } else if (img.loading === 'lazy') {
+                        // For lazy images, ensure they're visible when needed
+                        img.style.opacity = '0.1';
+                    }
+                });
+            }
+
+            // 3. Intersection Observer for lazy loading (enhanced)
             if ('IntersectionObserver' in window) {
                 new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             const img = entry.target;
-                            if (img.dataset.src) {
-                                img.src = img.dataset.src;
-                                img.removeAttribute('data-src');
-                                observer.unobserve(img);
+                            
+                            // Force load lazy images when they come into view
+                            if (img.loading === 'lazy' && !img.classList.contains('loaded')) {
+                                // Trigger load by accessing src
+                                const currentSrc = img.src;
+                                img.src = '';
+                                img.src = currentSrc;
                             }
+                            
+                            observer.unobserve(img);
                         }
                     });
-                }, { rootMargin: '50px 0px', threshold: 0.01 })
+                }, { rootMargin: '100px 0px', threshold: 0.01 })
                 .observe(...document.querySelectorAll('img[loading="lazy"]'));
             }
 
@@ -451,10 +484,26 @@
                 }
             };
 
-            // 3. Event listeners for preloading
+            // 3. Event listeners and initialization
             document.addEventListener('DOMContentLoaded', () => {
+                // Initialize all images first
+                initializeImages();
+                
                 const dots = document.querySelectorAll('.dot');
                 const controls = document.querySelectorAll('.carousel-control');
+                
+                // Force load visible carousel image
+                const activeItem = document.querySelector('.carousel-item.active img');
+                if (activeItem && !activeItem.classList.contains('loaded')) {
+                    const currentSrc = activeItem.src;
+                    activeItem.src = '';
+                    activeItem.src = currentSrc;
+                }
+                
+                // Load adjacent images immediately for smooth transitions
+                setTimeout(() => {
+                    preloadCarouselImage(1); // Load second image
+                }, 500);
                 
                 // Preload on hover/touch
                 dots.forEach((dot, index) => {
@@ -470,6 +519,15 @@
                         const nextIndex = isNext ? 
                             (currentIndex + 1) % dots.length : 
                             (currentIndex - 1 + dots.length) % dots.length;
+                        
+                        // Force load the target image immediately
+                        const targetItem = document.querySelectorAll('.carousel-item')[nextIndex];
+                        const targetImg = targetItem?.querySelector('img');
+                        if (targetImg && !targetImg.classList.contains('loaded')) {
+                            const currentSrc = targetImg.src;
+                            targetImg.src = '';
+                            targetImg.src = currentSrc;
+                        }
                         
                         preloadCarouselImage(nextIndex);
                         preloadCarouselImage((nextIndex + 1) % dots.length); // Preload one more

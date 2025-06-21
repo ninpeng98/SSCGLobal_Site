@@ -243,7 +243,6 @@ body {
     object-fit: cover;
     object-position: center center;
     display: block;
-    background-color: #000;
     border: none;
     padding: 0;
     margin: 0;
@@ -255,7 +254,7 @@ body {
     image-rendering: optimize-contrast;
     /* 이미지 최적화 */
     will-change: transform;
-    transition: transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .carousel-item picture {
@@ -267,14 +266,28 @@ body {
 }
 
 /* 이미지 로딩 상태 최적화 */
-.carousel-item img[loading="lazy"] {
-    opacity: 0;
+.carousel-item img {
+    opacity: 1;
     transition: opacity 0.3s ease;
+    background-color: #1a1a2e; /* 로딩 중 배경색 */
 }
 
-.carousel-item img[loading="lazy"].loaded,
+.carousel-item img[loading="lazy"]:not(.loaded) {
+    opacity: 0.1;
+    background: linear-gradient(45deg, #1a1a2e 25%, #16213e 25%, #16213e 50%, #1a1a2e 50%, #1a1a2e 75%, #16213e 75%);
+    background-size: 20px 20px;
+    animation: loading-shimmer 1.5s ease-in-out infinite;
+}
+
+.carousel-item img.loaded,
 .carousel-item img[loading="eager"] {
     opacity: 1;
+    background: none;
+}
+
+@keyframes loading-shimmer {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
 }
 
 /* 저해상도 이미지 placeholder 효과 */
