@@ -198,6 +198,9 @@ body {
     position: relative;
     max-width: 600px;
     width: 100%;
+    /* 성능 최적화 */
+    contain: layout style paint;
+    will-change: transform;
     height: 337px; /* 600 * 9/16 = 337.5 고정 높이 */
     margin: 0 auto;
     border-radius: 1rem;
@@ -250,6 +253,46 @@ body {
     backface-visibility: hidden;
     image-rendering: -webkit-optimize-contrast; /* Safari 이미지 렌더링 최적화 */
     image-rendering: optimize-contrast;
+    /* 이미지 최적화 */
+    will-change: transform;
+    transition: transform 0.3s ease;
+}
+
+.carousel-item picture {
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* 최적화된 렌더링 */
+    contain: layout style paint;
+}
+
+/* 이미지 로딩 상태 최적화 */
+.carousel-item img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-item img[loading="lazy"].loaded,
+.carousel-item img[loading="eager"] {
+    opacity: 1;
+}
+
+/* 저해상도 이미지 placeholder 효과 */
+.carousel-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #1a1a2e 25%, transparent 25%), 
+                linear-gradient(-45deg, #1a1a2e 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #1a1a2e 75%), 
+                linear-gradient(-45deg, transparent 75%, #1a1a2e 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    opacity: 0.1;
+    z-index: -1;
 }
 
 .carousel-control {
@@ -836,6 +879,13 @@ body {
         height: 225px; /* 400 * 9/16 */
     }
 
+    /* 이미지 품질 최적화 */
+    .carousel-item img {
+        image-rendering: auto;
+        image-rendering: crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+    }
+
     .footer-links {
         flex-direction: column;
         gap: 1.5rem;
@@ -864,6 +914,30 @@ body {
     .hero-image-carousel {
         max-width: 320px;
         height: 180px; /* 320 * 9/16 */
+    }
+
+    /* 초소형 화면에서 이미지 최적화 */
+    .carousel-item img {
+        image-rendering: auto;
+        image-rendering: -webkit-optimize-contrast;
+        /* 메모리 최적화 */
+        will-change: auto;
+    }
+
+    /* 캐러셀 컨트롤 크기 조정 */
+    .carousel-control {
+        padding: 0.5rem 0.75rem;
+        font-size: 1.25rem;
+    }
+
+    .carousel-dots {
+        bottom: 0.5rem;
+        padding: 0.25rem 0.75rem;
+    }
+
+    .dot {
+        width: 0.5rem;
+        height: 0.5rem;
     }
 
     .cta-button {

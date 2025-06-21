@@ -58,6 +58,11 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="favicon.ico">
     
+    <!-- Preload critical images for different screen sizes -->
+    <link rel="preload" as="image" href="images/sscmain01-480.webp" type="image/webp" media="(max-width: 480px)">
+    <link rel="preload" as="image" href="images/sscmain01-768.webp" type="image/webp" media="(max-width: 768px)">
+    <link rel="preload" as="image" href="images/sscmain01.webp" type="image/webp" media="(min-width: 769px)">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -215,16 +220,36 @@
             <div class="hero-image-carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="images/sscmain01.webp" alt="Social Casino2 - Free slot games with daily bonuses and jackpots">
+                        <picture>
+                            <source media="(max-width: 480px)" srcset="images/sscmain01-480.webp" type="image/webp">
+                            <source media="(max-width: 768px)" srcset="images/sscmain01-768.webp" type="image/webp">
+                            <source media="(min-width: 769px)" srcset="images/sscmain01.webp" type="image/webp">
+                            <img src="images/sscmain01.webp" alt="Social Casino2 - Free slot games with daily bonuses and jackpots" loading="eager">
+                        </picture>
                     </div>
                     <div class="carousel-item">
-                        <img src="images/sscmain02.webp" alt="Social Casino2 gameplay - Exciting slot machines and casino games" loading="lazy">
+                        <picture>
+                            <source media="(max-width: 480px)" srcset="images/sscmain02-480.webp" type="image/webp">
+                            <source media="(max-width: 768px)" srcset="images/sscmain02-768.webp" type="image/webp">
+                            <source media="(min-width: 769px)" srcset="images/sscmain02.webp" type="image/webp">
+                            <img src="images/sscmain02.webp" alt="Social Casino2 gameplay - Exciting slot machines and casino games" loading="lazy">
+                        </picture>
                     </div>
                     <div class="carousel-item">
-                        <img src="images/sscmain03.webp" alt="Social Casino2 features - Free coins, daily rewards, and leaderboards" loading="lazy">
+                        <picture>
+                            <source media="(max-width: 480px)" srcset="images/sscmain03-480.webp" type="image/webp">
+                            <source media="(max-width: 768px)" srcset="images/sscmain03-768.webp" type="image/webp">
+                            <source media="(min-width: 769px)" srcset="images/sscmain03.webp" type="image/webp">
+                            <img src="images/sscmain03.webp" alt="Social Casino2 features - Free coins, daily rewards, and leaderboards" loading="lazy">
+                        </picture>
                     </div>
                     <div class="carousel-item">
-                        <img src="images/sscmain04.webp" alt="Social Casino2 mobile app - Las Vegas casino experience on your phone" loading="lazy">
+                        <picture>
+                            <source media="(max-width: 480px)" srcset="images/sscmain04-480.webp" type="image/webp">
+                            <source media="(max-width: 768px)" srcset="images/sscmain04-768.webp" type="image/webp">
+                            <source media="(min-width: 769px)" srcset="images/sscmain04.webp" type="image/webp">
+                            <img src="images/sscmain04.webp" alt="Social Casino2 mobile app - Las Vegas casino experience on your phone" loading="lazy">
+                        </picture>
                     </div>
                 </div>
                 <button class="carousel-control prev"><i class="fas fa-chevron-left"></i></button>
@@ -378,5 +403,98 @@
     </footer>
 
     <script src="carousel.js"></script>
+    
+    <!-- Critical Image Optimization Script (Inline for Performance) -->
+    <script>
+        (function() {
+            'use strict';
+            
+            // 1. Intersection Observer for enhanced lazy loading
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                                observer.unobserve(img);
+                            }
+                        }
+                    });
+                }, { rootMargin: '50px 0px', threshold: 0.01 })
+                .observe(...document.querySelectorAll('img[loading="lazy"]'));
+            }
+
+            // 2. Smart carousel preloading
+            const preloadedImages = new Set();
+            const preloadCarouselImage = (index) => {
+                if (preloadedImages.has(index)) return;
+                
+                const item = document.querySelectorAll('.carousel-item')[index];
+                if (!item) return;
+                
+                const img = item.querySelector('img');
+                if (img?.loading === 'lazy') {
+                    const picture = item.querySelector('picture');
+                    const sources = picture?.querySelectorAll('source') || [];
+                    
+                    let srcToPreload = img.src;
+                    sources.forEach(source => {
+                        if (window.matchMedia(source.media).matches) {
+                            srcToPreload = source.srcset;
+                        }
+                    });
+                    
+                    new Image().src = srcToPreload;
+                    preloadedImages.add(index);
+                }
+            };
+
+            // 3. Event listeners for preloading
+            document.addEventListener('DOMContentLoaded', () => {
+                const dots = document.querySelectorAll('.dot');
+                const controls = document.querySelectorAll('.carousel-control');
+                
+                // Preload on hover/touch
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('mouseenter', () => preloadCarouselImage(index));
+                    dot.addEventListener('touchstart', () => preloadCarouselImage(index), { passive: true });
+                });
+                
+                // Preload adjacent images on navigation
+                controls.forEach(control => {
+                    control.addEventListener('click', () => {
+                        const currentIndex = [...dots].findIndex(dot => dot.classList.contains('active'));
+                        const isNext = control.classList.contains('next');
+                        const nextIndex = isNext ? 
+                            (currentIndex + 1) % dots.length : 
+                            (currentIndex - 1 + dots.length) % dots.length;
+                        
+                        preloadCarouselImage(nextIndex);
+                        preloadCarouselImage((nextIndex + 1) % dots.length); // Preload one more
+                    });
+                });
+            });
+
+            // 4. Performance monitoring
+            if ('PerformanceObserver' in window) {
+                try {
+                    new PerformanceObserver(list => {
+                        list.getEntries().forEach(entry => {
+                            if (entry.entryType === 'largest-contentful-paint' && typeof gtag !== 'undefined') {
+                                gtag('event', 'lcp', {
+                                    value: Math.round(entry.startTime),
+                                    custom_parameter_1: 'image_optimization'
+                                });
+                            }
+                        });
+                    }).observe({ entryTypes: ['largest-contentful-paint'] });
+                } catch (e) {
+                    // Graceful fallback
+                }
+            }
+        })();
+    </script>
 </body>
 </html>
