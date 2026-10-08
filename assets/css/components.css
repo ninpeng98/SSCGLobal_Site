@@ -1,0 +1,358 @@
+/* ── 판(panel): 보라 그라데이션 + 금테 + 빛 번짐·점무늬 ─────────────────────── */
+.panel {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--r-panel);
+  background: var(--g-panel);
+  box-shadow: var(--shadow-panel), 0 0 0 1px #3a1500;
+}
+.panel::before { /* 금테 3px: 테두리 영역만 남기는 마스크 */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 3px;
+  border-radius: inherit;
+  background: var(--g-gold-rim);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  z-index: -1;
+  border-radius: calc(var(--r-panel) - 3px);
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--c-glow), transparent 60%),
+    radial-gradient(var(--c-dot) 1.5px, transparent 1.6px) 0 0 / 13px 13px;
+  pointer-events: none;
+}
+
+/* ── 금색 제목: 금 그라데이션 글자 + 뒤에 깐 갈색 외곽선(::before) ─────────────── */
+/* background-clip:text 위에 text-stroke 를 그리면 외곽선이 글자 안쪽을 덮으므로, 같은 글자를 뒤에 한 번 더 그린다.
+   SplitText 로 단어를 나눈 뒤에는(.is-split) 단어(.gw)마다 같은 방식으로 그린다. */
+.gold-title,
+.gold-title .gw {
+  position: relative;
+  isolation: isolate;
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: .01em;
+  color: transparent;
+  background: var(--g-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.gold-title {
+  font-size: clamp(2rem, 1.2rem + 3.2vw, 3.5rem);
+  line-height: 1.08;
+  padding-block: .06em;
+}
+.gold-title::before,
+.gold-title .gw::before {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: inherit;
+  background: none;
+  color: var(--c-stroke-brown);
+  -webkit-text-stroke: .13em var(--c-stroke-brown);
+  filter: drop-shadow(0 .07em 0 rgba(40, 8, 0, .55));
+}
+.gold-title .gw { display: inline-block; }
+.gold-title.is-split { background: none; }
+.gold-title.is-split::before { content: none; }
+.gold-title--xl { font-size: clamp(2.25rem, 1.2rem + 4.4vw, 4.5rem); }
+
+/* 금 글자 위로 빛이 스친다(0.75s, 4.5s마다 — 클라이언트 잭팟 간판 값) */
+.sweep-text {
+  background:
+    linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .95) 50%, transparent 58%) 160% 0 / 250% 100% no-repeat,
+    var(--g-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-sweep 4.5s infinite;
+}
+@keyframes text-sweep {
+  0% { background-position: 160% 0, 0 0; animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+  16.7%, 100% { background-position: -60% 0, 0 0; }
+}
+
+/* ── 사탕 버튼(보라): 아래 입술 5px, 위 광택, 마우스를 올리면 빛 스침 ───────────── */
+.btn {
+  --btn-h: 52px;
+  --btn-fill: var(--g-btn-purple);
+  --btn-lip: var(--c-lip-purple);
+  --btn-stroke: var(--c-btn-stroke-purple);
+  --btn-shadow: rgba(30, 8, 70, .55);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  min-height: var(--btn-h);
+  margin-bottom: 5px;
+  padding: 0 1.6em;
+  border: 1.5px solid rgba(20, 4, 40, .7);
+  border-radius: var(--r-pill);
+  background: var(--btn-fill);
+  box-shadow: 0 5px 0 var(--btn-lip), var(--shadow-btn), inset 0 1.5px 0 rgba(255, 255, 255, .65);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  letter-spacing: .02em;
+  text-decoration: none;
+  text-shadow:
+    1.25px 0 var(--btn-stroke), -1.25px 0 var(--btn-stroke), 0 1.25px var(--btn-stroke), 0 -1.25px var(--btn-stroke),
+    0 3px 3px var(--btn-shadow);
+  cursor: pointer;
+  transform-origin: 50% 60%;
+}
+.btn::before { /* 위쪽 46% 광택 */
+  content: "";
+  position: absolute;
+  inset: 0 0 54% 0;
+  z-index: -1;
+  border-radius: var(--r-pill) var(--r-pill) 40% 40% / var(--r-pill) var(--r-pill) 100% 100%;
+  background: linear-gradient(rgba(255, 255, 255, .38), rgba(255, 255, 255, .08));
+}
+.btn::after { /* 빛 스침 띠 */
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -40%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent);
+  transform: translateX(-100%) skewX(-24deg);
+  pointer-events: none;
+}
+.btn:hover::after { animation: btn-shine .6s cubic-bezier(.45, 0, .55, 1); }
+@keyframes btn-shine { to { transform: translateX(560%) skewX(-24deg); } }
+.btn:disabled {
+  --btn-fill: var(--g-btn-disabled);
+  --btn-lip: var(--c-lip-disabled);
+  --btn-stroke: var(--c-btn-stroke-disabled);
+  cursor: default;
+}
+.btn:disabled::after { display: none; }
+.btn--icon { width: var(--btn-h); padding: 0; }
+.btn svg { width: 22px; height: 22px; filter: drop-shadow(0 1.5px 0 var(--btn-stroke)); }
+
+/* ── 알약·태그 ─────────────────────────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.6em;
+  height: 1.75em;
+  padding: 0 .6em;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display);
+  font-size: .8125rem;
+  letter-spacing: .02em;
+}
+.pill--age {
+  background: var(--g-badge-gold);
+  color: #4a1d00;
+  box-shadow: var(--shadow-pill), inset 0 1px 0 rgba(255, 255, 255, .7);
+}
+.tag {
+  display: inline-block;
+  padding: .2em .75em;
+  border: 1.5px solid var(--c-line);
+  border-radius: var(--r-pill);
+  background: var(--c-inset);
+  color: var(--c-text-dim);
+  font-size: .8125rem;
+  font-weight: 600;
+}
+
+/* ── Google Play 공식 배지: 그림은 그대로, 장식은 뒤쪽 빛만 ─────────────────── */
+.play-badge {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+  line-height: 0;
+  border-radius: 14px;
+}
+.play-badge img { width: var(--badge-w, 200px); height: auto; }
+.play-badge--sm { --badge-w: 150px; }
+.play-badge--lg { --badge-w: clamp(180px, 20vw, 240px); }
+.play-badge--xl { --badge-w: clamp(220px, 26vw, 300px); }
+.play-badge::before {
+  content: "";
+  position: absolute;
+  inset: -18% -10%;
+  z-index: -1;
+  border-radius: var(--r-pill);
+  background: radial-gradient(closest-side, rgba(255, 197, 58, .55), rgba(255, 197, 58, 0));
+  opacity: 0;
+  transform: scale(.8);
+  pointer-events: none;
+}
+.play-badge:hover::before { opacity: .6; transform: scale(1); transition: opacity .25s, transform .25s; }
+.play-badge.is-celebrating::before { animation: badge-glow 1.2s ease-out 2; }
+@keyframes badge-glow {
+  0% { opacity: 0; transform: scale(.8); }
+  35% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0; transform: scale(1.25); }
+}
+
+/* ── 스크린샷 틀 ──────────────────────────────────────────────────────── */
+.shot {
+  overflow: hidden;
+  border-radius: var(--r-inset);
+  background: var(--c-inset);
+  box-shadow: 0 0 0 1.5px rgba(255, 210, 87, .45), 0 12px 30px rgba(0, 0, 0, .5);
+}
+.shot img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+
+/* ── 상단 메뉴 ────────────────────────────────────────────────────────── */
+.nav-sentinel { position: absolute; top: 0; left: 0; width: 1px; height: 24px; pointer-events: none; }
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-nav);
+  height: var(--nav-h);
+  transition: background-color .3s, box-shadow .3s;
+}
+.site-nav.is-solid,
+.site-nav.is-open {
+  background-color: rgba(21, 8, 48, .88);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 1px 0 rgba(255, 210, 87, .22), 0 10px 30px rgba(0, 0, 0, .35);
+}
+.site-nav__inner { display: flex; align-items: center; gap: 24px; height: 100%; }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1.5px rgba(255, 210, 87, .6), 0 4px 10px rgba(0, 0, 0, .4);
+}
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: transparent;
+  background: var(--g-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.site-nav__menu { display: flex; gap: 28px; margin-left: auto; }
+.site-nav__menu a { position: relative; padding: 8px 2px; color: var(--c-text); font-weight: 600; text-decoration: none; }
+.site-nav__menu a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 2px;
+  background: var(--g-gold-short);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s;
+}
+.site-nav__menu a:hover::after,
+.site-nav__menu a:focus-visible::after { transform: scaleX(1); }
+.site-nav__toggle { display: none; }
+.site-nav__toggle .icon-close,
+.site-nav.is-open .site-nav__toggle .icon-menu { display: none; }
+.site-nav.is-open .site-nav__toggle .icon-close { display: block; }
+
+@media (max-width: 767px) {
+  .site-nav__inner { gap: 12px; }
+  .site-nav__menu {
+    position: fixed;
+    inset: var(--nav-h) 0 auto 0;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 8px var(--gutter) 20px;
+    background: rgba(21, 8, 48, .97);
+    border-bottom: 1px solid rgba(255, 210, 87, .22);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity .2s, transform .2s, visibility .2s;
+  }
+  .site-nav.is-open .site-nav__menu { opacity: 1; visibility: visible; transform: none; }
+  .site-nav__menu a { padding: 14px 0; border-bottom: 1px solid rgba(190, 150, 255, .14); font-size: 1.125rem; }
+  .site-nav .play-badge--sm { --badge-w: 120px; margin-left: auto; }
+  .site-nav__toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--c-line);
+    border-radius: 12px;
+    background: var(--c-inset);
+    cursor: pointer;
+  }
+}
+@media (max-width: 419px) {
+  .brand__name { display: none; }
+}
+
+/* ── 하단 ─────────────────────────────────────────────────────────────── */
+.site-footer {
+  padding-block: 56px 28px;
+  background: var(--c-bg-deep);
+  border-top: 1px solid rgba(255, 210, 87, .18);
+}
+.site-footer__grid { display: grid; grid-template-columns: 1.2fr 1fr 2fr; gap: 32px 48px; }
+.site-footer__tagline { margin-top: 12px; color: var(--c-text-dim); }
+.site-footer__links { display: grid; gap: 10px; align-content: start; }
+.site-footer__links a { color: var(--c-text); text-decoration: none; }
+.site-footer__links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.site-footer__notice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+  color: var(--c-text-dim);
+  font-size: .9375rem;
+}
+.site-footer__bottom {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(190, 150, 255, .14);
+  color: var(--c-text-dim);
+  font-size: .875rem;
+}
+@media (max-width: 899px) {
+  .site-footer__grid { grid-template-columns: 1fr; }
+}
+
+/* ── FAQ(접었다 펴는 목록, 클라이언트 일반 줄 색) ───────────────────────────── */
+.faq__list { display: grid; gap: 12px; margin-top: 32px; }
+.faq__item {
+  border-radius: var(--r-row);
+  background: var(--g-row);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 6px 16px rgba(0, 0, 0, .35);
+}
+.faq__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary svg { flex: none; width: 22px; height: 22px; transition: transform .25s; }
+.faq__item[open] summary svg { transform: rotate(180deg); }
+.faq__answer { padding: 0 22px 20px; }
+.faq__answer a { color: var(--c-gold-light); }
