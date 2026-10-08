@@ -1,8 +1,9 @@
-// 메인 페이지 섹션 연출: 제목·블록 등장, 슬롯 넘김, 잭팟 숫자, 층 열림, 4시간 원, 버튼 누름.
+// 메인 페이지 섹션 연출: 제목·블록 등장, 슬롯 넘김, 잭팟 숫자, 층 엘리베이터(floors.js), 보너스, 버튼 누름.
 // 라이브러리가 없거나 동작 줄이기면 모든 블록을 최종 상태로 둔다.
 import { DUR, EASE } from './motion.js';
 import { ringPose } from './lib/ring.js';
 import { toGlyphs, digitOffsetPercent, nextJackpot } from './lib/odometer.js';
+import { initElevator } from './floors.js';
 
 const TICK_MS = 1600;
 
@@ -10,7 +11,7 @@ export function initSections(root = document, { reduced = false } = {}) {
   const animated = !reduced && Boolean(window.gsap && window.ScrollTrigger);
   initSlots(root, { reduced });
   initOdometer(root, { animated });
-  initFloors(root, { animated });
+  initElevator(root, { reduced });
   initBonus(root, { animated });
   if (animated) {
     initReveals(root);
@@ -149,46 +150,6 @@ function initOdometer(root, { animated }) {
         render(value, 0.8);
       }, TICK_MS);
     },
-  });
-}
-
-function initFloors(root, { animated }) {
-  const section = root.querySelector('[data-floors]');
-  const tower = section?.querySelector('[data-tower]');
-  if (!tower) return;
-  const floors = [...tower.querySelectorAll('.floor')].reverse(); // 1F 부터
-  const setUnlocked = (n) => {
-    floors.forEach((f, i) => f.classList.toggle('is-unlocked', i < n));
-    tower.dataset.unlocked = String(n);
-  };
-  if (!animated) {
-    setUnlocked(floors.length);
-    return;
-  }
-  const { gsap, ScrollTrigger } = window;
-  const mm = gsap.matchMedia();
-  mm.add('(min-width: 1024px)', () => {
-    // 데스크톱: 섹션을 화면에 고정하고 스크롤 진행에 맞춰 한 층씩 연다
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=140%',
-      pin: true,
-      scrub: true,
-      onUpdate: (self) => setUnlocked(Math.round(self.progress * floors.length)),
-    });
-    return () => setUnlocked(0);
-  });
-  mm.add('(max-width: 1023px)', () => {
-    // 모바일: 고정 없이, 탑이 보이면 0.35초 간격으로 차례로 연다
-    const calls = [];
-    const st = ScrollTrigger.create({
-      trigger: tower,
-      start: 'top 70%',
-      once: true,
-      onEnter: () => floors.forEach((_, i) => calls.push(gsap.delayedCall(i * 0.35, () => setUnlocked(i + 1)))),
-    });
-    return () => { st.kill(); calls.forEach((c) => c.kill()); };
   });
 }
 

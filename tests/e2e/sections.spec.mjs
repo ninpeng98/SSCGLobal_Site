@@ -71,19 +71,6 @@ test('grand jackpot counter rolls up to its start value and keeps growing', asyn
   await expect(odo).toHaveAttribute('aria-label', 'Grand jackpot counter in virtual chips');
 });
 
-test('floors unlock from 1F to 5F while scrolling', async ({ page }) => {
-  await page.goto('/');
-  const tower = page.locator('[data-tower]');
-  await expect(tower).toHaveAttribute('data-unlocked', '0');
-  await tower.scrollIntoViewIfNeeded();
-  for (let i = 0; i < 40 && (await tower.getAttribute('data-unlocked')) !== '5'; i += 1) {
-    await page.mouse.wheel(0, 250);
-    await page.waitForTimeout(120);
-  }
-  await expect(tower).toHaveAttribute('data-unlocked', '5');
-  await expect(page.locator('.floor[data-floor="1"]')).toHaveClass(/is-unlocked/);
-});
-
 test('the 4-hour ring fills when it comes into view', async ({ page }) => {
   await page.goto('/');
   const bonus = page.locator('[data-bonus]');
@@ -154,7 +141,6 @@ test('keyboard reaches the badge, the carousel buttons and the FAQ', async ({ pa
 test('reduced motion shows every section in its final state', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await expect(page.locator('[data-tower]')).toHaveAttribute('data-unlocked', '5');
   await expect(page.locator('[data-bonus]')).toHaveAttribute('data-state', 'full');
   expect(await page.locator('[data-slots]').evaluate((el) => el.swiper?.autoplay?.running ?? false)).toBe(false);
   await expect(page.locator('html')).not.toHaveClass(/lenis/);
@@ -164,7 +150,6 @@ test('reduced motion shows every section in its final state', async ({ page }) =
 test('content stays readable when the animation libraries fail to load', async ({ page }) => {
   await page.route('**/assets/vendor/**', (route) => route.abort());
   await page.goto('/');
-  await expect(page.locator('[data-tower]')).toHaveAttribute('data-unlocked', '5');
   await expect(page.locator('[data-bonus]')).toHaveAttribute('data-state', 'full');
   expect(await hiddenRevealCount(page)).toBe(0);
   await expect(page.locator('.slot-card').first()).toBeVisible();
@@ -178,8 +163,8 @@ test('jumping straight past blocks (anchor jump, restored scroll) still shows th
     const floors = document.getElementById('floors');
     window.scrollTo({ top: floors.getBoundingClientRect().top + window.scrollY + 500, behavior: 'instant' });
   });
-  await expect.poll(() => page.locator('#floors [data-reveal]').evaluateAll((els) => els.map((e) => getComputedStyle(e).opacity)),
-    { timeout: 3_000 }).toEqual(['1', '1']);
+  await expect.poll(() => page.locator('#floors [data-reveal]').evaluateAll((els) => els.length > 0 && els.every((e) => getComputedStyle(e).opacity === '1')),
+    { timeout: 3_000 }).toBe(true);
 });
 
 test('with only the animation scripts blocked, every slot card can still be scrolled into view', async ({ page }) => {

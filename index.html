@@ -68,9 +68,9 @@
       "installUrl": "https://play.google.com/store/apps/details?id=site.vglobal.android.casinog",
       "image": "https://sscgl.vglobal.site/assets/img/og/og-golden-hour.jpg",
       "screenshot": [
-        "https://sscgl.vglobal.site/assets/img/features/lobby-1600.webp",
+        "https://sscgl.vglobal.site/assets/img/features/lobby-floors-1600.webp",
+        "https://sscgl.vglobal.site/assets/img/features/lobby-lucky-1600.webp",
         "https://sscgl.vglobal.site/assets/img/features/jackpot-1600.webp",
-        "https://sscgl.vglobal.site/assets/img/features/floors-1600.webp",
         "https://sscgl.vglobal.site/assets/img/features/ranking-1600.webp"
       ],
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -216,17 +216,162 @@
     <section class="section floors" id="floors" aria-labelledby="floors-title" data-floors>
       <div class="container floors__grid">
         <div class="floors__copy">
-          <h2 class="gold-title" id="floors-title">Level Up. Unlock New Floors.</h2>
-          <p data-reveal>Keep playing to open new areas of Golden Hour. As your level rises and your virtual chip balance grows, higher floors unlock with new slot machines and bigger challenges.</p>
-          <figure class="shot" data-reveal><img src="assets/img/features/floors-960.webp" srcset="assets/img/features/floors-960.webp 960w, assets/img/features/floors-1600.webp 1600w" sizes="(min-width: 1024px) 520px, 92vw" alt="A new floor unlocking in the Golden Hour lobby" width="1920" height="1080" loading="lazy" decoding="async"></figure>
+          <h2 class="gold-title" id="floors-title">Grow Your Chips. Unlock New Floors.</h2>
+          <p data-reveal>The lobby has ten floors. Each one opens when your virtual chip balance reaches its mark, from 5M for the 2nd floor to 10B for the 10th, and brings new slot machines with bigger bets.</p>
+          <p class="floors__hint" data-reveal>Scroll, or pick a floor on the panel.</p>
+          <figure class="shot floors__shot" data-reveal><img src="assets/img/features/lobby-floors-960.webp" srcset="assets/img/features/lobby-floors-960.webp 960w, assets/img/features/lobby-floors-1600.webp 1600w" sizes="(min-width: 1024px) 420px, 92vw" alt="The 1st and 2nd floors in the Golden Hour lobby" width="1600" height="720" loading="lazy" decoding="async"></figure>
         </div>
-        <ol class="tower" data-tower data-unlocked="0" reversed aria-label="Floors 1 to 5">
-          <li class="floor" data-floor="5"><span class="floor__no">5F</span><span class="floor__slots"><img src="assets/img/slots/titan.webp" alt="" width="273" height="282" loading="lazy"><img src="assets/img/slots/halloween-witch.webp" alt="" width="273" height="282" loading="lazy"></span><img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy"></li>
-          <li class="floor" data-floor="4"><span class="floor__no">4F</span><span class="floor__slots"><img src="assets/img/slots/excalibur.webp" alt="" width="273" height="282" loading="lazy"><img src="assets/img/slots/gangsters-poker.webp" alt="" width="273" height="282" loading="lazy"></span><img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy"></li>
-          <li class="floor" data-floor="3"><span class="floor__no">3F</span><span class="floor__slots"><img src="assets/img/slots/aladdin.webp" alt="" width="273" height="282" loading="lazy"><img src="assets/img/slots/zombie-hunter.webp" alt="" width="273" height="282" loading="lazy"></span><img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy"></li>
-          <li class="floor" data-floor="2"><span class="floor__no">2F</span><span class="floor__slots"><img src="assets/img/slots/treasure-island.webp" alt="" width="273" height="282" loading="lazy"><img src="assets/img/slots/fairy-garden.webp" alt="" width="273" height="282" loading="lazy"></span><img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy"></li>
-          <li class="floor" data-floor="1"><span class="floor__no">1F</span><span class="floor__slots"><img src="assets/img/slots/golden-fruits.webp" alt="" width="273" height="282" loading="lazy"><img src="assets/img/slots/cash-fever.webp" alt="" width="273" height="282" loading="lazy"></span><img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy"></li>
+        <!-- floors:start -->
+        <div class="floors__stage" data-elevator data-current="1">
+        <div class="floors__bg" aria-hidden="true">
+          <img data-bg="1" src="assets/img/bg/aurora-1-960.webp" srcset="assets/img/bg/aurora-1-960.webp 960w, assets/img/bg/aurora-1-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">
+          <img data-bg="2" src="assets/img/bg/aurora-2-960.webp" srcset="assets/img/bg/aurora-2-960.webp 960w, assets/img/bg/aurora-2-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">
+          <img data-bg="3" src="assets/img/bg/aurora-3-960.webp" srcset="assets/img/bg/aurora-3-960.webp 960w, assets/img/bg/aurora-3-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">
+          <img data-bg="4" src="assets/img/bg/aurora-4-960.webp" srcset="assets/img/bg/aurora-4-960.webp 960w, assets/img/bg/aurora-4-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">
+        </div>
+        <ol class="elevator" aria-label="The ten floors of the lobby">
+          <li class="floor" id="floor-1" data-floor="1">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">1</span> <span class="floor__bet">Min bet <b>50K</b></span></p>
+            <p class="floor__req">Open from the start</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/treasure-island.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Treasure Island</span></li>
+              <li><img src="assets/img/slots/zombie-hunter.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Zombie Hunter</span></li>
+              <li><img src="assets/img/slots/stone-age.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Stone Age</span></li>
+              <li><img src="assets/img/slots/gangsters-poker.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Gangsters Poker</span></li>
+              <li><img src="assets/img/slots/curse-of-the-pharaohs.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Curse of the Pharaohs</span></li>
+              <li><img src="assets/img/slots/fairy-garden.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Fairy Garden</span></li>
+              <li><img src="assets/img/slots/halloween-witch.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Halloween Witch</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-2" data-floor="2">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">2</span> <span class="floor__bet">Min bet <b>100K</b></span></p>
+            <p class="floor__req">Unlocks at <b>5M</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/stone-age-2.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Stone Age 2</span></li>
+              <li><img src="assets/img/slots/blue-hole.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Blue Hole</span></li>
+              <li><img src="assets/img/slots/lady-spy.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Lady Spy</span></li>
+              <li><img src="assets/img/slots/ufo-panic.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">UFO Panic</span></li>
+              <li><img src="assets/img/slots/space-warp.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Space Warp</span></li>
+              <li><img src="assets/img/slots/excalibur.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Excalibur</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-3" data-floor="3">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">3</span> <span class="floor__bet">Min bet <b>200K</b></span></p>
+            <p class="floor__req">Unlocks at <b>10M</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/dancing-robot.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Dancing Robot</span></li>
+              <li><img src="assets/img/slots/fast-food-holic.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Fast Food Holic</span></li>
+              <li><img src="assets/img/slots/excalibur-2.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Excalibur 2</span></li>
+              <li><img src="assets/img/slots/aloha.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Aloha</span></li>
+              <li><img src="assets/img/slots/princess-in-love.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Princess in Love</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-4" data-floor="4">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">4</span> <span class="floor__bet">Min bet <b>1M</b></span></p>
+            <p class="floor__req">Unlocks at <b>50M</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/blue-sky.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Blue Sky</span></li>
+              <li><img src="assets/img/slots/titan.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Titan</span></li>
+              <li><img src="assets/img/slots/beijing-opera.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Beijing Opera</span></li>
+              <li><img src="assets/img/slots/panorama-japan.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Panorama Japan</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-5" data-floor="5">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">5</span> <span class="floor__bet">Min bet <b>1.2M</b></span></p>
+            <p class="floor__req">Unlocks at <b>100M</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/ghost-town.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Ghost Town</span></li>
+              <li><img src="assets/img/slots/slots-gang.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Slots Gang</span></li>
+              <li><img src="assets/img/slots/slot-wars.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Slot Wars</span></li>
+              <li><img src="assets/img/slots/fire-fighter.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Fire Fighter</span></li>
+              <li><img src="assets/img/slots/western-ranch-story.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Western Ranch Story</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-6" data-floor="6">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">6</span> <span class="floor__bet">Min bet <b>5M</b></span></p>
+            <p class="floor__req">Unlocks at <b>250M</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/hola-amigo.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Hola! Amigo</span></li>
+              <li><img src="assets/img/slots/highway-star.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Highway Star</span></li>
+              <li><img src="assets/img/slots/joyful-circus.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Joyful Circus</span></li>
+              <li><img src="assets/img/slots/bakers-oven.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Baker&#39;s Oven</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-7" data-floor="7">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">7</span> <span class="floor__bet">Min bet <b>10M</b></span></p>
+            <p class="floor__req">Unlocks at <b>500M</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/beer-fest.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Beer Fest</span></li>
+              <li><img src="assets/img/slots/aladdin.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Aladdin</span></li>
+              <li><img src="assets/img/slots/christmas-miracle.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Christmas Miracle</span></li>
+              <li><img src="assets/img/slots/cookie-pop.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Cookie Pop</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-8" data-floor="8">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">8</span> <span class="floor__bet">Min bet <b>100M</b></span></p>
+            <p class="floor__req">Unlocks at <b>5B</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/dancing-robot-2.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Dancing Robot 2</span></li>
+              <li><img src="assets/img/slots/magical-spin.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Magical Spin</span></li>
+              <li><img src="assets/img/slots/halloween-party.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Halloween Party</span></li>
+              <li><img src="assets/img/slots/head-butt.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Head Butt</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-9" data-floor="9">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">9</span> <span class="floor__bet">Min bet <b>150M</b></span></p>
+            <p class="floor__req">Unlocks at <b>7.5B</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/farm-day.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Farm Day</span></li>
+              <li><img src="assets/img/slots/golden-fruits.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Golden Fruits</span></li>
+              <li><img src="assets/img/slots/money-fever.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Money Fever</span></li>
+              <li><img src="assets/img/slots/new-fairy-garden.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">New Fairy Garden</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
+          <li class="floor" id="floor-10" data-floor="10">
+            <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">10</span> <span class="floor__bet">Min bet <b>120M</b></span></p>
+            <p class="floor__req">Unlocks at <b>10B</b> chips</p>
+            <ul class="floor__slots">
+              <li><img src="assets/img/slots/ranch-story.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Ranch Story</span></li>
+              <li><img src="assets/img/slots/pirate-ship.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Pirate Ship</span></li>
+              <li><img src="assets/img/slots/gold-mine.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Gold Mine</span></li>
+              <li><img src="assets/img/slots/jewelry-fever.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">Jewelry Fever</span></li>
+            </ul>
+            <span class="floor__flash" aria-hidden="true"></span>
+            <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
+          </li>
         </ol>
+        <div class="floors__panel" role="group" aria-label="Pick a floor">
+          <button class="floor-btn" type="button" data-go="10" aria-controls="floor-10" aria-label="Floor 10">10</button>
+          <button class="floor-btn" type="button" data-go="9" aria-controls="floor-9" aria-label="Floor 9">9</button>
+          <button class="floor-btn" type="button" data-go="8" aria-controls="floor-8" aria-label="Floor 8">8</button>
+          <button class="floor-btn" type="button" data-go="7" aria-controls="floor-7" aria-label="Floor 7">7</button>
+          <button class="floor-btn" type="button" data-go="6" aria-controls="floor-6" aria-label="Floor 6">6</button>
+          <button class="floor-btn" type="button" data-go="5" aria-controls="floor-5" aria-label="Floor 5">5</button>
+          <button class="floor-btn" type="button" data-go="4" aria-controls="floor-4" aria-label="Floor 4">4</button>
+          <button class="floor-btn" type="button" data-go="3" aria-controls="floor-3" aria-label="Floor 3">3</button>
+          <button class="floor-btn" type="button" data-go="2" aria-controls="floor-2" aria-label="Floor 2">2</button>
+          <button class="floor-btn" type="button" data-go="1" aria-controls="floor-1" aria-label="Floor 1">1</button>
+        </div>
+        </div>
+        <!-- floors:end -->
       </div>
     </section>
 
