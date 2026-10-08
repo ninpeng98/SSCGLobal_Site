@@ -138,7 +138,8 @@ test('the machine head chases its bulbs and sweeps a shine over JACKPOT; the met
   await machine(page).scrollIntoViewIfNeeded();
   const anim = (sel) => page.locator(sel).evaluateAll((els) => els.map((e) => getComputedStyle(e).animationName));
   expect(await anim('.machine__bulbs img')).toEqual(['bulb-chase', 'bulb-chase', 'bulb-chase']);
-  expect((await anim('.machine__shine'))[0]).toBe('jackpot-shine');
+  // 빛 스침은 기계가 화면 가까이 온 뒤(.is-near) 시작한다
+  await expect.poll(async () => (await anim('.machine__shine'))[0]).toBe('jackpot-shine');
   for (const name of await anim('.meter__neon')) expect(name).toContain('neon-breathe');
 });
 
