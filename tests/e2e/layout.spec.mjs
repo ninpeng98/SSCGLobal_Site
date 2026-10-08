@@ -95,9 +95,13 @@ test('social cards use the new-UI captures (nicknames swapped, no popup frame) i
 test('rankings explain Peerage: win 1st place, climb six shield tiers, boost the Daily Jackpot', async ({ page }) => {
   await page.goto('/');
   const peerage = page.locator('#social .peerage');
-  await expect(peerage.locator('.peerage__ladder li')).toHaveText(['Bronze', 'Silver', 'Sapphire', 'Ruby', 'Royal Gold', 'Diamond']);
+  await expect(peerage.locator('.peerage__ladder .peerage__name')).toHaveText(['Bronze', 'Silver', 'Sapphire', 'Ruby', 'Royal Gold', 'Diamond']);
+  // 등급별 데일리 잭팟 보너스(레벨 1~5): 사용자가 준 표
+  await expect(peerage.locator('.peerage__ladder .peerage__bonus')).toHaveText(['+0–40%', '+60–120%', '+150–230%', '+270–350%', '+390–470%', '+520–600%']);
   await expect(peerage.locator('.peerage__ladder img')).toHaveCount(6);
   await expect(peerage).toContainText('1st');
-  await expect(peerage).toContainText('+500%');
+  await expect(peerage).toContainText('+600%');
+  await expect(page.locator('#daily-jackpot')).toContainText('+600%');
+  await expect(page.locator('body')).not.toContainText('+500%');
   await expect(peerage.locator('.shot, img[src*="features/peerage"]')).toHaveCount(0);
 });

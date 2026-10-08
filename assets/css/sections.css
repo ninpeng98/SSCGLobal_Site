@@ -447,13 +447,18 @@
   line-height: 1.2;
 }
 .peerage__ladder img { width: calc(58% + var(--step) * 6%); max-width: 104px; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)); }
+.peerage__name { color: var(--c-text); }
+.peerage__bonus { padding: 1px 7px; border-radius: var(--r-pill); background: rgba(13, 4, 32, .6); color: var(--c-gold-light); font-size: .75rem; font-weight: 700; white-space: nowrap; }
+.peerage__note { grid-column: 2; margin-top: -6px; color: var(--c-text-dim); font-size: .8125rem; text-align: center; }
 .peerage__ladder li:last-child img { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)) drop-shadow(0 0 16px rgba(190, 220, 255, .55)); }
 @media (max-width: 899px) {
   .peerage { grid-template-columns: 1fr; }
+  .peerage__note { grid-column: auto; }
 }
 @media (max-width: 480px) {
   .peerage__ladder { min-height: 190px; }
   .peerage__ladder li { translate: 0 calc(var(--step) * -12px); font-size: .6875rem; }
+  .peerage__bonus { font-size: .625rem; padding-inline: 4px; }
 }
 
 /* ── 콜렉트 보너스(2시간마다, 룰렛 없이 바로 지급): 받기 전 ↔ 받은 순간 화면이 번갈아 나온다 ──────── */
