@@ -165,7 +165,7 @@
   padding: 28px 20px 28px 24px;
   border-radius: var(--r-panel);
   background: #0d0420;
-  box-shadow: 0 0 0 1.5px rgba(255, 210, 87, .45), 0 24px 50px rgba(0, 0, 0, .55);
+  box-shadow: inset 0 0 0 1.5px rgba(190, 150, 255, .3), 0 24px 50px rgba(0, 0, 0, .55); /* 무대: 은은한 보라 테(안쪽 층 표시판의 금색과 구분) */
 }
 .floors__bg { position: absolute; inset: 0; z-index: -1; }
 .floors__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
@@ -175,19 +175,19 @@
 .elevator { display: grid; margin: 0; padding: 0; list-style: none; }
 .floor { position: relative; grid-area: 1 / 1; display: grid; align-content: center; justify-items: center; gap: 12px; text-align: center; }
 .floor:not(.is-current) { visibility: hidden; }
-.floor__plate {
+.floor__plate { /* 층 표시판: 게임 로비의 층 판처럼 테 없는 짙은 판에 금색 숫자 */
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 20px;
-  border-radius: var(--r-pill);
-  background: rgba(13, 4, 32, .78);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 210, 87, .55), 0 6px 16px rgba(0, 0, 0, .4);
+  padding: 8px 22px;
+  border-radius: var(--r-inset);
+  background: linear-gradient(180deg, rgba(40, 22, 80, .92), rgba(16, 8, 38, .92));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .12);
   color: var(--c-text-dim);
   font-family: var(--font-display);
 }
 .floor__label, .floor__bet { font-size: .8125rem; letter-spacing: .1em; text-transform: uppercase; }
-.floor__no { display: inline-block; color: #fff4c9; font-size: 2.25rem; line-height: 1.1; }
+.floor__no { display: inline-block; color: transparent; background: var(--g-title-gold); -webkit-background-clip: text; background-clip: text; font-size: 2.4rem; line-height: 1.1; }
 .floor__bet b { color: #fff4c9; }
 .floor__req { color: var(--c-text); font-weight: 600; text-shadow: 0 1px 6px rgba(0, 0, 0, .8); }
 .floor__req b { color: var(--c-gold-light); }
@@ -195,9 +195,6 @@
 .floor__slots li { display: grid; justify-items: center; gap: 2px; width: clamp(72px, 10vw, 150px); } /* 데스크톱은 한 줄에 4개(1층 7개도 두 줄) */
 .floor__slots img { width: 100%; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .55)); }
 .floor__name { padding: 1px 7px; border-radius: var(--r-pill); background: rgba(13, 4, 32, .62); color: var(--c-text); font-size: .8125rem; font-weight: 600; line-height: 1.3; } /* 밝은 빛 물결 위에서도 읽히게 이름 뒤에 어두운 판 */
-.floor__lock, .floor__flash { position: absolute; left: 50%; top: 58%; translate: -50% -50%; opacity: 0; visibility: hidden; pointer-events: none; }
-.floor__lock { z-index: 2; width: 72px; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .6)); }
-.floor__flash { z-index: 1; width: 440px; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 236, 170, .8), rgba(255, 190, 70, .28) 40%, transparent 70%); }
 .floors__dots { display: flex; justify-content: center; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
 .floors__dots li { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .28); transition: background .3s, transform .3s; }
 .floors__dots li.is-current { background: var(--c-gold-light); box-shadow: 0 0 8px rgba(255, 200, 80, .8); transform: scale(1.35); }

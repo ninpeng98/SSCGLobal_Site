@@ -22,8 +22,6 @@ function floorItem({ floor, minChip, minBet, games }) {
     `${I}    <ul class="floor__slots">`,
     ...slots,
     `${I}    </ul>`,
-    `${I}    <span class="floor__flash" aria-hidden="true"></span>`,
-    `${I}    <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">`,
     `${I}  </li>`,
   ].join('\n');
 }

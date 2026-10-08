@@ -17,7 +17,6 @@ const WEBP = [
   ['assets/img/hero/keyart-16x9-1920.webp', 1920, 16 / 9],
   ['assets/img/reels/seven.webp', 244, 244 / 435],
   ['assets/img/icons/chip.webp', 152, 1],
-  ['assets/img/icons/lock.webp', 64, 128 / 184],
   ['assets/img/icons/coin-sheet.webp', 320, 320 / 128],
   ['assets/img/features/lucky-time-badge.webp', 384, 384 / 98],
   // 데일리 잭팟 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버, 작은 상금 체리)

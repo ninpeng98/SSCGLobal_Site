@@ -46,7 +46,6 @@ webp "$TMP/seven.png" "$OUT/reels/seven.webp" 244 88
 
 # 아이콘(받은 소재)
 webp "$IN/icon_chip.png" "$OUT/icons/chip.webp" 152 88
-webp "$IN/icon_lock_closed.png" "$OUT/icons/lock.webp" 64 90
 cwebp -quiet -lossless -metadata none "$IN/coin_spin_sheet.png" -o "$OUT/icons/coin-sheet.webp"
 
 # 슬롯 타일(로비 타일 273×282, 원본 크기 그대로): 10개 층에 놓인 47개 전부(scripts/floors.mjs)
