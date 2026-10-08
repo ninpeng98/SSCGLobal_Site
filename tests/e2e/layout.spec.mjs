@@ -49,7 +49,7 @@ test('one h1, and every section after the hero has an h2', async ({ page }) => {
 
 test('content blocks have the planned counts', async ({ page }) => {
   await page.goto('/');
-  expect(await page.locator('.slot-card').count()).toBe(12);
+  expect(await page.locator('.slot-card').count()).toBe(14);
   expect(await page.locator('.tiers > .tier').count()).toBe(4);
   expect(await page.locator('.bento > .bento__cell').count()).toBe(4);
   expect(await page.locator('[data-tower] .floor').count()).toBe(5);

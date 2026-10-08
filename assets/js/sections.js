@@ -1,6 +1,7 @@
 // 메인 페이지 섹션 연출: 제목·블록 등장, 슬롯 넘김, 잭팟 숫자, 층 열림, 4시간 원, 버튼 누름.
 // 라이브러리가 없거나 동작 줄이기면 모든 블록을 최종 상태로 둔다.
 import { DUR, EASE } from './motion.js';
+import { ringPose } from './lib/ring.js';
 import { toGlyphs, digitOffsetPercent, nextJackpot } from './lib/odometer.js';
 
 const TICK_MS = 1600;
@@ -40,21 +41,48 @@ function initReveals(root) {
   ScrollTrigger.batch(items, { start: 'top 90%', onEnter: show, onLeave: show, onEnterBack: show });
 }
 
+// 슬롯 넘김: 볼록한 원통(가운데가 가장 가깝다). Swiper 는 끌기·키보드·무한 반복만 맡고,
+// 카드 위치는 lib/ring.js 가 정한다(virtualTranslate: 줄 전체를 옮기지 않고 카드마다 놓는다).
+const RING_RADIUS = 2.45; // 원통 반지름 = 카드 폭 × 이 값
+
+function placeRing(swiper) {
+  const width = swiper.width;
+  for (const slide of swiper.slides) {
+    const size = slide.swiperSlideSize;
+    const pose = ringPose(slide.progress, { radius: size * RING_RADIUS });
+    const x = -slide.swiperSlideOffset + (width - size) / 2 + pose.x;
+    slide.style.transform = `translate3d(${x}px, 0, ${pose.z}px) rotateY(${pose.rotateY}deg)`;
+    slide.style.opacity = String(pose.opacity);
+    slide.style.zIndex = String(pose.zIndex);
+    slide.style.visibility = pose.opacity === 0 ? 'hidden' : '';
+  }
+}
+
 function initSlots(root, { reduced }) {
   const el = root.querySelector('[data-slots]');
   if (!el || !window.Swiper) return;
+  el.classList.add('is-ring');
   new window.Swiper(el, {
-    effect: reduced ? 'slide' : 'coverflow',
-    coverflowEffect: { rotate: 28, stretch: 0, depth: 140, modifier: 1, slideShadows: false },
     slidesPerView: 'auto',
     centeredSlides: true,
     loop: true,
     grabCursor: true,
-    speed: reduced ? 0 : 600,
+    speed: reduced ? 0 : 700,
+    virtualTranslate: true,
+    watchSlidesProgress: true,
     keyboard: { enabled: true, onlyInViewport: true },
     navigation: { prevEl: root.querySelector('.slots__prev'), nextEl: root.querySelector('.slots__next') },
-    autoplay: reduced ? false : { delay: 4000, pauseOnMouseEnter: true, disableOnInteraction: false },
+    // 사용자가 한 번이라도 넘기면 자동 넘김을 멈춘다(키보드·터치 포함)
+    autoplay: reduced ? false : { delay: 4000, pauseOnMouseEnter: true, disableOnInteraction: true },
     a11y: { enabled: true, prevSlideMessage: 'Previous slot', nextSlideMessage: 'Next slot' },
+    on: {
+      setTranslate: placeRing,
+      progress: placeRing,
+      resize: placeRing,
+      setTransition(swiper, ms) {
+        for (const slide of swiper.slides) slide.style.transitionDuration = `${ms}ms`;
+      },
+    },
   });
 }
 

@@ -3,16 +3,61 @@ import { test, expect } from './fixtures.mjs';
 const hiddenRevealCount = (page) => page.locator('[data-reveal]')
   .evaluateAll((els) => els.filter((e) => getComputedStyle(e).opacity !== '1').length);
 
-test('slot carousel uses coverflow and the next button moves it', async ({ page, problems }) => {
+// 보이는 카드마다 [가운데로부터의 가로 거리, 회전 sin, 회전 cos, 깊이]를 읽는다(DOMMatrix: m31 = sinθ, m33 = cosθ, m43 = z)
+const ringCards = (page) => page.locator('[data-slots] .swiper-slide').evaluateAll((slides) => {
+  const box = document.querySelector('[data-slots]').getBoundingClientRect();
+  const mid = box.left + box.width / 2;
+  return slides
+    .filter((s) => Number(getComputedStyle(s).opacity) > 0.01 && getComputedStyle(s).visibility !== 'hidden')
+    .map((s) => {
+      const m = new DOMMatrix(getComputedStyle(s).transform);
+      const r = s.getBoundingClientRect();
+      return { dx: r.left + r.width / 2 - mid, sin: m.m31, cos: m.m33, z: m.m43, active: s.classList.contains('swiper-slide-active') };
+    });
+});
+
+test('slot carousel is a convex ring: centre card nearest, side cards turn outward, both sides balanced', async ({ page, problems }) => {
+  await page.goto('/#slots');
+  const carousel = page.locator('[data-slots]');
+  await expect(carousel).toHaveClass(/is-ring/);
+  await page.waitForTimeout(800);
+  const cards = await ringCards(page);
+  const left = cards.filter((c) => c.dx < -5);
+  const right = cards.filter((c) => c.dx > 5);
+  expect(left.length).toBe(right.length);
+  expect(left.length).toBeGreaterThanOrEqual(1);
+  const active = cards.find((c) => c.active);
+  expect(Math.abs(active.dx)).toBeLessThan(2);
+  for (const c of cards) {
+    expect(c.cos, 'never shows a card from behind').toBeGreaterThan(0);
+    expect(c.z).toBeLessThanOrEqual(active.z + 0.5);
+  }
+  for (const c of left) expect(c.sin, 'left cards face left-front').toBeLessThan(0);
+  for (const c of right) expect(c.sin, 'right cards face right-front').toBeGreaterThan(0);
+  expect(problems).toEqual([]);
+});
+
+test('the ring stays centred and balanced on a very wide screen', async ({ page }, info) => {
+  test.skip(info.project.name !== 'desktop', 'wide screen check');
+  await page.setViewportSize({ width: 2000, height: 1000 });
+  await page.goto('/#slots');
+  await expect(page.locator('[data-slots]')).toHaveClass(/is-ring/);
+  await page.waitForTimeout(800);
+  const cards = await ringCards(page);
+  const lefts = cards.filter((c) => c.dx < -5).map((c) => -c.dx).sort((a, b) => a - b);
+  const rights = cards.filter((c) => c.dx > 5).map((c) => c.dx).sort((a, b) => a - b);
+  expect(lefts.length).toBe(rights.length);
+  lefts.forEach((d, i) => expect(Math.abs(d - rights[i])).toBeLessThan(3));
+});
+
+test('the next button turns the ring', async ({ page }) => {
   await page.goto('/#slots');
   const carousel = page.locator('[data-slots]');
   await expect(carousel).toHaveClass(/swiper-initialized/);
-  await expect(carousel).toHaveClass(/swiper-coverflow/);
   const active = () => carousel.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index');
   const before = await active();
   await page.locator('.slots__next').click();
   await expect.poll(active).not.toBe(before);
-  expect(problems).toEqual([]);
 });
 
 test('grand jackpot counter rolls up to its start value and keeps growing', async ({ page }) => {
@@ -111,7 +156,7 @@ test('reduced motion shows every section in its final state', async ({ page }) =
   await page.goto('/');
   await expect(page.locator('[data-tower]')).toHaveAttribute('data-unlocked', '5');
   await expect(page.locator('[data-bonus]')).toHaveAttribute('data-state', 'full');
-  await expect(page.locator('[data-slots]')).not.toHaveClass(/swiper-coverflow/);
+  expect(await page.locator('[data-slots]').evaluate((el) => el.swiper?.autoplay?.running ?? false)).toBe(false);
   await expect(page.locator('html')).not.toHaveClass(/lenis/);
   expect(await hiddenRevealCount(page)).toBe(0);
 });
