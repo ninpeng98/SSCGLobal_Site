@@ -1,0 +1,64 @@
+/* 디자인 값. 출처: mazynga_unity_global develop docs/tools/popup-lab/kit.js(웹 시안)와 확정 설계 문서.
+   "웹 조정" 표시가 없는 값은 클라이언트와 같다. */
+:root {
+  /* 색 */
+  --c-bg: #150830;
+  --c-bg-2: #1d0c40;          /* 웹 조정: 섹션 구분용 한 단계 밝은 톤 */
+  --c-bg-deep: #0f0524;       /* 웹 조정: 하단 */
+  --c-panel-1: #45197d;
+  --c-text: #f3ecff;
+  --c-text-dim: #b9a8e8;
+  --c-gold: #ffc53a;
+  --c-gold-light: #ffd257;
+  --c-stroke-brown: #3d1200;
+  --c-line: rgba(190, 150, 255, .28);
+  --c-inset: rgba(10, 3, 26, .62);
+  --c-glow: rgba(200, 120, 255, .36);
+  --c-dot: rgba(255, 255, 255, .035);
+
+  /* 그라데이션 */
+  --g-gold-text: linear-gradient(180deg, #ffffff 0%, #fff1a6 25%, #ffc53a 50%, #e27d00 75%, #ffd358 100%);
+  --g-gold-rim: linear-gradient(180deg, #fff5c6 0%, #ffd257 5%, #c26d0e 45%, #a95a08 55%, #ffcf4a 95%, #8a4a06 100%);
+  --g-gold-short: linear-gradient(180deg, #fff5c6 0%, #c26d0e 50%, #ffcf4a 100%);
+  --g-panel: linear-gradient(180deg, #45197d 0%, #27104b 45%, #150830 100%);
+  --g-btn-purple: linear-gradient(180deg, #b996ff 0%, #7c4ee6 48%, #6536d0 52%, #7a4ae6 100%);
+  --g-btn-disabled: linear-gradient(180deg, #b3a7cc 0%, #857aa3 48%, #74698f 52%, #82779e 100%);
+  --g-badge-gold: linear-gradient(180deg, #ffeb8a 0%, #ffa812 100%);
+  --g-row: linear-gradient(180deg, #4b2787 0%, #2a1356 100%);
+  --g-row-vip: linear-gradient(180deg, #5e2aa2 0%, #2a0c56 100%);
+
+  /* 버튼 */
+  --c-lip-purple: #36167e;
+  --c-btn-stroke-purple: #5530b8;
+  --c-lip-disabled: #3b3156;
+  --c-btn-stroke-disabled: #5b5078;
+
+  /* 그림자 */
+  --shadow-panel: 0 16px 40px rgba(0, 0, 0, .75);
+  --shadow-btn: 0 5px 10px rgba(0, 0, 0, .55);
+  --shadow-pill: 0 3px 6px rgba(0, 0, 0, .5);
+
+  /* 둥글기(설계 5.4) */
+  --r-panel: 32px;            /* 웹 조정: 클라이언트 40 */
+  --r-inset: 16px;
+  --r-row: 18px;
+  --r-pill: 999px;
+
+  /* 글꼴 */
+  --font-display: 'GH Display', 'Arial Black', system-ui, sans-serif;
+  --font-body: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* 배치 */
+  --nav-h: 68px;
+  --container: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --space-section: clamp(72px, 10vw, 140px);
+  --z-nav: 100;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --r-panel: 24px;
+    --nav-h: 60px;
+  }
+}
