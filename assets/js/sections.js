@@ -1,9 +1,9 @@
 // 메인 페이지 섹션 연출: 제목·블록 등장, 슬롯 넘김, 잭팟 숫자, 층 엘리베이터(floors.js), 보너스, 버튼 누름.
 // 라이브러리가 없거나 동작 줄이기면 모든 블록을 최종 상태로 둔다.
-import { DUR, EASE } from './motion.js';
-import { initSlotRing } from './slots-ring.js';
-import { toGlyphs, digitOffsetPercent, forwardRow, nextJackpot } from './lib/odometer.js';
-import { initElevator } from './floors.js';
+import { DUR, EASE } from './motion.js?v=90a53229';
+import { initSlotRing } from './slots-ring.js?v=e2a48fdd';
+import { toGlyphs, digitOffsetPercent, forwardRow, nextJackpot } from './lib/odometer.js?v=9153f9e0';
+import { initElevator } from './floors.js?v=4468f0cf';
 
 const TICK_MS = 1600;
 

@@ -235,7 +235,7 @@ test('jumping straight past blocks (anchor jump, restored scroll) still shows th
 });
 
 test('if the site script never runs, every slot card can still be scrolled into view', async ({ page }) => {
-  await page.route('**/assets/js/main.js', (route) => route.abort());
+  await page.route(/\/assets\/js\/main\.js(\?|$)/, (route) => route.abort());
   await page.goto('/#slots');
   const last = page.locator('.slot-card').last();
   await last.scrollIntoViewIfNeeded();

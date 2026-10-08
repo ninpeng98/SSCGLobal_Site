@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "serve": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "serve": "python3 scripts/serve.py 4173",
+    "stamp": "node scripts/stamp-assets.mjs",
     "test:unit": "node --test \"tests/unit/**/*.test.mjs\"",
     "test:e2e": "playwright test",
     "verify": "node scripts/verify.mjs",

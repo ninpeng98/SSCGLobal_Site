@@ -1,6 +1,6 @@
 // 정책·404 페이지 시작점: 메뉴, 404 의 걸린 릴 흔들림.
-import { initNav } from './nav.js';
-import { prefersReducedMotion } from './motion.js';
+import { initNav } from './nav.js?v=7afb179e';
+import { prefersReducedMotion } from './motion.js?v=90a53229';
 
 initNav();
 

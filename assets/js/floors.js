@@ -4,7 +4,7 @@
 // 그보다 작은 화면은 보이는 동안 저절로 한 층씩 오르고(10층 뒤엔 1층부터 다시), 무대를 만지면 멈춘다.
 // 어느 화면에서나 무대를 좌우로 밀거나(스와이프) 키보드 좌우 화살표로 층을 바꾼다. 아래 점 10개가 지금 층을 보여 준다.
 // GSAP 이 없으면 연출 없이, 동작 줄이기면 저절로 오르기·스크롤 연동 없이 스와이프·화살표로만.
-import { floorForProgress, bgGroup } from './lib/floors.js';
+import { floorForProgress, bgGroup } from './lib/floors.js?v=16d97751';
 
 // 스크롤로 층을 바꾸는 화면. sections.css 의 .floors-track 높이(100svh + 9 × 6svh: 한 층에 화면 높이의 6%)와 같은 조건
 const SCROLL_MQ = '(min-width: 1024px) and (min-height: 700px)';

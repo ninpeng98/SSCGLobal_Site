@@ -1,6 +1,6 @@
 // canvas 연출: 떠오르는 반짝이(최대 40개, 첫 화면)와 터지는 코인(최대 60개, 데일리 잭팟).
 // 화면 밖이거나 탭이 숨겨지면 그리기를 멈춘다. 동작 줄이기면 아무것도 그리지 않는다.
-import { makeSparkle, stepSparkle, sparkleAlpha, makeCoin, stepCoin, coinFrame, isCoinGone } from './lib/particles.js';
+import { makeSparkle, stepSparkle, sparkleAlpha, makeCoin, stepCoin, coinFrame, isCoinGone } from './lib/particles.js?v=2aeb5867';
 
 const MAX_SPARKLES = 40;
 const MAX_COINS = 60;

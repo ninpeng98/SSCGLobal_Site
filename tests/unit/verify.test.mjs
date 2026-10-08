@@ -6,6 +6,7 @@ import path from 'node:path';
 import {
   findLocalRefs, findCssRefs, findInlineViolations, parseVendorManifest, sha384, verifySite,
 } from '../../scripts/verify.mjs';
+import { stampSite } from '../../scripts/stamp-assets.mjs';
 
 test('findLocalRefs keeps local paths and drops external, anchor, mailto and data URLs', () => {
   const html = `<a href="privacy-policy.html#top"></a><a href="https://x.com/a.png"></a><a href="#faq"></a>
@@ -53,6 +54,7 @@ test('verifySite passes a clean site', async () => {
     'assets/vendor/VENDOR.md': `| \`assets/vendor/x-1.0.0/x.js\` | \`${sha384(Buffer.from(js))}\` |`,
     '404.html': '<a href="/">home</a><img src="/assets/img/a.webp">',
   });
+  await stampSite(root, { write: true });
   assert.deepEqual(await verifySite(root), []);
 });
 
@@ -80,4 +82,19 @@ test('verifySite enforces the JS gzip budget', async () => {
   const errors = await verifySite(root, ['budget']);
   assert.equal(errors.length, 1);
   assert.match(errors[0], /^budget: JS \d+KB gzip > 130KB$/);
+});
+
+test('verifySite reports CSS/JS whose version stamp is missing or out of date', async () => {
+  const root = await makeSite({
+    'index.html': '<link rel="stylesheet" href="assets/css/a.css?v=00000000"><script type="module" src="assets/js/main.js"></script>',
+    'assets/css/a.css': 'a{}',
+    'assets/js/main.js': "import './b.js';",
+    'assets/js/b.js': '',
+  });
+  assert.deepEqual(await verifySite(root, ['stamps']), [
+    'stamps: assets/js/main.js out of date (run node scripts/stamp-assets.mjs)',
+    'stamps: index.html out of date (run node scripts/stamp-assets.mjs)',
+  ]);
+  await stampSite(root, { write: true });
+  assert.deepEqual(await verifySite(root, ['stamps']), []);
 });

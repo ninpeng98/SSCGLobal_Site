@@ -1,7 +1,7 @@
 // 슬롯 넘김(볼록한 원통): 계속 천천히 돈다. 끄는(스와이프) 동안만 멈춰 손을 따라가고, 놓으면 가까운 카드에
 // 맞춘 뒤 다시 돈다. 키보드 좌우 화살표로 한 장씩. 카드 위치는 lib/ring.js 가 정한다(라이브러리 없음).
 // 화면 밖이거나 탭이 숨겨지면 그리기를 멈춘다. 동작 줄이기면 저절로 돌지 않는다(끌기·화살표는 된다).
-import { ringPose, ringOffset } from './lib/ring.js';
+import { ringPose, ringOffset } from './lib/ring.js?v=7b59e5b2';
 
 const SPEED = 0.2;         // 저절로 도는 빠르기(초당 카드 장수: 5초에 한 장)
 const RADIUS = 3.6;        // 원통 반지름 = 카드 폭 × 이 값

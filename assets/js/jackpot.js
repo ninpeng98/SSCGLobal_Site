@@ -1,6 +1,6 @@
 // 데일리 잭팟 기계: 정면 기계 그림의 빈 릴 창 위에 릴 3개를 얹어 돌린다. 계산은 lib/reels.js.
 // 화면에 들어오면 한 번 돌아 GRAND(스페이드 3개)에 멈추고, 그 뒤로는 기계의 SPIN 버튼으로 다시 돌린다.
-import { JACKPOT_SYMBOLS, TIERS, buildStrip, spinDurations, stripYPercent, pickTier } from './lib/reels.js';
+import { JACKPOT_SYMBOLS, TIERS, buildStrip, spinDurations, stripYPercent, pickTier } from './lib/reels.js?v=a33b22d2';
 
 const SYMBOL_SRC = Object.fromEntries(JACKPOT_SYMBOLS.map((s) => [s, `assets/img/jackpot/sym-${s}.webp`]));
 const LOOPS = 3;         // 띠 하나에 심볼을 몇 바퀴 넣을지

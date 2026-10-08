@@ -5,16 +5,18 @@
 // - vendor: assets/vendor 파일이 VENDOR.md 의 sha384 와 같은지, 목록에 없는 파일이 없는지
 // - budget: assets/js + assets/vendor 의 .js 압축 합계가 예산 이하인지
 // - abs404: 404.html 은 모든 로컬 경로가 / 로 시작하는지(GitHub Pages 는 아무 깊이의 경로에서 404.html 을 보여 준다)
-// 사용: node scripts/verify.mjs [--check refs,inline,vendor,budget,abs404]
+// - stamps: CSS·JS 주소의 내용 버전(?v=)이 최신인지(stamp-assets.mjs)
+// 사용: node scripts/verify.mjs [--check refs,inline,vendor,budget,abs404,stamps]
 import { readFile, readdir, access } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stampSite } from './stamp-assets.mjs';
 
 export const PAGES = ['index.html', 'privacy-policy.html', 'terms-of-service.html', '404.html'];
 export const JS_BUDGET_GZIP = 130 * 1024;
-const ALL_CHECKS = ['refs', 'inline', 'vendor', 'budget', 'abs404'];
+const ALL_CHECKS = ['refs', 'inline', 'vendor', 'budget', 'abs404', 'stamps'];
 const SKIP = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i; // http:, https:, mailto:, data:, //host, #anchor
 
 export function findLocalRefs(html) {
@@ -138,6 +140,10 @@ export async function verifySite(root, checks = ALL_CHECKS) {
       for (const f of (await walk(d)).filter((x) => x.endsWith('.js'))) total += gzipSync(await readFile(f)).length;
     }
     if (total > JS_BUDGET_GZIP) errors.push(`budget: JS ${Math.round(total / 1024)}KB gzip > ${JS_BUDGET_GZIP / 1024}KB`);
+  }
+
+  if (checks.includes('stamps')) {
+    for (const file of (await stampSite(root)).sort()) errors.push(`stamps: ${file} out of date (run node scripts/stamp-assets.mjs)`);
   }
 
   return errors;

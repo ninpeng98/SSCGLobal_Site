@@ -1,9 +1,9 @@
 // 메인 페이지 시작점: 메뉴, 부드러운 스크롤, 첫 화면 연출(반짝이·배경 패럴랙스), 데일리 잭팟 기계, 섹션 연출.
-import { prefersReducedMotion, CONFETTI_COLORS } from './motion.js';
-import { initNav } from './nav.js';
-import { createParticles } from './particles.js';
-import { initSections } from './sections.js';
-import { initDailyJackpot } from './jackpot.js';
+import { prefersReducedMotion, CONFETTI_COLORS } from './motion.js?v=90a53229';
+import { initNav } from './nav.js?v=7afb179e';
+import { createParticles } from './particles.js?v=ed1d69f2';
+import { initSections } from './sections.js?v=20922526';
+import { initDailyJackpot } from './jackpot.js?v=65d1e2e1';
 
 const reduced = prefersReducedMotion();
 const { gsap, ScrollTrigger, SplitText } = window;
