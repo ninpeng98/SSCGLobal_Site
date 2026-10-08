@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures.mjs';
 
-const SECTION_IDS = ['top', 'slots', 'lucky-time', 'floors', 'social', 'bonus', 'faq', 'download'];
+const SECTION_IDS = ['top', 'slots', 'lucky-time', 'floors', 'daily-jackpot', 'bonus', 'social', 'faq', 'download'];
 
 test('sections appear in order with no console errors', async ({ page, problems }) => {
   await page.goto('/');
@@ -50,18 +50,20 @@ test('one h1, and every section after the hero has an h2', async ({ page }) => {
 test('content blocks have the planned counts', async ({ page }) => {
   await page.goto('/');
   expect(await page.locator('.slot-card').count()).toBe(14);
-  expect(await page.locator('.tiers > .tier').count()).toBe(4);
+  expect(await page.locator('.daily__meters > .meter').count()).toBe(4);
   expect(await page.locator('.bento > .bento__cell').count()).toBe(4);
   expect(await page.locator('[data-tower] .floor').count()).toBe(5);
   expect(await page.locator('.faq__item').count()).toBe(6);
 });
 
-test('jackpot area uses chips, never currency or live wording', async ({ page }) => {
+test('jackpot areas use chips, never currency or live wording', async ({ page }) => {
   await page.goto('/');
-  const text = await page.locator('#lucky-time').textContent();
-  expect(text).not.toMatch(/[$€£¥₩]/);
-  expect(text).not.toMatch(/\blive\b/i);
-  await expect(page.locator('#lucky-time')).toContainText('Virtual chips. No cash value.');
+  for (const id of ['#lucky-time', '#daily-jackpot']) {
+    const text = await page.locator(id).textContent();
+    expect(text, id).not.toMatch(/[$€£¥₩]/);
+    expect(text, id).not.toMatch(/\blive\b/i);
+    await expect(page.locator(id)).toContainText(/Virtual chips[ .,a-z]*no cash value/i);
+  }
 });
 
 test('FAQ answers open', async ({ page }) => {

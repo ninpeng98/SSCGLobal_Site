@@ -81,50 +81,41 @@
 .slots__carousel:not(.swiper-initialized) .swiper-slide { scroll-snap-align: center; }
 .slots__carousel:not(.swiper-initialized) ~ .slots__nav { display: none; }
 
-/* ── 럭키 타임 & 잭팟(데일리 잭팟 기계 + 등급 카드 | 글) ───────────────────── */
-.lucky__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
-.jackpot { display: grid; justify-items: center; gap: 28px; }
-.jackpot__machine {
-  width: min(100%, 360px);
-  overflow: hidden;
-  border-radius: var(--r-panel);
-  box-shadow: 0 0 0 1.5px rgba(255, 210, 87, .45), 0 24px 50px rgba(0, 0, 0, .6), 0 0 90px rgba(200, 120, 255, .35);
-}
-.jackpot__machine img { width: 100%; }
-.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 10px; width: 100%; padding: 0; list-style: none; }
-.tier { /* 클라이언트 잭팟 계기판 색: GRAND 분홍, MAJOR 빨강, MINOR 초록, MINI 금 */
-  --tier: #ffc93a;
-  position: relative;
+/* ── 럭키 타임 & 잭팟(일반 슬롯 이야기: 글·누적 잭팟 | 로비·슬롯 화면) ───────────────── */
+.lucky__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.lucky__copy { display: grid; gap: 18px; align-content: start; justify-items: start; }
+.lucky__copy > p { color: var(--c-text-dim); font-size: 1.125rem; }
+.lucky__badge { width: 192px; }
+.lucky__shots { display: grid; gap: 16px; }
+.lucky__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.progressive { /* 일반 슬롯의 누적 잭팟: GRAND 숫자가 계속 커진다 */
   display: grid;
   justify-items: center;
-  gap: 8px;
-  padding: 22px 10px 14px;
+  gap: 14px;
+  width: min(100%, 420px);
+  padding: 26px 20px 18px;
   border-radius: var(--r-inset);
   background: linear-gradient(180deg, #2a1048, #12052a);
-  box-shadow: inset 0 0 0 2px var(--tier), 0 0 18px color-mix(in srgb, var(--tier) 45%, transparent);
+  box-shadow: inset 0 0 0 2px rgba(255, 210, 87, .6), 0 0 26px rgba(255, 190, 70, .22);
 }
-.tier--grand { --tier: #ff4fd8; grid-column: 1 / -1; }
-.tier--major { --tier: #ff5a5a; }
-.tier--minor { --tier: #3fe07a; }
-.tier--mini { --tier: #ffc93a; }
-.tier__name {
-  position: absolute;
-  top: 0;
-  translate: 0 -50%;
+.progressive__grand { position: relative; display: grid; justify-items: center; gap: 10px; }
+.progressive__name,
+.progressive__tier {
   padding: 3px 14px;
   border-radius: var(--r-pill);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--tier) 45%, #fff), var(--tier));
   box-shadow: var(--shadow-pill), inset 0 1px 0 rgba(255, 255, 255, .6);
   color: #2a0a3a;
   font-family: var(--font-display);
   font-size: .8125rem;
   letter-spacing: .06em;
 }
-.tier__symbols { display: flex; gap: 4px; }
-.tier__symbols img { width: 30px; height: 30px; }
-.tier--grand .tier__symbols img { width: 40px; height: 40px; }
-.tier__value { display: inline-flex; align-items: center; gap: 10px; }
-.tier__chip { width: 34px; height: 34px; }
+.progressive__name { background: var(--g-badge-gold); }
+.progressive__value { display: inline-flex; align-items: center; gap: 10px; }
+.progressive__chip { width: 34px; height: 34px; }
+.progressive__tiers { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0; list-style: none; }
+.progressive__tier--major { background: linear-gradient(180deg, #ffb3b3, #ff5a5a); }
+.progressive__tier--minor { background: linear-gradient(180deg, #b6f5c9, #3fe07a); }
+.progressive__tier--mini { background: linear-gradient(180deg, #d8d3ff, #9c8cff); }
 .odometer {
   display: inline-flex;
   color: #fff4c9;
@@ -138,10 +129,6 @@
 .odo__reel > span { height: 1em; }
 .odo__sep { display: inline-block; width: .3em; }
 .jackpot__note { color: var(--c-text-dim); font-size: .875rem; }
-.lucky__copy { display: grid; gap: 20px; align-content: start; }
-.lucky__copy > p { color: var(--c-text-dim); font-size: 1.125rem; }
-.lucky__badge { width: 192px; }
-.lucky__shots { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
 @media (max-width: 899px) {
   .lucky__grid { grid-template-columns: 1fr; }
 }
@@ -190,6 +177,116 @@
 .floor.is-unlocked .floor__lock { opacity: 0; transform: scale(0) rotate(-20deg); }
 @media (max-width: 1023px) {
   .floors__grid { grid-template-columns: 1fr; min-height: 0; }
+}
+
+/* ── 데일리 잭팟(하루 1회 무료 기계): 등급 판 | 기계 | 등급 판, 게임과 같은 배치 ─────────────────
+   기계 그림(600×740)은 웹 시안에서 배경·빛살 없이 투명하게 뽑은 것이라 액자를 두르지 않는다.
+   릴 창·SPIN 버튼 위치는 그림 좌표의 백분율(측정: 릴 띠 x 107·239·371, 폭 122, y 243, 높이 262 / SPIN 중심 463, 587 지름 96). */
+.daily { overflow: hidden; }
+.daily__fx, .daily__confetti { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.daily__fx { z-index: 3; }
+.daily__confetti { z-index: 4; }
+.daily__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 12px clamp(16px, 3vw, 40px);
+}
+.daily__meters { display: contents; }
+.meter { --glow: #ffc93a; width: min(100%, 240px); justify-self: center; list-style: none; }
+.meter img { width: 100%; transition: filter .3s; }
+.meter[data-tier="grand"] { --glow: #ff4fd8; grid-column: 1; grid-row: 1; align-self: end; justify-self: end; }
+.meter[data-tier="major"] { --glow: #ff5a5a; grid-column: 1; grid-row: 2; align-self: start; justify-self: end; }
+.meter[data-tier="minor"] { --glow: #3fe07a; grid-column: 3; grid-row: 1; align-self: end; justify-self: start; }
+.meter[data-tier="mini"] { --glow: #ffc93a; grid-column: 3; grid-row: 2; align-self: start; justify-self: start; }
+.meter.is-hit img { filter: brightness(1.2) drop-shadow(0 0 16px var(--glow)) drop-shadow(0 0 4px var(--glow)); animation: meter-hit .7s ease-in-out 4 alternate; }
+@keyframes meter-hit { to { transform: scale(1.06); } }
+
+.machine { position: relative; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 600 / 740; }
+.machine__body, .machine__glass { position: absolute; inset: 0; width: 100%; height: 100%; }
+.machine__body { filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .55)); }
+.machine__glass { z-index: 2; pointer-events: none; }
+.machine__window {
+  position: absolute;
+  z-index: 1;
+  left: calc(107 / 600 * 100%);
+  top: calc(243 / 740 * 100%);
+  width: calc(386 / 600 * 100%);
+  height: calc(262 / 740 * 100%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: calc(10 / 386 * 100%);
+}
+.machine__reel { position: relative; overflow: hidden; container-type: size; }
+.machine__strip { display: flex; flex-direction: column; will-change: transform; }
+.machine__cell { flex: none; display: grid; place-items: center; height: calc(100cqh * 90 / 262); }
+.machine__cell img { width: auto; height: 90%; aspect-ratio: 1; }
+.machine[data-state="spinning"] .machine__reel:not(.is-stopped) .machine__strip { filter: blur(1.4px); }
+.machine__spin {
+  position: absolute;
+  z-index: 3;
+  left: calc(415 / 600 * 100%);
+  top: calc(539 / 740 * 100%);
+  width: calc(96 / 600 * 100%);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: transform .08s ease, background-color .2s;
+}
+.machine__spin:hover:not(:disabled) { background-color: rgba(255, 255, 255, .14); }
+.machine__spin:active:not(:disabled) { transform: scale(.93); background-color: rgba(0, 0, 0, .2); }
+.machine__spin:disabled { cursor: default; }
+.machine__spin:focus-visible { outline: 3px solid var(--c-gold-light); outline-offset: 4px; }
+.machine[data-state="landed"] .machine__spin::after { /* 다시 누를 수 있다는 표시: 버튼 둘레로 퍼지는 고리 */
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(255, 224, 130, .9);
+  border-radius: 50%;
+  animation: spin-hint 1.8s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes spin-hint { from { transform: scale(1); opacity: 1; } to { transform: scale(1.45); opacity: 0; } }
+.machine[data-state="static"] .machine__spin { display: none; }
+.machine__result {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: calc(374 / 740 * 100%);
+  translate: -50% -50%;
+  padding: .25em .9em;
+  border-radius: var(--r-pill);
+  background: rgba(20, 6, 40, .82);
+  box-shadow: 0 0 0 2px rgba(255, 210, 87, .7), 0 10px 30px rgba(0, 0, 0, .5);
+  color: #fff4c9;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, .9rem + 1.6vw, 2rem);
+  white-space: nowrap;
+  opacity: 0;
+  scale: .6;
+  pointer-events: none;
+  transition: opacity .25s ease, scale .35s cubic-bezier(.34, 1.8, .64, 1);
+}
+.machine__result.is-shown { opacity: 1; scale: 1; }
+.machine__result:empty { display: none; }
+.daily__foot { display: grid; justify-items: center; gap: 10px; margin-top: 28px; text-align: center; }
+.daily__peerage { display: inline-flex; align-items: center; gap: 12px; color: var(--c-text); font-size: 1.0625rem; font-weight: 600; }
+.daily__peerage img { width: 48px; height: 48px; }
+@media (max-width: 899px) {
+  .daily__stage { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .machine { grid-column: 1 / -1; grid-row: 1; justify-self: center; width: min(100%, 400px); }
+  .meter[data-tier="grand"] { grid-column: 1; grid-row: 2; }
+  .meter[data-tier="major"] { grid-column: 2; grid-row: 2; }
+  .meter[data-tier="minor"] { grid-column: 1; grid-row: 3; }
+  .meter[data-tier="mini"] { grid-column: 2; grid-row: 3; }
+  .meter { align-self: center; justify-self: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .machine__spin::after, .meter.is-hit img { animation: none; }
 }
 
 /* ── 랭킹 & 소셜(크기가 다른 4칸) ─────────────────────────────────────── */

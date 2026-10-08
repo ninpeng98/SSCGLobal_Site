@@ -1,4 +1,4 @@
-// 첫 화면 canvas: 떠오르는 반짝이(최대 40개)와 터지는 코인(최대 60개).
+// canvas 연출: 떠오르는 반짝이(최대 40개, 첫 화면)와 터지는 코인(최대 60개, 데일리 잭팟).
 // 화면 밖이거나 탭이 숨겨지면 그리기를 멈춘다. 동작 줄이기면 아무것도 그리지 않는다.
 import { makeSparkle, stepSparkle, sparkleAlpha, makeCoin, stepCoin, coinFrame, isCoinGone } from './lib/particles.js';
 
@@ -7,7 +7,7 @@ const MAX_COINS = 60;
 const CELL = 64;
 const COLS = 5;
 
-export function createParticles(canvas, { coinSheet, reduced = false, rng = Math.random } = {}) {
+export function createParticles(canvas, { coinSheet, reduced = false, sparkles: withSparkles = true, rng = Math.random } = {}) {
   const ctx = canvas.getContext('2d');
   const sparkles = [];
   const coins = [];
@@ -30,6 +30,7 @@ export function createParticles(canvas, { coinSheet, reduced = false, rng = Math
 
   function seed() {
     sparkles.length = 0;
+    if (!withSparkles) return;
     const n = Math.min(MAX_SPARKLES, Math.round(w / 36));
     for (let i = 0; i < n; i += 1) sparkles.push(makeSparkle(rng, w, h));
   }

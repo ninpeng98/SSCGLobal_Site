@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { REEL_SYMBOLS, buildStrip, shuffle, spinDurations, finalYPercent, pickResult } from '../../assets/js/lib/reels.js';
+import { JACKPOT_SYMBOLS, TIERS, VISIBLE_ROWS, buildStrip, shuffle, spinDurations, stripYPercent, pickTier } from '../../assets/js/lib/reels.js';
 
 // 같은 결과를 다시 만들 수 있는 난수(mulberry32)
 function seeded(seed) {
@@ -12,23 +12,30 @@ function seeded(seed) {
   };
 }
 
-test('the first symbol is seven (the key art shows 777)', () => {
-  assert.equal(REEL_SYMBOLS[0], 'seven');
+test('each Daily Jackpot tier lines up its own symbol (spade, heart, diamond, clover; cherries pay small prizes)', () => {
+  assert.deepEqual(TIERS, { grand: 'spade', major: 'heart', minor: 'diamond', mini: 'clover', cherry: 'cherry' });
+  for (const s of Object.values(TIERS)) assert.ok(JACKPOT_SYMBOLS.includes(s), s);
 });
 
-test('buildStrip starts on `from`, ends on the target, and never shows the target in between', () => {
-  const strip = buildStrip(REEL_SYMBOLS, 3, 'crown', { from: 'seven', rng: seeded(1) });
-  assert.equal(strip.length, 2 + 3 * (REEL_SYMBOLS.length - 1));
-  assert.equal(strip[0], 'seven');
-  assert.equal(strip.at(-1), 'crown');
-  assert.ok(strip.slice(1, -1).every((s) => s !== 'crown'));
+test('the reel window shows a little under three rows (262px window, 90px rows in the web prototype)', () => {
+  assert.equal(VISIBLE_ROWS, 262 / 90);
 });
 
-test('buildStrip puts every other symbol once in each loop', () => {
-  const middle = buildStrip(REEL_SYMBOLS, 2, 'gift', { rng: seeded(7) }).slice(1, -1);
-  const others = REEL_SYMBOLS.filter((s) => s !== 'gift').sort();
-  assert.deepEqual(middle.slice(0, others.length).sort(), others);
-  assert.deepEqual(middle.slice(others.length).sort(), others);
+test('buildStrip starts with the three rows on show and ends with the result in the middle row', () => {
+  const from = ['heart', 'cherry', 'clover'];
+  const strip = buildStrip(JACKPOT_SYMBOLS, 2, 'spade', { from, rng: seeded(1) });
+  assert.deepEqual(strip.slice(0, 3), from);
+  assert.equal(strip.at(-2), 'spade');
+  assert.notEqual(strip.at(-3), 'spade');
+  assert.notEqual(strip.at(-1), 'spade');
+  assert.equal(strip.length, 3 + 2 * JACKPOT_SYMBOLS.length + 3);
+});
+
+test('buildStrip spins every symbol once per loop', () => {
+  const middle = buildStrip(JACKPOT_SYMBOLS, 2, 'heart', { from: ['spade', 'spade', 'spade'], rng: seeded(7) }).slice(3, -3);
+  const all = [...JACKPOT_SYMBOLS].sort();
+  assert.deepEqual(middle.slice(0, all.length).sort(), all);
+  assert.deepEqual(middle.slice(all.length).sort(), all);
 });
 
 test('shuffle keeps the same items and leaves the input alone', () => {
@@ -42,12 +49,18 @@ test('spinDurations follows the 1.4 / 1.85 / 2.3 second plan', () => {
   assert.deepEqual(spinDurations(3), [1.4, 1.85, 2.3]);
 });
 
-test('finalYPercent moves the last cell into the window', () => {
-  assert.equal(finalYPercent(10), -90);
-  assert.equal(finalYPercent(4), -75);
+test('stripYPercent centres the given cell in the window', () => {
+  // 4칸 띠, 창에 3칸: 0번 칸을 가운데 두려면 띠를 한 칸(25%) 내린다
+  assert.equal(stripYPercent(0, 4, 3), 25);
+  assert.equal(stripYPercent(1, 4, 3), 0);
+  assert.equal(stripYPercent(3, 4, 3), -50);
 });
 
-test('pickResult covers both ends of the list', () => {
-  assert.equal(pickResult(REEL_SYMBOLS, () => 0), REEL_SYMBOLS[0]);
-  assert.equal(pickResult(REEL_SYMBOLS, () => 0.9999), REEL_SYMBOLS.at(-1));
+test('pickTier covers both ends and favours the small prizes', () => {
+  assert.equal(pickTier(() => 0), 'grand');
+  assert.equal(pickTier(() => 0.9999), 'cherry');
+  const rng = seeded(11);
+  const counts = {};
+  for (let i = 0; i < 2000; i += 1) { const t = pickTier(rng); counts[t] = (counts[t] || 0) + 1; }
+  assert.ok(counts.cherry > counts.mini && counts.mini > counts.minor && counts.minor > counts.major && counts.major > counts.grand, JSON.stringify(counts));
 });

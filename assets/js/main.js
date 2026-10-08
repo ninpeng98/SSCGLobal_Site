@@ -1,8 +1,9 @@
-// 메인 페이지 시작점: 메뉴, 부드러운 스크롤, 첫 화면 연출(반짝이·배경 패럴랙스), 섹션 연출.
-import { prefersReducedMotion } from './motion.js';
+// 메인 페이지 시작점: 메뉴, 부드러운 스크롤, 첫 화면 연출(반짝이·배경 패럴랙스), 데일리 잭팟 기계, 섹션 연출.
+import { prefersReducedMotion, CONFETTI_COLORS } from './motion.js';
 import { initNav } from './nav.js';
 import { createParticles } from './particles.js';
 import { initSections } from './sections.js';
+import { initDailyJackpot } from './jackpot.js';
 
 const reduced = prefersReducedMotion();
 const { gsap, ScrollTrigger, SplitText } = window;
@@ -11,6 +12,7 @@ if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger, ...(SplitText ? [S
 initNav();
 initSmoothScroll();
 initHero();
+initJackpot();
 document.fonts.ready.then(() => initSections(document, { reduced }));
 
 function initSmoothScroll() {
@@ -34,4 +36,34 @@ function initHero() {
   const scrub = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
   gsap.to('.hero__backdrop img', { yPercent: 12, ease: 'none', scrollTrigger: scrub });
   gsap.to('.hero__stage', { yPercent: 6, ease: 'none', scrollTrigger: { ...scrub } });
+}
+
+// 데일리 잭팟: 당첨되면 릴 창에서 코인이 터지고, 잭팟(체리 제외)이면 색종이도 쏜다
+const BURST = { grand: 48, major: 38, minor: 28, mini: 22, cherry: 12 };
+function initJackpot() {
+  const section = document.querySelector('[data-daily]');
+  if (!section) return;
+  const fxCanvas = section.querySelector('[data-jackpot-fx]');
+  const coinSheet = new Image();
+  coinSheet.src = 'assets/img/icons/coin-sheet.webp';
+  const particles = fxCanvas ? createParticles(fxCanvas, { coinSheet, reduced, sparkles: false }) : null;
+  const confettiCanvas = section.querySelector('[data-jackpot-confetti]');
+  // useWorker:false — Worker(blob:)를 만들지 않아 CSP 를 넓히지 않는다
+  const shoot = !reduced && window.confetti && confettiCanvas
+    ? window.confetti.create(confettiCanvas, { resize: true, useWorker: false })
+    : null;
+  initDailyJackpot(section, {
+    reduced,
+    onWin(tier, rect) {
+      const box = section.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2 - box.left;
+      const cy = rect.top + rect.height / 2 - box.top;
+      particles?.burst(cx, cy, BURST[tier]);
+      if (!shoot || tier === 'cherry') return;
+      const origin = { x: cx / box.width, y: (rect.top - box.top) / box.height };
+      const base = { particleCount: tier === 'grand' ? 90 : 50, spread: 75, startVelocity: 42, colors: CONFETTI_COLORS, scalar: 0.9, ticks: 220 };
+      shoot({ ...base, angle: 115, origin: { x: origin.x - 0.12, y: origin.y } });
+      shoot({ ...base, angle: 65, origin: { x: origin.x + 0.12, y: origin.y } });
+    },
+  });
 }
