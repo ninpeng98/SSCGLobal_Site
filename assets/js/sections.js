@@ -13,6 +13,7 @@ export function initSections(root = document, { reduced = false } = {}) {
   initOdometer(root, { animated });
   initElevator(root, { reduced });
   initBonus(root, { reduced });
+  initPeerage(root, { reduced });
   if (animated) {
     initReveals(root);
     initPressFeedback(root);
@@ -186,6 +187,24 @@ function initBonus(root, { reduced }) {
     else if (rounds < COLLECT.rounds && el.dataset.state !== 'paid') el.dataset.state = 'wait';
   }, { threshold: 0.4 });
   io.observe(el);
+}
+
+// peerage 방패 등장: 숨겨 두었다가(.is-armed) 목록이 화면에 들어오면 .is-shown — 순서·빛은 CSS 가 맡는다.
+// 블록 전체가 떠오르며 나타나는 중(initReveals)이면 다 나타난 뒤에 시작한다(투명한 동안 연출이 지나가 버리지 않게).
+// 동작 줄이기면 숨기지 않는다(처음부터 멈춘 그림). JS 가 없으면 이 함수가 돌지 않아 그대로 보인다
+function initPeerage(root, { reduced }) {
+  const ladder = root.querySelector('.peerage__ladder');
+  if (!ladder || reduced) return;
+  const panel = ladder.closest('[data-reveal]');
+  const panelShown = () => !panel || Number(getComputedStyle(panel).opacity) > 0.95;
+  ladder.classList.add('is-armed');
+  const show = () => (panelShown() ? ladder.classList.add('is-shown') : requestAnimationFrame(show));
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    io.disconnect();
+    show();
+  }, { threshold: 0.35 });
+  io.observe(ladder);
 }
 
 /* 사탕 버튼 누름: 0.94배로 눌렸다가 튕겨 돌아온다(클라이언트 값). 설치 배지는 그림을 바꾸지 않기 위해 제외. */

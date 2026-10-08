@@ -2,7 +2,7 @@
 import { prefersReducedMotion, CONFETTI_COLORS } from './motion.js?v=90a53229';
 import { initNav } from './nav.js?v=7afb179e';
 import { createParticles } from './particles.js?v=ed1d69f2';
-import { initSections } from './sections.js?v=20922526';
+import { initSections } from './sections.js?v=3a942aa0';
 import { initDailyJackpot } from './jackpot.js?v=65d1e2e1';
 
 const reduced = prefersReducedMotion();

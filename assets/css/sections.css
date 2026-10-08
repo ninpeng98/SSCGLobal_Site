@@ -453,11 +453,58 @@
   text-align: center;
   line-height: 1.2;
 }
-.peerage__ladder img { width: calc(58% + var(--step) * 6%); max-width: 104px; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)); }
+/* 방패: 뒤에 티어 색 빛(::before), 위에 방패 모양으로 잘린 빛줄기(.peerage__shine) */
+.peerage__shield { position: relative; isolation: isolate; display: block; width: calc(58% + var(--step) * 6%); max-width: 104px; }
+.peerage__shield::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--tier-glow), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.peerage__ladder img { width: 100%; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)); }
+.peerage__shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, .9) 50%, transparent 60%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 150% 0;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+}
 .peerage__name { color: var(--c-text); }
 .peerage__bonus { padding: 1px 7px; border-radius: var(--r-pill); background: rgba(13, 4, 32, .6); color: var(--c-gold-light); font-size: .75rem; font-weight: 700; white-space: nowrap; }
 .peerage__note { grid-column: 2; margin-top: -6px; color: var(--c-text-dim); font-size: .8125rem; text-align: center; }
 .peerage__ladder li:last-child img { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)) drop-shadow(0 0 16px rgba(190, 220, 255, .55)); }
+/* 등장(sections.js 가 .is-armed → 화면에 들어오면 .is-shown): Bronze 부터 0.16초 간격으로 솟아올라 살짝 커졌다 앉고,
+   앉는 순간 티어 색 빛이 퍼지고 빛줄기가 스친다. 이름·보너스는 그 뒤에. 빛줄기는 6초마다 계단을 타고 다시 지나가고 Diamond 는 숨 쉬듯 빛난다 */
+.peerage__ladder.is-armed img,
+.peerage__ladder.is-armed .peerage__name,
+.peerage__ladder.is-armed .peerage__bonus { opacity: 0; }
+.peerage__ladder.is-shown img { animation: peerage-rise .75s ease-out calc(var(--step) * .16s) both; }
+.peerage__ladder.is-shown .peerage__shield::before { animation: peerage-burst .9s ease-out calc(var(--step) * .16s + .4s) both; }
+.peerage__ladder.is-shown li:last-child .peerage__shield::before {
+  animation: peerage-burst .9s ease-out calc(var(--step) * .16s + .4s) both, peerage-breathe 3.2s ease-in-out calc(var(--step) * .16s + 1.3s) infinite;
+}
+.peerage__ladder.is-shown .peerage__shine { opacity: 1; animation: peerage-shine 6s ease-in-out calc(var(--step) * .16s + .45s) infinite; }
+.peerage__ladder.is-shown .peerage__name,
+.peerage__ladder.is-shown .peerage__bonus { animation: peerage-label .4s ease-out calc(var(--step) * .16s + .5s) both; }
+@keyframes peerage-rise {
+  0% { opacity: 0; transform: translateY(40px) scale(.35); }
+  55% { opacity: 1; transform: translateY(-6px) scale(1.14); }
+  78% { transform: translateY(1px) scale(.97); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes peerage-burst { 0% { opacity: 0; transform: scale(.4); } 30% { opacity: .95; } 100% { opacity: 0; transform: scale(1.5); } }
+@keyframes peerage-breathe { 0%, 100% { opacity: .25; transform: scale(.9); } 50% { opacity: .6; transform: scale(1.05); } }
+@keyframes peerage-shine { 0% { background-position: 150% 0; } 14%, 100% { background-position: -50% 0; } }
+@keyframes peerage-label { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (max-width: 899px) {
   .peerage { grid-template-columns: 1fr; }
   .peerage__note { grid-column: auto; }
