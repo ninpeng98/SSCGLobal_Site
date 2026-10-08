@@ -105,3 +105,29 @@ test('rankings explain Peerage: win 1st place, climb six shield tiers, boost the
   await expect(page.locator('body')).not.toContainText('+500%');
   await expect(peerage.locator('.shot, img[src*="features/peerage"]')).toHaveCount(0);
 });
+
+// 섹션 리듬: 앞 섹션 내용의 아래 끝 → 다음 섹션 제목의 위 끝 = 섹션 여백 두 번(위·아래). 랭킹과 FAQ 사이의 팀 띠는 띠의 테두리까지가 여백 한 번
+test('sections keep one even rhythm between their content and the next title', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const gaps = await page.evaluate(() => {
+    const space = parseFloat(getComputedStyle(document.querySelector('#slots')).paddingTop);
+    const flow = (sec) => [...sec.querySelectorAll(':scope > *, :scope > .container > *, :scope > .hero__copy > *')]
+      .filter((e) => !['absolute', 'fixed'].includes(getComputedStyle(e).position) && !e.matches('.container, .hero__copy, .hero__backdrop') && e.getBoundingClientRect().height > 0)
+      .map((e) => e.getBoundingClientRect());
+    const flowBottom = (sec) => Math.max(...flow(sec).map((r) => r.bottom));
+    const headTop = (sec) => Math.min(...flow(sec).map((r) => r.top));
+    const ids = ['top', 'slots', 'lucky-time', 'floors', 'daily-jackpot', 'bonus', 'social'];
+    const out = {};
+    for (let i = 0; i < ids.length - 1; i += 1) {
+      out[`${ids[i]}→${ids[i + 1]}`] = Math.round((headTop(document.getElementById(ids[i + 1])) - flowBottom(document.getElementById(ids[i]))) / space * 100) / 100;
+    }
+    const team = document.querySelector('.team').getBoundingClientRect();
+    out['social→team band'] = Math.round((team.top - flowBottom(document.getElementById('social'))) / space * 100) / 100;
+    out['team band→faq'] = Math.round((headTop(document.getElementById('faq')) - team.bottom) / space * 100) / 100;
+    return out;
+  });
+  const want = Object.fromEntries(Object.keys(gaps).map((k) => [k, k.includes('team') ? 1 : 2]));
+  // 여백 단위로 ±0.1(데스크톱 14px, 휴대폰 7px)
+  for (const k of Object.keys(gaps)) expect(Math.abs(gaps[k] - want[k]), `${k}: ${JSON.stringify(gaps)}`).toBeLessThanOrEqual(0.1);
+});
