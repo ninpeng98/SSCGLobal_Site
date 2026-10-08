@@ -22,8 +22,9 @@ const WEBP = [
   ['assets/img/icons/lock.webp', 64, 128 / 184],
   ['assets/img/icons/coin-sheet.webp', 320, 320 / 128],
   ['assets/img/features/lucky-time-badge.webp', 384, 384 / 98],
+  ...['spade', 'heart', 'diamond', 'clover'].map((s) => [`assets/img/icons/sym-${s}.webp`, 120, 1]),
   ['assets/img/brand/app-icon-128.webp', 128, 1],
-  ['assets/img/brand/vglobal-logo.webp', 480, 2048 / 1536],
+  ['assets/img/brand/vglobal-logo.webp', 500, 500 / 310],
   ...['jackpot', 'lucky-time', 'floors', 'ranking', 'lobby'].flatMap((n) => [
     [`assets/img/features/${n}-960.webp`, 960, 16 / 9],
     [`assets/img/features/${n}-1600.webp`, 1600, 16 / 9],
@@ -51,6 +52,10 @@ test('PNG icons have the declared sizes', () => {
   for (const [file, px] of [['favicon-32', 32], ['icon-192', 192], ['icon-512', 512], ['apple-touch-icon', 180]]) {
     assert.deepEqual(pngSize(readFileSync(`assets/img/brand/${file}.png`)), { width: px, height: px });
   }
+});
+
+test('the Daily Jackpot machine image exists and is at least 400px wide', () => {
+  assert.ok(webpSize(readFileSync('assets/img/features/jackpot-machine.webp')).width >= 400);
 });
 
 test('official Google Play badge, social image and favicon exist', () => {

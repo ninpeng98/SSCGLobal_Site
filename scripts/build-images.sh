@@ -72,9 +72,23 @@ lobby 06_lobby_60_slots
 SHOTS
 webp "$UI/lucky_time_badge.png" "$OUT/features/lucky-time-badge.webp" 384 88
 
+# 데일리 잭팟 기계: 클라이언트 세션의 투명 렌더가 있으면 그것을, 없으면 Popup Lab 캡처에서 기계 부분을 잘라 쓴다(임시)
+if [[ -f "$IN/jackpot_machine.png" ]]; then
+  webp "$IN/jackpot_machine.png" "$OUT/features/jackpot-machine.webp" 880 88
+else
+  sips --cropOffset 26 440 --cropToHeightWidth 546 440 "$CLIENT/docs/tools/popup-lab/bake/jp2_grandwin.png" --out "$TMP/jackpot.png" >/dev/null
+  webp "$TMP/jackpot.png" "$OUT/features/jackpot-machine.webp" 440 88
+fi
+# 잭팟 등급 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버)
+for s in spade heart diamond clover; do
+  webp "$CLIENT/Assets/Texture/UI/JackpotKit/sym_$s.png" "$OUT/icons/sym-$s.webp" 120 88
+done
+
 # 브랜드
 webp "$BRAND/app_icon_round_1024.png" "$OUT/brand/app-icon-128.webp" 128 88
-webp "$BRAND/company_logo.png" "$OUT/brand/vglobal-logo.webp" 480 88
+# 회사 로고: 2048×1536 흰 캔버스 가운데의 로고 부분만 자른다(x 790, y 630, 500×310). 사이트에서는 CSS 로 색을 뒤집어 흰 글자로 쓴다
+sips --cropOffset 630 790 --cropToHeightWidth 310 500 "$BRAND/company_logo.png" --out "$TMP/logo.png" >/dev/null
+webp "$TMP/logo.png" "$OUT/brand/vglobal-logo.webp" 500 90
 sips -Z 32 "$BRAND/app_icon_round_1024.png" --out "$OUT/brand/favicon-32.png" >/dev/null
 sips -Z 192 "$BRAND/app_icon_round_1024.png" --out "$OUT/brand/icon-192.png" >/dev/null
 sips -Z 512 "$BRAND/app_icon_round_1024.png" --out "$OUT/brand/icon-512.png" >/dev/null
