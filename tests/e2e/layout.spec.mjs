@@ -4,7 +4,7 @@ const SECTION_IDS = ['top', 'slots', 'lucky-time', 'floors', 'social', 'bonus', 
 
 test('sections appear in order with no console errors', async ({ page, problems }) => {
   await page.goto('/');
-  const ids = await page.locator('main > section[id]').evaluateAll((s) => s.map((x) => x.id));
+  const ids = await page.locator('main section[id]').evaluateAll((s) => s.map((x) => x.id));
   expect(ids).toEqual(SECTION_IDS);
   await page.waitForLoadState('networkidle');
   expect(problems).toEqual([]);

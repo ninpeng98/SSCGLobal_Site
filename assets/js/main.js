@@ -1,15 +1,27 @@
-// 메인 페이지 시작점: 메뉴, 첫 화면 연출(릴·코인·색종이).
+// 메인 페이지 시작점: 메뉴, 부드러운 스크롤, 첫 화면 연출(릴·코인·색종이·배경 패럴랙스), 섹션 연출.
 import { prefersReducedMotion, CONFETTI_COLORS } from './motion.js';
 import { initNav } from './nav.js';
 import { createParticles } from './particles.js';
 import { initHeroReels } from './hero-reels.js';
+import { initSections } from './sections.js';
 
 const reduced = prefersReducedMotion();
-const { gsap } = window;
+const { gsap, ScrollTrigger, SplitText } = window;
 
+if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger, ...(SplitText ? [SplitText] : []));
 initNav();
+initSmoothScroll();
 const fx = initHeroFx();
 initHero();
+document.fonts.ready.then(() => initSections(document, { reduced }));
+
+function initSmoothScroll() {
+  if (reduced || !window.Lenis || !gsap || !ScrollTrigger) return;
+  const lenis = new window.Lenis({ autoRaf: false, anchors: { offset: -80 } });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
 
 function initHeroFx() {
   const canvas = document.querySelector('[data-particles]');
@@ -54,6 +66,12 @@ async function initHero() {
   // LCP(키 아트)를 늦추지 않도록 그림은 투명도를 건드리지 않고 크기만 살짝
   gsap.from('.hero__stage', { scale: 1.04, duration: 0.9, ease: 'power2.out' });
   gsap.from('.hero__copy > *', { y: 18, opacity: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08, delay: 0.15 });
+  if (ScrollTrigger) {
+    // 배경 패럴랙스: 스크롤하면 흐린 배경이 앞 그림보다 느리게 내려간다
+    const scrub = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
+    gsap.to('.hero__backdrop img', { yPercent: 12, ease: 'none', scrollTrigger: scrub });
+    gsap.to('.hero__stage', { yPercent: 6, ease: 'none', scrollTrigger: { ...scrub } });
+  }
   await Promise.all([waitForImage(hero.querySelector('.hero__art')), reels.ready]);
   gsap.delayedCall(0.5, () => reels.spin('seven'));
 }
