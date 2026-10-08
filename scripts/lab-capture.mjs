@@ -27,6 +27,27 @@ const SHOTS = {
 const MACHINE_FRAME = [-300, -368, 600, 740];
 const METER_FRAME = [-180, -152, 360, 304];
 
+async function shot(page, { key, t, rect, film }) {
+  return page.evaluate(async ({ key, t, rect, film }) => {
+    if (film) {
+      const [x, y, w, h] = rect, PAD = 20;
+      const sheet = await window.lab.film(key, [t], [x, y - PAD, w, h + PAD], 1, 2);
+      window.lab.unzoom();
+      window.lab.setSpeed(1);
+      const out = Object.assign(document.createElement('canvas'), { width: w * 2, height: h * 2 });
+      out.getContext('2d').drawImage(sheet, 0, PAD * 2, w * 2, h * 2, 0, 0, w * 2, h * 2);
+      return out.toDataURL('image/png');
+    }
+    await window.lab.film(key, [t], [0, 0, 1600, 720], 1, 1);
+    window.lab.unzoom();
+    window.lab.zoom(...rect);
+    const url = document.querySelector('#zoomv canvas').toDataURL('image/png');
+    window.lab.unzoom();
+    window.lab.setSpeed(1);
+    return url;
+  }, { key, t, rect, film });
+}
+
 async function jackpotParts(page) {
   return page.evaluate(async ({ MACHINE_FRAME, METER_FRAME }) => {
     const { lab, PIXI } = window;
@@ -89,11 +110,36 @@ async function jackpotParts(page) {
   }, { MACHINE_FRAME, METER_FRAME });
 }
 
+// 시안 데이터의 닉네임은 실제 유저 이름일 수 있어, 캡처할 때만 브라우저가 받는 데이터 파일에서 지어낸 이름으로 바꾼다
+// (시안 파일 자체는 그대로). 왼쪽이 시안 이름, 오른쪽이 사이트용 이름
+const NAME_SWAP = {
+  JackpotJoe: 'Starlit_Mo', SlotQueen: 'VelvetSpin', RoyalFlush: 'Crown_Ivy', Neon_Kai: 'Comet_Jun', GoldRush77: 'Amber_Fox',
+  LuckyAna: 'Clover_Rae', SpinKing: 'Reel_Duke', Mika: 'Pip', BigBetBob: 'Maple_Ted', Fortune8: 'Orbit8', CherryPop: 'Sugar_Plum',
+  MaxBet: 'Tango_Lux', DiamondLee: 'Opal_Sky', Vegas_Rin: 'Neon_Wren', ZeusFan: 'Thunder_Kit', WildCard: 'Joker_Lu', Hana: 'Iris',
+  LuckySeven: 'Seven_Sails', MoonSpin: 'Moon_Pebble', Tiger88: 'Lynx_21', AceHigh: 'Ace_Breeze', Bella: 'Juniper', Captain_J: 'Captain_Oz',
+  Nova: 'Quill', TheLuckiestSpinnerInTown: 'TheBrightestReelInTown', 'ミカ_Mika': 'Pip_Pip', 'さくら姫': 'Ruby_Rose', '행운의여신': 'Lucky_Sun',
+};
+const NAME_FILES = /\/(scenes\/top25|gift\/data|chat\/data|rank\/data|friends\/data|mypage\/data)\.js(\?|$)/;
+const swapNames = (src) => Object.entries(NAME_SWAP)
+  .sort(([a], [b]) => b.length - a.length)
+  .reduce((out, [from, to]) => out.replace(new RegExp(`(['"\`])${from}(['"\`])`, 'g'), `$1${to}$2`), src);
+
+// 새 UI 팝업(랭킹·선물함·메시지함): 이름을 바꾼 데이터로 찍는다
+// 금테 프레임·닫기(X)·바깥 로비가 들어가지 않게 팝업 안쪽 내용만 자른다(940×506)
+const INNER = [330, 140, 940, 506];
+SHOTS.lab_top25 = { key: 't25Ranked', t: 2, rect: INNER };
+SHOTS.lab_gifts = { key: 'giftMixed', t: 4, rect: INNER };
+SHOTS.lab_messages = { key: 'chatThread', t: 4, rect: INNER };
+
 const only = new Set(process.argv.slice(2));
 const want = (name) => only.size === 0 || only.has(name);
 mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome' });
 const page = await browser.newPage({ viewport: { width: 1700, height: 900 } });
+await page.route(NAME_FILES, async (route) => {
+  const res = await route.fetch();
+  await route.fulfill({ response: res, body: swapNames(await res.text()) });
+});
 await page.goto(LAB);
 await page.waitForFunction(() => window.lab && window.PIXI, null, { timeout: 30_000 });
 const save = (name, url) => {

@@ -64,13 +64,13 @@ lucky-time 05_excalibur_lucky_time
 SHOTS
 webp "$UI/lucky_time_badge.png" "$OUT/features/lucky-time-badge.webp" 384 88
 
-# 웹 시안(Popup Lab, 새 UI)에서 캡처해 _incoming 에 둔 팝업 화면(Task 11). 2배 해상도로 찍어 2080×1380 / 1400×1360 으로 잘랐다
+# 웹 시안의 새 UI 팝업(랭킹·선물함·메시지함): 닉네임을 바꿔 찍고 팝업 안쪽만 자른 것(940×506 의 2배)
 while read -r name src; do
   for w in 960 1600; do webp "$IN/$src.png" "$OUT/features/$name-$w.webp" "$w" 80; done
 done <<'LAB'
-ranking shot_top25
-gifts shot_gifts
-messages shot_messages
+ranking lab_top25
+gifts lab_gifts
+messages lab_messages
 LAB
 # 웹 시안의 새 로비·콜렉트 보너스·peerage(scripts/lab-capture.mjs 가 2배 해상도로 찍은 것)
 while read -r name src sizes; do
@@ -78,7 +78,6 @@ while read -r name src sizes; do
 done <<'LAB2'
 lobby-floors lab_lobby 960 1600
 lobby-lucky lab_lucky 960 1600
-peerage lab_peerage 960 1600
 LAB2
 
 # 데일리 잭팟 기계: 웹 시안에서 배경·빛살 없이 투명하게 뽑은 빈 릴 창 기계와, 릴 위에 덮는 유리·가운데 줄

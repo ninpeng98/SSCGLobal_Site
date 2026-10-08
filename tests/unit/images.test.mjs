@@ -41,15 +41,10 @@ const WEBP = [
     [`assets/img/features/${n}-960.webp`, 960, 16 / 9],
     [`assets/img/features/${n}-1600.webp`, 1600, 16 / 9],
   ]),
-  // 웹 시안(Popup Lab)에서 캡처한 새 UI 팝업(2080×1380 으로 자른 것)
-  ...['ranking', 'gifts', 'messages'].flatMap((n) => [
-    [`assets/img/features/${n}-960.webp`, 960, 2080 / 1380],
-    [`assets/img/features/${n}-1600.webp`, 1600, 2080 / 1380],
-  ]),
+  // 웹 시안(Popup Lab)의 새 UI 팝업 안쪽(닉네임을 바꿔 찍음, 940×506)
+  ...['ranking', 'gifts', 'messages'].flatMap((n) => [960, 1600].map((w) => [`assets/img/features/${n}-${w}.webp`, w, 940 / 506])),
   // 웹 시안의 새 로비(1600×720 무대 전체): 층 화면, 럭키 타임 표시
   ...['lobby-floors', 'lobby-lucky'].flatMap((n) => [960, 1600].map((w) => [`assets/img/features/${n}-${w}.webp`, w, 1600 / 720])),
-  // peerage 팝업 944×604 영역
-  ...[960, 1600].map((w) => [`assets/img/features/peerage-${w}.webp`, w, 944 / 604]),
 ];
 
 

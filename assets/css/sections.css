@@ -373,53 +373,33 @@
   .meter__neon { opacity: .8; }
 }
 
-/* ── 랭킹 & 소셜(크기가 다른 4칸) ─────────────────────────────────────── */
-.bento {
+/* ── 랭킹 & 소셜: 같은 크기 카드 세 장(새 UI 팝업 안쪽 화면 + 글), 그 아래 peerage ─────────── */
+.social-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.social-card {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  gap: 16px;
-}
-.bento__cell {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: grid;
-  align-content: end;
+  grid-template-rows: auto auto 1fr;
   gap: 8px;
-  min-height: 220px;
-  padding: 24px;
+  padding: 12px 12px 20px;
   border-radius: var(--r-panel);
+  background: linear-gradient(180deg, rgba(75, 39, 135, .55), rgba(30, 12, 64, .7));
   box-shadow: inset 0 0 0 1.5px rgba(190, 150, 255, .22), 0 12px 28px rgba(0, 0, 0, .4);
 }
-.bento__cell h3 { font-family: var(--font-display); font-size: 1.375rem; }
-.bento__cell--rank { grid-row: 1 / 3; }
-/* 스크린샷 칸: 그림을 칸 가득 깔고 아래에 글을 겹친다 */
-.bento__cell--shot { padding: 0; background: var(--c-bg-2); }
-.bento__cell--shot > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; z-index: -1; }
-.bento__text { padding: 64px 24px 24px; background: linear-gradient(180deg, transparent, rgba(10, 3, 26, .92) 45%); }
-.bento__text p { margin-top: 6px; }
-.bento__cell--friends { background: radial-gradient(90% 80% at 80% 10%, rgba(255, 95, 210, .35), transparent 60%), var(--g-row-vip); }
-.bento__cell--messages { grid-column: 2 / 4; }
-.bento__icon { position: absolute; top: 16px; right: 16px; z-index: -1; width: 104px; height: auto; filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .45)); }
+.social-card__shot { margin: 0 0 6px; overflow: hidden; border-radius: calc(var(--r-panel) - 10px); box-shadow: 0 0 0 1px rgba(255, 210, 87, .35); }
+.social-card__shot img { width: 100%; }
+.social-card h3, .social-card p { padding-inline: 8px; }
+.social-card h3 { font-family: var(--font-display); font-size: 1.375rem; }
+.social-card p { color: var(--c-text-dim); }
 @media (max-width: 899px) {
-  .bento { grid-template-columns: 1fr 1fr; }
-  .bento__cell--rank { grid-column: 1 / 3; grid-row: auto; aspect-ratio: 16 / 10; }
-  .bento__cell--messages { grid-column: 1 / 3; }
+  .social-cards { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; }
 }
-@media (max-width: 559px) {
-  .bento { grid-template-columns: 1fr; }
-  .bento__cell--rank, .bento__cell--messages { grid-column: auto; }
-}
-
-/* peerage(1등 칭호): 화면 | 글·방패 6등급 */
+/* peerage(1등 칭호): 글·얻는 방법 | 방패 6등급이 계단처럼 올라간다(사이트 전용 그림) */
 .peerage {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: clamp(20px, 3vw, 40px);
   align-items: center;
-  margin-top: 16px;
-  padding: clamp(16px, 2.4vw, 28px);
+  margin-top: 18px;
+  padding: clamp(20px, 3vw, 36px);
   border-radius: var(--r-panel);
   background: radial-gradient(90% 90% at 85% 15%, rgba(255, 196, 80, .16), transparent 60%), var(--g-row-vip);
   box-shadow: inset 0 0 0 1.5px rgba(255, 210, 87, .35), 0 12px 28px rgba(0, 0, 0, .4);
@@ -427,14 +407,39 @@
 .peerage__copy { display: grid; gap: 12px; }
 .peerage__copy h3 { font-family: var(--font-display); font-size: 1.5rem; }
 .peerage__copy p { color: var(--c-text-dim); }
-.peerage__tiers { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
-.peerage__tiers li { display: grid; justify-items: center; gap: 4px; color: var(--c-text); font-size: .75rem; font-weight: 600; text-align: center; line-height: 1.2; }
-.peerage__tiers img { width: min(56px, 100%); filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .5)); }
+.peerage__ways { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+.peerage__ways li { padding: .3em .85em; border-radius: var(--r-pill); background: var(--c-inset); box-shadow: inset 0 0 0 1.5px rgba(255, 210, 87, .45); color: #fff4c9; font-size: .875rem; font-weight: 600; }
+.peerage__ladder {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: end;
+  gap: 4px;
+  min-height: 230px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.peerage__ladder li {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  translate: 0 calc(var(--step) * -18px);
+  color: var(--c-text);
+  font-size: .8125rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+}
+.peerage__ladder img { width: calc(58% + var(--step) * 6%); max-width: 104px; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)); }
+.peerage__ladder li:last-child img { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .55)) drop-shadow(0 0 16px rgba(190, 220, 255, .55)); }
 @media (max-width: 899px) {
   .peerage { grid-template-columns: 1fr; }
 }
-@media (max-width: 420px) {
-  .peerage__tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 12px; }
+@media (max-width: 480px) {
+  .peerage__ladder { min-height: 190px; }
+  .peerage__ladder li { translate: 0 calc(var(--step) * -12px); font-size: .6875rem; }
 }
 
 /* ── 콜렉트 보너스(2시간마다, 룰렛 없이 바로 지급): 받기 전 ↔ 받은 순간 화면이 번갈아 나온다 ──────── */

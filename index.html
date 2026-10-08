@@ -452,38 +452,41 @@
           <h2 class="gold-title" id="social-title">Rankings &amp; Social Play</h2>
           <p class="section__lede" data-reveal>Compare your best wins with other players, climb the Daily Top 25, earn a Peerage title and play together with friends.</p>
         </div>
-        <div class="bento">
-          <article class="bento__cell bento__cell--rank bento__cell--shot" data-reveal>
-            <img src="assets/img/features/ranking-960.webp" srcset="assets/img/features/ranking-960.webp 960w, assets/img/features/ranking-1600.webp 1600w" sizes="(min-width: 900px) 600px, 92vw" alt="The Daily Top 25 ranking with your rank and today's prizes" width="2080" height="1380" loading="lazy" decoding="async">
-            <div class="bento__text"><h3>Daily Top 25</h3><p>Climb the rankings and beat your own records.</p></div>
+        <div class="social-cards">
+          <article class="social-card" data-reveal>
+            <figure class="social-card__shot"><img src="assets/img/features/ranking-960.webp" srcset="assets/img/features/ranking-960.webp 960w, assets/img/features/ranking-1600.webp 1600w" sizes="(min-width: 900px) 380px, 92vw" alt="The Daily Top 25 ranking with your rank, the time left and today's prizes" width="1880" height="1012" loading="lazy" decoding="async"></figure>
+            <h3>Daily Top 25</h3>
+            <p>Climb today's room ranking and win chip prizes for the top spots.</p>
           </article>
-          <article class="bento__cell bento__cell--friends" data-reveal>
-            <img class="bento__icon" src="assets/img/icons/crown-chip.webp" alt="" width="256" height="256" loading="lazy">
-            <h3>Add &amp; follow friends</h3><p>Follow the players you meet at the machines.</p>
+          <article class="social-card" data-reveal>
+            <figure class="social-card__shot"><img src="assets/img/features/gifts-960.webp" srcset="assets/img/features/gifts-960.webp 960w, assets/img/features/gifts-1600.webp 1600w" sizes="(min-width: 900px) 380px, 92vw" alt="The gift box with gifts from friends and the Golden Hour team" width="1880" height="1012" loading="lazy" decoding="async"></figure>
+            <h3>Send gifts</h3>
+            <p>Share virtual chip gifts and keys with friends, and send one back.</p>
           </article>
-          <article class="bento__cell bento__cell--gifts bento__cell--shot" data-reveal>
-            <img src="assets/img/features/gifts-960.webp" srcset="assets/img/features/gifts-960.webp 960w, assets/img/features/gifts-1600.webp 1600w" sizes="(min-width: 900px) 300px, 92vw" alt="The gift box with gifts from friends and the Golden Hour team" width="2080" height="1380" loading="lazy" decoding="async">
-            <div class="bento__text"><h3>Send gifts</h3><p>Share virtual chip gifts with your friends.</p></div>
-          </article>
-          <article class="bento__cell bento__cell--messages bento__cell--shot" data-reveal>
-            <img src="assets/img/features/messages-960.webp" srcset="assets/img/features/messages-960.webp 960w, assets/img/features/messages-1600.webp 1600w" sizes="(min-width: 900px) 600px, 92vw" alt="Messages between players in Golden Hour" width="2080" height="1380" loading="lazy" decoding="async">
-            <div class="bento__text"><h3>Message players</h3><p>Chat with the people you play with, right inside the game.</p></div>
+          <article class="social-card" data-reveal>
+            <figure class="social-card__shot"><img src="assets/img/features/messages-960.webp" srcset="assets/img/features/messages-960.webp 960w, assets/img/features/messages-1600.webp 1600w" sizes="(min-width: 900px) 380px, 92vw" alt="Messages between players in Golden Hour" width="1880" height="1012" loading="lazy" decoding="async"></figure>
+            <h3>Follow &amp; chat</h3>
+            <p>Follow the players you meet at the machines and message them right inside the game.</p>
           </article>
         </div>
         <div class="peerage" data-reveal>
-          <figure class="shot peerage__shot"><img src="assets/img/features/peerage-960.webp" srcset="assets/img/features/peerage-960.webp 960w, assets/img/features/peerage-1600.webp 1600w" sizes="(min-width: 900px) 560px, 92vw" alt="The Peerage screen with a player's current title, the points to the next one and the six tiers from Bronze to Diamond" width="1888" height="1208" loading="lazy" decoding="async"></figure>
           <div class="peerage__copy">
             <h3>Win 1st place. Earn a title.</h3>
-            <p>Finish 1st in a weekly ranking, a tournament or a Daily Top 25 room to earn Peerage points. Climb from Bronze to Diamond, and every step adds to your Daily Jackpot prize, up to +500%.</p>
-            <ul class="peerage__tiers" aria-label="Peerage tiers">
-              <li><img src="assets/img/peerage/bronze.webp" alt="" width="160" height="160" loading="lazy">Bronze</li>
-              <li><img src="assets/img/peerage/silver.webp" alt="" width="160" height="160" loading="lazy">Silver</li>
-              <li><img src="assets/img/peerage/sapphire.webp" alt="" width="160" height="160" loading="lazy">Sapphire</li>
-              <li><img src="assets/img/peerage/ruby.webp" alt="" width="160" height="160" loading="lazy">Ruby</li>
-              <li><img src="assets/img/peerage/royalgold.webp" alt="" width="160" height="160" loading="lazy">Royal Gold</li>
-              <li><img src="assets/img/peerage/diamond.webp" alt="" width="160" height="160" loading="lazy">Diamond</li>
+            <p>Finish 1st and earn Peerage points. Climb from Bronze to Diamond, and every step adds to your Daily Jackpot prize, up to +500%.</p>
+            <ul class="peerage__ways" aria-label="Ways to earn Peerage points">
+              <li>1st in a weekly ranking</li>
+              <li>1st in a tournament</li>
+              <li>1st in a Daily Top 25 room</li>
             </ul>
           </div>
+          <ol class="peerage__ladder" aria-label="Peerage tiers, lowest to highest">
+            <li style="--step:0"><img src="assets/img/peerage/bronze.webp" alt="" width="160" height="160" loading="lazy">Bronze</li>
+            <li style="--step:1"><img src="assets/img/peerage/silver.webp" alt="" width="160" height="160" loading="lazy">Silver</li>
+            <li style="--step:2"><img src="assets/img/peerage/sapphire.webp" alt="" width="160" height="160" loading="lazy">Sapphire</li>
+            <li style="--step:3"><img src="assets/img/peerage/ruby.webp" alt="" width="160" height="160" loading="lazy">Ruby</li>
+            <li style="--step:4"><img src="assets/img/peerage/royalgold.webp" alt="" width="160" height="160" loading="lazy">Royal Gold</li>
+            <li style="--step:5"><img src="assets/img/peerage/diamond.webp" alt="" width="160" height="160" loading="lazy">Diamond</li>
+          </ol>
         </div>
       </div>
     </section>

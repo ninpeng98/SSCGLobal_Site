@@ -51,7 +51,7 @@ test('content blocks have the planned counts', async ({ page }) => {
   await page.goto('/');
   expect(await page.locator('.slot-card').count()).toBe(14);
   expect(await page.locator('.daily__meters > .meter').count()).toBe(4);
-  expect(await page.locator('.bento > .bento__cell').count()).toBe(4);
+  expect(await page.locator('.social-cards > .social-card').count()).toBe(3);
   expect(await page.locator('[data-elevator] .floor').count()).toBe(10);
   expect(await page.locator('[data-elevator] .floor__slots > li').count()).toBe(47);
   expect(await page.locator('.faq__item').count()).toBe(7);
@@ -75,23 +75,29 @@ test('FAQ answers open', async ({ page }) => {
   await expect(first.locator('.faq__answer')).toContainText('No.');
 });
 
-test('social and bonus sections show the new-UI captures from the web prototype', async ({ page }) => {
+test('social cards use the new-UI captures (nicknames swapped, no popup frame) in one even row', async ({ page }, info) => {
   await page.goto('/');
-  const shots = await page.locator('.bento__cell--shot > img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
+  const cards = page.locator('.social-card');
+  const shots = await cards.locator('img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
   expect(shots).toEqual([
     'assets/img/features/ranking-960.webp',
     'assets/img/features/gifts-960.webp',
     'assets/img/features/messages-960.webp',
   ]);
+  const boxes = await cards.evaluateAll((els) => els.map((e) => e.getBoundingClientRect()).map((r) => ({ w: Math.round(r.width), top: Math.round(r.top) })));
+  if (info.project.name === 'desktop') {
+    expect(new Set(boxes.map((b) => b.w)).size).toBe(1);
+    expect(new Set(boxes.map((b) => b.top)).size).toBe(1);
+  }
   await expect(page.locator('#bonus .collect-demo__plate img').first()).toHaveAttribute('src', 'assets/img/collect/plate-wait.webp');
 });
 
 test('rankings explain Peerage: win 1st place, climb six shield tiers, boost the Daily Jackpot', async ({ page }) => {
   await page.goto('/');
   const peerage = page.locator('#social .peerage');
-  await expect(peerage.locator('.peerage__tiers li')).toHaveText(['Bronze', 'Silver', 'Sapphire', 'Ruby', 'Royal Gold', 'Diamond']);
-  await expect(peerage.locator('.peerage__tiers img')).toHaveCount(6);
+  await expect(peerage.locator('.peerage__ladder li')).toHaveText(['Bronze', 'Silver', 'Sapphire', 'Ruby', 'Royal Gold', 'Diamond']);
+  await expect(peerage.locator('.peerage__ladder img')).toHaveCount(6);
   await expect(peerage).toContainText('1st');
   await expect(peerage).toContainText('+500%');
-  await expect(peerage.locator('.peerage__shot img')).toHaveAttribute('src', 'assets/img/features/peerage-960.webp');
+  await expect(peerage.locator('.shot, img[src*="features/peerage"]')).toHaveCount(0);
 });
