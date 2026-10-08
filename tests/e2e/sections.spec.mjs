@@ -109,3 +109,12 @@ test('jumping straight past blocks (anchor jump, restored scroll) still shows th
   await expect.poll(() => page.locator('#floors [data-reveal]').evaluateAll((els) => els.map((e) => getComputedStyle(e).opacity)),
     { timeout: 3_000 }).toEqual(['1', '1']);
 });
+
+test('with only the animation scripts blocked, every slot card can still be scrolled into view', async ({ page }) => {
+  await page.route('**/assets/vendor/**/*.js', (route) => route.abort());
+  await page.goto('/#slots');
+  await expect(page.locator('.slots__nav')).toBeHidden();
+  const last = page.locator('.slot-card').last();
+  await last.scrollIntoViewIfNeeded();
+  await expect(last).toBeInViewport();
+});

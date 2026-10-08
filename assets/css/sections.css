@@ -130,6 +130,10 @@
 .slot-card__name { font-family: var(--font-display); font-size: 1.125rem; }
 .swiper-slide:not(.swiper-slide-active) .slot-card figcaption { opacity: .55; }
 .slots__nav { display: flex; justify-content: center; gap: 14px; margin-top: 28px; }
+/* Swiper 가 뜨지 않으면(스크립트 차단 등) 카드 줄을 가로 스크롤로 보여 주고, 동작하지 않는 이전/다음 버튼은 숨긴다 */
+.slots__carousel:not(.swiper-initialized) .swiper-wrapper { overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding-inline: var(--gutter); }
+.slots__carousel:not(.swiper-initialized) .swiper-slide { scroll-snap-align: center; }
+.slots__carousel:not(.swiper-initialized) ~ .slots__nav { display: none; }
 
 /* ── 럭키 타임 & 잭팟(데일리 잭팟 기계 + 등급 카드 | 글) ───────────────────── */
 .lucky__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 5vw, 72px); align-items: center; }

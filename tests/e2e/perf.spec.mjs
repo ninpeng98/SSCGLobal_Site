@@ -30,3 +30,28 @@ test('layout shift stays under 0.1 during the hero animation', async ({ page }) 
   }));
   expect(cls).toBeLessThan(0.1);
 });
+
+test('hero badge never fades out again after it first appears on a slow phone', async ({ page }, info) => {
+  test.skip(info.project.name !== 'mobile', 'mobile only');
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Network.enable');
+  await cdp.send('Network.emulateNetworkConditions', {
+    offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8,
+  });
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  await page.addInitScript(() => {
+    window.__actionsOpacity = [];
+    const tick = () => {
+      const el = document.querySelector('.hero__actions');
+      if (el) window.__actionsOpacity.push(Number(getComputedStyle(el).opacity));
+      if (performance.now() < 6000) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  await page.goto('/', { waitUntil: 'load' });
+  await page.waitForFunction(() => performance.now() > 6000, null, { timeout: 20_000 });
+  const samples = await page.evaluate(() => window.__actionsOpacity);
+  const firstVisible = samples.findIndex((o) => o === 1);
+  expect(firstVisible).toBeGreaterThanOrEqual(0);
+  expect(Math.min(...samples.slice(firstVisible))).toBe(1);
+});

@@ -63,9 +63,7 @@ async function initHero() {
   const reels = initHeroReels(hero, { reduced, onLand: (_, rect) => celebrate(rect) });
   if (!reels) return;
   hero.classList.add('is-interactive');
-  // LCP(키 아트)를 늦추지 않도록 그림은 투명도를 건드리지 않고 크기만 살짝
-  gsap.from('.hero__stage', { scale: 1.04, duration: 0.9, ease: 'power2.out' });
-  gsap.from('.hero__copy > *', { y: 18, opacity: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08, delay: 0.15 });
+  // 첫 화면 문구·그림에는 등장 연출을 넣지 않는다 — 느린 기기에서 모듈이 늦게 돌면, 이미 보인 설치 배지를 다시 숨겼다 보이게 된다
   if (ScrollTrigger) {
     // 배경 패럴랙스: 스크롤하면 흐린 배경이 앞 그림보다 느리게 내려간다
     const scrub = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
