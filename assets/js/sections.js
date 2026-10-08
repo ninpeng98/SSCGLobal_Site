@@ -44,13 +44,13 @@ function initReveals(root) {
 
 // 슬롯 넘김: 볼록한 원통(가운데가 가장 가깝다). Swiper 는 끌기·키보드·무한 반복만 맡고,
 // 카드 위치는 lib/ring.js 가 정한다(virtualTranslate: 줄 전체를 옮기지 않고 카드마다 놓는다).
-const RING_RADIUS = 2.45; // 원통 반지름 = 카드 폭 × 이 값
+const RING_RADIUS = 3.3; // 원통 반지름 = 카드 폭 × 이 값(카드 사이가 넉넉하게)
 
 function placeRing(swiper) {
   const width = swiper.width;
   for (const slide of swiper.slides) {
     const size = slide.swiperSlideSize;
-    const pose = ringPose(slide.progress, { radius: size * RING_RADIUS });
+    const pose = ringPose(slide.progress, { radius: size * RING_RADIUS, step: 19 });
     const x = -slide.swiperSlideOffset + (width - size) / 2 + pose.x;
     slide.style.transform = `translate3d(${x}px, 0, ${pose.z}px) rotateY(${pose.rotateY}deg)`;
     slide.style.opacity = String(pose.opacity);
@@ -68,13 +68,12 @@ function initSlots(root, { reduced }) {
     centeredSlides: true,
     loop: true,
     grabCursor: true,
-    speed: reduced ? 0 : 700,
+    speed: reduced ? 0 : 1100,
     virtualTranslate: true,
     watchSlidesProgress: true,
     keyboard: { enabled: true, onlyInViewport: true },
-    navigation: { prevEl: root.querySelector('.slots__prev'), nextEl: root.querySelector('.slots__next') },
-    // 사용자가 한 번이라도 넘기면 자동 넘김을 멈춘다(키보드·터치 포함)
-    autoplay: reduced ? false : { delay: 4000, pauseOnMouseEnter: true, disableOnInteraction: true },
+    // 화살표 버튼 없이 천천히 저절로 돈다. 끌어서(스와이프) 넘길 수 있고, 놓으면 다시 돈다. 마우스를 올리면 멈춘다
+    autoplay: reduced ? false : { delay: 1600, pauseOnMouseEnter: true, disableOnInteraction: false },
     a11y: { enabled: true, prevSlideMessage: 'Previous slot', nextSlideMessage: 'Next slot' },
     on: {
       setTranslate: placeRing,

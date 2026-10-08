@@ -50,13 +50,22 @@ test('the ring stays centred and balanced on a very wide screen', async ({ page 
   lefts.forEach((d, i) => expect(Math.abs(d - rights[i])).toBeLessThan(3));
 });
 
-test('the next button turns the ring', async ({ page }) => {
+test('the ring has no arrow buttons: it turns slowly by itself and by swiping', async ({ page }, info) => {
   await page.goto('/#slots');
   const carousel = page.locator('[data-slots]');
   await expect(carousel).toHaveClass(/swiper-initialized/);
+  await expect(page.locator('.slots__nav, .slots__prev, .slots__next')).toHaveCount(0);
   const active = () => carousel.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index');
+  const first = await active();
+  await expect.poll(active, { timeout: 6_000 }).not.toBe(first);
+  // 끌어서 넘기기
+  const box = await carousel.boundingBox();
   const before = await active();
-  await page.locator('.slots__next').click();
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width * 0.7, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.3, y, { steps: 8 });
+  await page.mouse.up();
   await expect.poll(active).not.toBe(before);
 });
 
@@ -141,7 +150,7 @@ test('scrolling to the bottom reveals every block', async ({ page }) => {
   expect(await hiddenRevealCount(page)).toBe(0);
 });
 
-test('keyboard reaches the badge, the carousel buttons and the FAQ', async ({ page }, info) => {
+test('keyboard reaches the badge and the FAQ', async ({ page }, info) => {
   test.skip(info.project.name !== 'desktop', 'keyboard check on desktop');
   await page.goto('/');
   const seen = new Set();
@@ -150,11 +159,10 @@ test('keyboard reaches the badge, the carousel buttons and the FAQ', async ({ pa
     seen.add(await page.evaluate(() => {
       const el = document.activeElement;
       return el.matches('.hero [data-play-badge]') ? 'hero-badge'
-        : el.matches('.slots__next') ? 'slots-next'
         : el.matches('.faq__item summary') ? 'faq' : el.tagName;
     }));
   }
-  for (const key of ['hero-badge', 'slots-next', 'faq']) expect(seen.has(key), key).toBe(true);
+  for (const key of ['hero-badge', 'faq']) expect(seen.has(key), key).toBe(true);
 });
 
 test('reduced motion shows every section in its final state', async ({ page }) => {
@@ -189,7 +197,6 @@ test('jumping straight past blocks (anchor jump, restored scroll) still shows th
 test('with only the animation scripts blocked, every slot card can still be scrolled into view', async ({ page }) => {
   await page.route('**/assets/vendor/**/*.js', (route) => route.abort());
   await page.goto('/#slots');
-  await expect(page.locator('.slots__nav')).toBeHidden();
   const last = page.locator('.slot-card').last();
   await last.scrollIntoViewIfNeeded();
   await expect(last).toBeInViewport();
