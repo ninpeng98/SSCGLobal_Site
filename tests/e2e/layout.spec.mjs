@@ -86,3 +86,13 @@ test('social and bonus sections show the new-UI captures from the web prototype'
   const bonus = await page.locator('#bonus .shot img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
   expect(bonus).toEqual(['assets/img/features/collect-ready-800.webp', 'assets/img/features/collect-paid-800.webp']);
 });
+
+test('rankings explain Peerage: win 1st place, climb six shield tiers, boost the Daily Jackpot', async ({ page }) => {
+  await page.goto('/');
+  const peerage = page.locator('#social .peerage');
+  await expect(peerage.locator('.peerage__tiers li')).toHaveText(['Bronze', 'Silver', 'Sapphire', 'Ruby', 'Royal Gold', 'Diamond']);
+  await expect(peerage.locator('.peerage__tiers img')).toHaveCount(6);
+  await expect(peerage).toContainText('1st');
+  await expect(peerage).toContainText('+500%');
+  await expect(peerage.locator('.peerage__shot img')).toHaveAttribute('src', 'assets/img/features/peerage-960.webp');
+});
