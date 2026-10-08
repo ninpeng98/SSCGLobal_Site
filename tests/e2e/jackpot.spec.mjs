@@ -150,7 +150,8 @@ test('reduced motion keeps the bulbs, shine and neon still', async ({ page }) =>
   for (const sel of ['.machine__bulbs img', '.machine__shine', '.meter__neon']) {
     for (const name of await anim(sel)) expect(name, sel).toBe('none');
   }
-  await expect(page.locator('.meter .meter__prize').first()).toHaveText('1,200,000,000');
+  // 운영 금액(GRAND 2억 > MAJOR 1.5억 > MINOR > MINI)
+  await expect(page.locator('.meter .meter__prize')).toHaveText(['200,000,000', '150,000,000', '5,000,000', '1,000,000']);
 });
 
 test('reel symbols keep the prototype spacing: 81 of every 90 in the column, never touching', async ({ page }) => {
