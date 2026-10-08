@@ -85,7 +85,8 @@
 .lucky__copy > p { color: var(--c-text-dim); font-size: 1.125rem; }
 .lucky__badge { width: 192px; }
 .lucky__shots { display: grid; gap: 16px; }
-.lucky__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lucky__pair { display: grid; gap: 16px; } /* 슬롯 안 화면 두 장(럭키 타임 작동 중, 잭팟 당첨)을 크게 위아래로 */
+.lucky__pair .shot:nth-child(2) { width: 88%; justify-self: end; margin-top: -6%; position: relative; box-shadow: 0 18px 40px rgba(0, 0, 0, .6); }
 .progressive { /* 일반 슬롯의 누적 잭팟: GRAND 숫자가 계속 커진다 */
   display: grid;
   justify-items: center;
