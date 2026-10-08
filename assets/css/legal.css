@@ -10,6 +10,8 @@
   -webkit-background-clip: text;
   background-clip: text;
 }
+.legal__updated { margin-top: -12px; color: var(--c-text-dim); font-size: .9375rem; }
+.legal__panel h3 { margin: 24px 0 8px; color: #fff4c9; font-size: 1.125rem; }
 .legal__panel h2 { margin: 40px 0 12px; color: #fff4c9; font-family: var(--font-display); font-size: clamp(1.25rem, 1.1rem + .6vw, 1.5rem); }
 .legal__panel p,
 .legal__panel li { max-width: 70ch; font-size: 1.0625rem; line-height: 1.7; }
