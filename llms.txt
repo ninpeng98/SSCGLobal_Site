@@ -21,4 +21,4 @@
 - [FAQ](https://sscgl.vglobal.site/#faq): real-money gambling, free play, free chips, age, devices, support, data, account deletion
 - [Privacy Policy](https://sscgl.vglobal.site/privacy-policy.html)
 - [Terms of Service](https://sscgl.vglobal.site/terms-of-service.html)
-- [Delete your account](https://sscgl.vglobal.site/delete-account.html): how to request deletion of your account and data
+- [Delete your account](https://sscgl.vglobal.site/delete-account.html): delete your account in the app (Settings > Delete account) or request deletion by email

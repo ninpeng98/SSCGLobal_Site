@@ -36,10 +36,17 @@ test('account deletion page names the app and developer and shows how to request
   const main = page.locator('main');
   await expect(main).toContainText('Golden Hour – Slots Casino');
   await expect(main).toContainText('Vglobal Co., Ltd.');
-  const steps = main.locator('ol.delete-steps > li');
-  await expect(steps).toHaveCount(3);
-  await expect(steps.nth(0)).toContainText('MEMBER ID');
-  await expect(steps.nth(2)).toContainText('within 30 days');
+  // 새 앱(auth v2) 기준: 앱 안 [Delete account] 와 이메일 요청 두 길. 손님도 MEMBER ID 가 있다
+  const inApp = main.locator('#in-app + ol.delete-steps > li');
+  await expect(inApp).toHaveCount(3);
+  await expect(inApp.nth(0)).toContainText('Settings');
+  await expect(inApp.nth(1)).toContainText('Delete account');
+  await expect(inApp.nth(2)).toContainText('waiting period');
+  const byEmail = main.locator('#by-email + ol.delete-steps > li');
+  await expect(byEmail).toHaveCount(3);
+  await expect(byEmail.nth(0)).toContainText('MEMBER ID');
+  await expect(byEmail.nth(0)).toContainText('Guest accounts have one too');
+  await expect(byEmail.nth(2)).toContainText('within 30 days');
   const request = main.locator('a.btn[href^="mailto:"]');
   await expect(request).toBeVisible();
   const lines = await request.evaluate((a) => { const r = document.createRange(); r.selectNodeContents(a); return new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size; });
@@ -50,8 +57,9 @@ test('account deletion page names the app and developer and shows how to request
   expect(decodeURIComponent(href)).toContain('MEMBER ID:');
   await expect(main.locator('#what-we-delete + ul')).toContainText('virtual chips');
   await expect(main.locator('#what-we-keep + ul')).toContainText('as long as the law requires');
-  await expect(main.locator('#guests')).toBeVisible();
-  await expect(main).toContainText('REGISTER');
+  await expect(main.locator('#what-we-delete + ul')).toContainText('Google account');
+  await expect(main.locator('#guests')).toHaveCount(0);
+  await expect(main).not.toContainText('REGISTER');
   await expect(main).toContainText('Uninstalling the app does not delete your account');
 });
 
@@ -61,8 +69,11 @@ test('every page links to the account deletion page from the footer, the FAQ and
     const link = page.locator('footer a', { hasText: 'Delete Account' });
     await expect(link, path).toHaveAttribute('href', /(^|\/)delete-account\.html$/);
   }
+  await page.goto('/privacy-policy.html');
+  await expect(page.locator('main a[href="delete-account.html"]')).toHaveCount(1);
   await page.goto('/');
   await expect(page.locator('.faq__answer a[href="delete-account.html"]')).toHaveCount(1);
+  await expect(page.locator('.faq__answer', { hasText: 'Delete account' })).toHaveCount(1);
   expect(await (await request.get('/sitemap.xml')).text()).toContain('<loc>https://sscgl.vglobal.site/delete-account.html</loc>');
   expect(await (await request.get('/llms.txt')).text()).toContain('(https://sscgl.vglobal.site/delete-account.html)');
 });

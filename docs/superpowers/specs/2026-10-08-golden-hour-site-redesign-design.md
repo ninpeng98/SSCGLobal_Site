@@ -467,8 +467,9 @@ taste-skill(`Leonxlnx/taste-skill`, MIT)에서 이 사이트에 맞는 규칙만
 | 랭킹·소셜 | 닉네임을 바꿔 다시 찍은 팝업 안쪽 화면으로 같은 크기 카드 3장. peerage 는 위 표 |
 | 이메일 | 고객 지원은 `vglobalcs24@gmail.com`(꼬리말·FAQ·구조화 데이터). 정책 본문 연락처는 그대로 |
 | 캐시 | 페이지의 로컬 CSS·JS 주소와 JS 모듈의 상대 import 에 내용 버전(`?v=` 해시 8자리)을 붙인다(`npm run stamp`, `verify.mjs` 의 stamps 점검). 브라우저가 캐시한 옛 JS 와 새 HTML 이 섞여 슬롯 넘김 등이 깨지는 일을 막는다 |
-| 계정 삭제 | `delete-account.html`(Google Play 계정·데이터 삭제 요청 주소): 설정의 MEMBER ID 를 `vglobalcs24@gmail.com` 으로 보내면 본인 확인 뒤 30일 안에 삭제. 손님은 REGISTER 로 MEMBER ID 를 받은 뒤 요청. 결제 기록만 법이 정한 기간 동안 따로 보관. 꼬리말·FAQ·sitemap·llms.txt 에서 연결. 앱 안 삭제(클라 v2 설정의 [Delete account], 유예 기간 미정)는 출시되면 페이지에 더한다 |
+| 계정 삭제 | `delete-account.html`(Google Play 계정·데이터 삭제 요청 주소)은 새 앱(auth v2) 기준(사용자 결정 2026-10-08): 앱 안 Settings → Delete account → 확인 → 유예 뒤 삭제(유예 일수·취소 방법 미정, `docs/drafts/delete-account-v2.md`), 또는 설정의 MEMBER ID(손님 포함)를 `vglobalcs24@gmail.com` 으로 보내면 본인 확인 뒤 30일 안에 삭제. 결제 기록만 법이 정한 기간 동안 따로 보관. 꼬리말·FAQ·개인정보처리방침 9항·sitemap·llms.txt 에서 연결 |
 | AI 검색 | FAQPage 구조화 데이터(화면 FAQ 와 같은 문구), `llms.txt`(사이트 요약과 링크) |
 | 첫 화면 경계 | 흐린 키 아트 배경은 아래로 갈수록 투명해져(마스크) 다음 섹션과 같은 오로라·점무늬 배경으로 이어진다. 단색으로 끝나면 경계선이 생긴다 |
 | peerage 등장 | 블록이 다 나타난 뒤, 방패가 Bronze 부터 0.16초 간격으로 솟아올라 앉고(티어 색 빛 퍼짐 + 방패 모양 빛줄기), 이름·보너스가 뒤따른다. 빛줄기는 6초마다 계단을 타고 다시 지나가고 Diamond 는 숨 쉬듯 빛난다. JS 없음·동작 줄이기면 정지 그림 |
 | 섹션 리듬 | 섹션 내용 사이 간격은 모두 섹션 여백 두 번(데스크톱 280px, 휴대폰 144px). 첫 화면도 화면 한 장 고정 대신 내용 + 섹션 여백으로 끝난다. 랭킹과 FAQ 사이 팀 띠는 띠 테두리까지 여백 한 번, 마지막 설치 섹션은 일부러 더 넓다 |
+| 개인정보처리방침 | 원문은 그대로 두고 더한 문단에 `data-revision` 을 단다: 최종 수정일(2026. 10. 08), Section 3 아래 Google Sign-In(Google 계정 식별자만 저장, 로그인·복구용, 삭제 시 연결도 삭제), Section 9 에 계정 삭제 안내 |
