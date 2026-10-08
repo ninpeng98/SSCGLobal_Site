@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # 클라이언트 저장소 원본과 받은 소재(assets/img/_incoming)를 사이트용 WebP·PNG·ICO·JPG 로 만든다.
 # 원본 PNG 는 이 저장소에 넣지 않고, 결과만 커밋한다. 원본보다 크게 늘리지 않는다.
-# 사용: CLIENT_REPO=/path/to/mazynga_unity_global scripts/build-images.sh
+# 사용: CLIENT_REPO=/path/to/mazynga_unity_global [CLIENT_REF=origin/develop] scripts/build-images.sh
+# 새 로비 배경·peerage 방패처럼 원격 develop 에만 있는 원본은 CLIENT_REF 에서 git show 로 꺼낸다(작업 폴더는 건드리지 않음).
+# 웹 시안 캡처(_incoming/lab_*, jp_*)는 scripts/lab-capture.mjs 로 먼저 만든다.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CLIENT="${CLIENT_REPO:-/Users/ultramaker/Projects/work/mazynga/mazynga_unity_global}"
+REF="${CLIENT_REF:-origin/develop}"
 BRAND="$CLIENT/output/promo-video-kit/01_brand"
 STORE="$CLIENT/output/promo-video-kit/02_store_screenshots"
 UI="$CLIENT/output/promo-video-kit/03_ui_elements"
@@ -14,7 +17,14 @@ IN="assets/img/_incoming"
 OUT="assets/img"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-mkdir -p "$OUT"/{hero,brand,slots,features,icons,reels,og,badges}
+mkdir -p "$OUT"/{hero,brand,slots,features,icons,reels,og,badges,jackpot,peerage,bg}
+
+# from_ref PATH: CLIENT_REF 의 파일을 임시 폴더로 꺼내고 그 경로를 출력
+from_ref() {
+  local dst="$TMP/ref-$(basename "$1")"
+  git -C "$CLIENT" show "$REF:$1" > "$dst"
+  echo "$dst"
+}
 
 # webp SRC DST WIDTH [QUALITY]: 폭 WIDTH 로 줄여(비율 유지) WebP 로 저장. 원본이 더 작으면 원본 폭 그대로.
 webp() {
@@ -36,39 +46,21 @@ webp "$TMP/seven.png" "$OUT/reels/seven.webp" 244 88
 
 # 아이콘(받은 소재)
 webp "$IN/icon_chip.png" "$OUT/icons/chip.webp" 152 88
-webp "$IN/icon_crown_432.png" "$OUT/icons/crown.webp" 216 88
-webp "$IN/icon_trophy.png" "$OUT/icons/trophy.webp" 256 85
-webp "$IN/icon_gift.png" "$OUT/icons/gift.webp" 256 85
 webp "$IN/extra_crown_chip_purple_1024.png" "$OUT/icons/crown-chip.webp" 256 85
 webp "$IN/icon_lock_closed.png" "$OUT/icons/lock.webp" 64 90
 cwebp -quiet -lossless -metadata none "$IN/coin_spin_sheet.png" -o "$OUT/icons/coin-sheet.webp"
 
-# 슬롯 타일(로비 타일 273×282, 원본 크기 그대로)
+# 슬롯 타일(로비 타일 273×282, 원본 크기 그대로): 10개 층에 놓인 47개 전부(scripts/floors.mjs)
 while read -r slug src; do
   webp "$TILES/$src.png" "$OUT/slots/$slug.webp" 273 85
-done <<'SLOTS'
-golden-fruits 04_goldenfruits
-cash-fever 18_cashfever
-fairy-garden 06_fairygarden
-aladdin 26_aladdin
-excalibur 31_excalibur
-titan 59_titan
-treasure-island 01_treasureisland
-curse-of-the-pharaohs 38_curseofthepharaohs
-halloween-witch 52_halloweenwitch
-christmas-miracle 56_christmasmiracle
-zombie-hunter 48_zombiehunter
-gangsters-poker 03_gangsterspoker
-SLOTS
+done < <(node scripts/floors.mjs)
 
-# 기능 화면(스토어 홍보 화면 — 새 UI 촬영본이 오면 Task 11 에서 바꾼다)
+# 기능 화면(스토어 홍보 화면): 슬롯 안 화면은 이번 UI 개편 대상이 아니라 그대로 쓴다
 while read -r name src; do
   for w in 960 1600; do webp "$STORE/$src.png" "$OUT/features/$name-$w.webp" "$w" 80; done
 done <<'SHOTS'
 jackpot 01_titan_major_jackpot
-floors 04_level_up_floors
 lucky-time 05_excalibur_lucky_time
-lobby 06_lobby_60_slots
 SHOTS
 webp "$UI/lucky_time_badge.png" "$OUT/features/lucky-time-badge.webp" 384 88
 
@@ -80,18 +72,39 @@ ranking shot_top25
 gifts shot_gifts
 messages shot_messages
 LAB
-for w in 700 1400; do webp "$IN/shot_time_bonus.png" "$OUT/features/time-bonus-$w.webp" "$w" 80; done
+# 웹 시안의 새 로비·콜렉트 보너스·peerage(scripts/lab-capture.mjs 가 2배 해상도로 찍은 것)
+while read -r name src sizes; do
+  for w in $sizes; do webp "$IN/$src.png" "$OUT/features/$name-$w.webp" "$w" 80; done
+done <<'LAB2'
+lobby-floors lab_lobby 960 1600
+lobby-lucky lab_lucky 960 1600
+collect-ready lab_collect_ready 800 1600
+collect-paid lab_collect_paid 800 1600
+peerage lab_peerage 960 1600
+LAB2
 
-# 데일리 잭팟 기계: 클라이언트 세션의 투명 렌더가 있으면 그것을, 없으면 Popup Lab 캡처에서 기계 부분을 잘라 쓴다(임시)
-if [[ -f "$IN/jackpot_machine.png" ]]; then
-  webp "$IN/jackpot_machine.png" "$OUT/features/jackpot-machine.webp" 880 88
-else
-  sips --cropOffset 26 440 --cropToHeightWidth 546 440 "$CLIENT/docs/tools/popup-lab/bake/jp2_grandwin.png" --out "$TMP/jackpot.png" >/dev/null
-  webp "$TMP/jackpot.png" "$OUT/features/jackpot-machine.webp" 440 88
-fi
-# 잭팟 등급 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버)
-for s in spade heart diamond clover; do
-  webp "$CLIENT/Assets/Texture/UI/JackpotKit/sym_$s.png" "$OUT/icons/sym-$s.webp" 120 88
+# 데일리 잭팟 기계: 웹 시안에서 배경·빛살 없이 투명하게 뽑은 빈 릴 창 기계와, 릴 위에 덮는 유리·가운데 줄
+while read -r name src; do
+  for w in 600 1200; do webp "$IN/$src.png" "$OUT/jackpot/$name-$w.webp" "$w" 86; done
+done <<'JP'
+machine jp_machine_base
+glass jp_machine_glass
+JP
+for n in grand major minor mini; do webp "$IN/jp_meter_$n.png" "$OUT/jackpot/meter-$n.webp" 360 86; done
+# 잭팟 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버, 작은 상금 체리): 게임에 들어가는 180×180 그림
+for s in spade heart diamond clover cherry; do
+  webp "$CLIENT/Assets/Texture/UI/JackpotKit/sym_$s.png" "$OUT/jackpot/sym-$s.webp" 160 88
+done
+
+# peerage 방패(6등급의 1단계)
+for t in bronze silver sapphire ruby royalgold diamond; do
+  webp "$(from_ref "Assets/Texture/UI/Peerage/peer_${t}1.png")" "$OUT/peerage/$t.webp" 160 88
+done
+
+# 새 로비 배경(몽환적인 빛 물결). 게임은 층 묶음 1–3F, 4–6F, 7–9F, 10F 마다 bg_1~4 를 쓴다
+for i in 1 2 3 4; do
+  src="$(from_ref "Assets/Resources/Lobby/bg_$i.jpg")"
+  for w in 960 1920; do webp "$src" "$OUT/bg/aurora-$i-$w.webp" "$w" 70; done
 done
 
 # 브랜드

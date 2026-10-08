@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { webpSize, pngSize } from './helpers/image-size.mjs';
+import { SLOT_LIST } from '../../scripts/floors.mjs';
 
 // [파일, 기대 폭, 기대 가로/세로 비율]. 높이는 반올림 차이가 있어 비율로 본다(1% 허용).
 const WEBP = [
@@ -16,18 +17,23 @@ const WEBP = [
   ['assets/img/hero/keyart-16x9-1920.webp', 1920, 16 / 9],
   ['assets/img/reels/seven.webp', 244, 244 / 435],
   ['assets/img/icons/chip.webp', 152, 1],
-  ['assets/img/icons/crown.webp', 216, 432 / 360],
-  ['assets/img/icons/trophy.webp', 256, 1],
-  ['assets/img/icons/gift.webp', 256, 1],
-  ['assets/img/icons/crown-chip.webp', 256, 1],
   ['assets/img/icons/lock.webp', 64, 128 / 184],
   ['assets/img/icons/coin-sheet.webp', 320, 320 / 128],
   ['assets/img/features/lucky-time-badge.webp', 384, 384 / 98],
-  ...['spade', 'heart', 'diamond', 'clover'].map((s) => [`assets/img/icons/sym-${s}.webp`, 120, 1]),
+  // 데일리 잭팟 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버, 작은 상금 체리)
+  ...['spade', 'heart', 'diamond', 'clover', 'cherry'].map((s) => [`assets/img/jackpot/sym-${s}.webp`, 160, 1]),
+  // 데일리 잭팟 기계(웹 시안에서 배경·빛살 없이 투명하게 뽑은 600×740 의 2배 그림): 빈 릴 창 기계와 유리 덮개
+  ...['machine', 'glass'].flatMap((n) => [600, 1200].map((w) => [`assets/img/jackpot/${n}-${w}.webp`, w, 600 / 740])),
+  // 등급 판(상금 숫자 없음) 360×304 의 2배 그림을 360 폭으로
+  ...['grand', 'major', 'minor', 'mini'].map((n) => [`assets/img/jackpot/meter-${n}.webp`, 360, 360 / 304]),
+  // peerage 방패(6등급, 1단계)
+  ...['bronze', 'silver', 'sapphire', 'ruby', 'royalgold', 'diamond'].map((t) => [`assets/img/peerage/${t}.webp`, 160, 1]),
+  // 새 로비 배경(층 묶음 1–3F, 4–6F, 7–9F, 10F) 2880×1080
+  ...[1, 2, 3, 4].flatMap((i) => [960, 1920].map((w) => [`assets/img/bg/aurora-${i}-${w}.webp`, w, 2880 / 1080])),
   ['assets/img/brand/app-icon-128.webp', 128, 1],
   ['assets/img/brand/vglobal-logo.webp', 500, 500 / 310],
-  // 스토어 홍보 화면(16:9) — 인게임 새 촬영본이 오면 바뀐다
-  ...['jackpot', 'lucky-time', 'floors', 'lobby'].flatMap((n) => [
+  // 스토어 홍보 화면(16:9): 슬롯 안 화면(잭팟 당첨, 럭키 타임)
+  ...['jackpot', 'lucky-time'].flatMap((n) => [
     [`assets/img/features/${n}-960.webp`, 960, 16 / 9],
     [`assets/img/features/${n}-1600.webp`, 1600, 16 / 9],
   ]),
@@ -36,14 +42,14 @@ const WEBP = [
     [`assets/img/features/${n}-960.webp`, 960, 2080 / 1380],
     [`assets/img/features/${n}-1600.webp`, 1600, 2080 / 1380],
   ]),
-  ['assets/img/features/time-bonus-700.webp', 700, 1400 / 1360],
-  ['assets/img/features/time-bonus-1400.webp', 1400, 1400 / 1360],
+  // 웹 시안의 새 로비(1600×720 무대 전체): 층 화면, 럭키 타임 표시
+  ...['lobby-floors', 'lobby-lucky'].flatMap((n) => [960, 1600].map((w) => [`assets/img/features/${n}-${w}.webp`, w, 1600 / 720])),
+  // 새 콜렉트 보너스(룰렛 없음): 받기 전·받은 순간, 800×340 영역
+  ...['collect-ready', 'collect-paid'].flatMap((n) => [800, 1600].map((w) => [`assets/img/features/${n}-${w}.webp`, w, 800 / 340])),
+  // peerage 팝업 944×604 영역
+  ...[960, 1600].map((w) => [`assets/img/features/peerage-${w}.webp`, w, 944 / 604]),
 ];
 
-export const SLOTS = [
-  'golden-fruits', 'cash-fever', 'fairy-garden', 'aladdin', 'excalibur', 'titan',
-  'treasure-island', 'curse-of-the-pharaohs', 'halloween-witch', 'christmas-miracle', 'zombie-hunter', 'gangsters-poker',
-];
 
 for (const [file, width, ratio] of WEBP) {
   test(`${file} is ${width}px wide with ratio ${ratio.toFixed(3)}`, () => {
@@ -53,8 +59,9 @@ for (const [file, width, ratio] of WEBP) {
   });
 }
 
-test('12 slot tiles exist at 273×282', () => {
-  for (const slug of SLOTS) assert.deepEqual(webpSize(readFileSync(`assets/img/slots/${slug}.webp`)), { width: 273, height: 282 });
+test('all 47 floor slots have a 273×282 tile', () => {
+  assert.equal(SLOT_LIST.length, 47);
+  for (const { slug } of SLOT_LIST) assert.deepEqual(webpSize(readFileSync(`assets/img/slots/${slug}.webp`)), { width: 273, height: 282 }, slug);
 });
 
 test('PNG icons have the declared sizes', () => {
@@ -63,10 +70,10 @@ test('PNG icons have the declared sizes', () => {
   }
 });
 
-test('the Daily Jackpot machine image is the 880px web-lab render', () => {
-  const size = webpSize(readFileSync('assets/img/features/jackpot-machine.webp'));
-  assert.equal(size.width, 880);
-  assert.ok(Math.abs(size.width / size.height - 1120 / 1380) < 0.01, `${size.width}×${size.height}`);
+test('the Daily Jackpot machine keeps a transparent background (no rays, no lobby behind it)', () => {
+  // 그림 네 귀퉁이가 투명해야 한다: WebP 의 ALPH 덩어리가 있고, 확장 헤더의 알파 표시가 켜져 있다
+  const buf = readFileSync('assets/img/jackpot/machine-600.webp');
+  assert.ok(buf.includes(Buffer.from('ALPH')), 'machine-600.webp has no alpha chunk');
 });
 
 test('official Google Play badge, social image and favicon exist', () => {
