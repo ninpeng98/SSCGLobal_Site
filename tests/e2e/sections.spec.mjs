@@ -46,10 +46,38 @@ test('the 4-hour ring fills when it comes into view', async ({ page }) => {
   await expect(bonus).toHaveAttribute('data-state', 'full', { timeout: 5_000 });
 });
 
-test('section titles are split into gold words that keep their outline text and label', async ({ page }) => {
+test('section titles are split into gold words and keep their label', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#slots-title .gw').first()).toHaveAttribute('data-text', '60+');
-  await expect(page.locator('#slots-title')).toHaveAttribute('aria-label', '60+ Unique 3D Slots');
+  await expect(page.locator('#slots-title .gw').first()).toHaveText('45+');
+  await expect(page.locator('#slots-title')).toHaveAttribute('aria-label', '45+ Unique 3D Slots');
+});
+
+test('gold titles paint champagne gold down to the g and y tails, with no brown outline', async ({ page }) => {
+  await page.goto('/');
+  const words = page.locator('#social-title .gw');
+  await expect(words.first()).toBeVisible();
+  const styles = await words.evaluateAll((els) => els.map((el) => {
+    const cs = getComputedStyle(el);
+    const em = parseFloat(cs.fontSize);
+    return {
+      text: el.textContent,
+      clip: cs.webkitBackgroundClip || cs.backgroundClip,
+      color: cs.color,
+      stroke: parseFloat(cs.webkitTextStrokeWidth) || 0,
+      // 칠하는 상자가 글자 꼬리(g·y)까지 내려가도록 아래 여백을 넓히고 같은 만큼 자리를 되돌린다
+      padBottom: parseFloat(cs.paddingBottom) / em,
+      marginBottom: parseFloat(cs.marginBottom) / em,
+      after: getComputedStyle(el, '::after').content,
+    };
+  }));
+  for (const s of styles) {
+    expect(s.clip, s.text).toBe('text');
+    expect(s.color, s.text).toBe('rgba(0, 0, 0, 0)');
+    expect(s.stroke, s.text).toBe(0);
+    expect(s.padBottom, s.text).toBeGreaterThanOrEqual(0.2);
+    expect(s.marginBottom, s.text).toBeCloseTo(-s.padBottom, 3);
+    expect(s.after, s.text).toBe('none');
+  }
 });
 
 test('scrolling to the bottom reveals every block', async ({ page }) => {

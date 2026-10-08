@@ -24,7 +24,6 @@ function initReveals(root) {
   if (SplitText) {
     root.querySelectorAll('h2.gold-title').forEach((title) => {
       const split = SplitText.create(title, { type: 'words', wordsClass: 'gw' });
-      split.words.forEach((w) => { w.dataset.text = w.textContent; });
       title.classList.add('is-split');
       if (!below(title)) return;
       gsap.from(split.words, {

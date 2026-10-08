@@ -32,42 +32,32 @@
   pointer-events: none;
 }
 
-/* ── 금색 제목: 갈색 외곽선 글자(본문) 위에 금 그라데이션 글자(::after)를 겹친다 ───────────── */
-/* 요소 자체의 배경은 쌓임 순서상 맨 아래라서, 금 그라데이션을 배경으로 칠하면 외곽선 층에 가려진다.
-   그래서 본문 글자가 외곽선을 맡고, 같은 글자(data-text)를 ::after 로 위에 한 번 더 그려 금색을 칠한다.
-   SplitText 로 단어를 나눈 뒤에는(.is-split) 단어(.gw)마다 같은 방식으로 그린다. */
+/* ── 금색 제목: 외곽선 없이 샴페인 금색 + 바로 아래 짧은 진한 금빛 그림자 + 부드러운 그림자 ───────── */
+/* 글자 모양으로 그라데이션을 칠한다(background-clip: text). 칠하는 상자가 글자 위아래 끝(악센트, g·y 꼬리)까지
+   닿도록 위아래 여백을 넓히고, 넓힌 만큼 바깥 여백을 음수로 되돌려 줄 간격은 그대로 둔다.
+   SplitText 로 단어를 나눈 뒤에는(.is-split) 단어(.gw)마다 칠한다(움직이는 단어도 금색이 따라가게). */
 .gold-title,
 .gold-title .gw {
-  position: relative;
   font-family: var(--font-display);
   font-weight: 900;
   letter-spacing: .01em;
-  color: var(--c-stroke-brown);
-  -webkit-text-stroke: .13em var(--c-stroke-brown);
-  text-shadow: 0 .07em 0 rgba(40, 8, 0, .55);
+  color: transparent;
+  background: var(--g-title-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  padding-block: .16em .24em;
+  margin-block: -.16em -.24em;
 }
 .gold-title {
   font-size: clamp(2rem, 1.2rem + 3.2vw, 3.5rem);
   line-height: 1.08;
-  padding-block: .06em;
+  filter: drop-shadow(0 .045em 0 var(--c-title-edge)) drop-shadow(0 .12em .18em rgba(10, 2, 30, .6));
 }
-.gold-title::after,
-.gold-title .gw::after {
-  content: attr(data-text);
-  content: attr(data-text) / "";
-  position: absolute;
-  inset: 0;
-  padding: inherit;
-  color: transparent;
-  -webkit-text-stroke: 0;
-  text-shadow: none;
-  background: var(--g-gold-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  pointer-events: none;
-}
+.gold-title.is-split { background: none; }
 .gold-title .gw { display: inline-block; }
-.gold-title.is-split::after { content: none; }
+@media (forced-colors: active) {
+  .gold-title, .gold-title .gw { color: CanvasText; background: none; }
+}
 .gold-title--xl { font-size: clamp(2.25rem, 1.2rem + 4.4vw, 4.5rem); }
 
 /* ── 사탕 버튼(보라): 아래 입술 5px, 위 광택, 마우스를 올리면 빛 스침 ───────────── */
