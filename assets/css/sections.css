@@ -140,15 +140,16 @@
 .floors__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(32px, 4vw, 56px); align-items: center; }
 .floors__copy { display: grid; gap: 18px; }
 .floors__copy > p { color: var(--c-text-dim); font-size: 1.125rem; }
-.floors__copy > .floors__hint { font-size: .9375rem; }
 .floors__stage {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  gap: 18px;
+  gap: 14px;
+  touch-action: pan-y; /* 세로 스크롤은 브라우저가, 좌우 밀기는 층 바꾸기가 맡는다 */
+  user-select: none;
   padding: 28px 20px 28px 24px;
   border-radius: var(--r-panel);
   background: #0d0420;
@@ -178,61 +179,26 @@
 .floor__bet b { color: #fff4c9; }
 .floor__req { color: var(--c-text); font-weight: 600; text-shadow: 0 1px 6px rgba(0, 0, 0, .8); }
 .floor__req b { color: var(--c-gold-light); }
-.floor__slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px; max-width: 560px; margin: 0; padding: 0; list-style: none; }
-.floor__slots li { display: grid; justify-items: center; gap: 2px; width: clamp(72px, 8.4vw, 124px); } /* 데스크톱은 한 줄에 4개(1층 7개도 두 줄) */
+.floor__slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px; max-width: 660px; margin: 0; padding: 0; list-style: none; }
+.floor__slots li { display: grid; justify-items: center; gap: 2px; width: clamp(72px, 10vw, 150px); } /* 데스크톱은 한 줄에 4개(1층 7개도 두 줄) */
 .floor__slots img { width: 100%; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .55)); }
 .floor__name { padding: 1px 7px; border-radius: var(--r-pill); background: rgba(13, 4, 32, .62); color: var(--c-text); font-size: .8125rem; font-weight: 600; line-height: 1.3; } /* 밝은 빛 물결 위에서도 읽히게 이름 뒤에 어두운 판 */
 .floor__lock, .floor__flash { position: absolute; left: 50%; top: 58%; translate: -50% -50%; opacity: 0; visibility: hidden; pointer-events: none; }
 .floor__lock { z-index: 2; width: 72px; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .6)); }
 .floor__flash { z-index: 1; width: 440px; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 236, 170, .8), rgba(255, 190, 70, .28) 40%, transparent 70%); }
-.floors__panel {
-  display: grid;
-  grid-template-columns: repeat(2, 44px);
-  gap: 8px;
-  padding: 12px;
-  border-radius: var(--r-inset);
-  background: linear-gradient(180deg, #3a2a52, #1b1030);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .12), 0 8px 18px rgba(0, 0, 0, .45);
-}
-.floor-btn {
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #5b4a78, #2a1c40);
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .12), 0 3px 6px rgba(0, 0, 0, .45);
-  color: #a99cc4;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: color .2s, background .2s, box-shadow .2s;
-}
-.floor-btn.is-open { color: #fff4c9; }
-.floor-btn[aria-pressed="true"] {
-  background: radial-gradient(circle at 35% 30%, #fff1a6, #ffb52a 70%);
-  box-shadow: 0 0 0 2px #fff4c9, 0 0 16px rgba(255, 200, 80, .7);
-  color: #3d1600;
-}
-.floor-btn:focus-visible { outline: 3px solid var(--c-gold-light); outline-offset: 2px; }
-@media (forced-colors: active) {
-  .floor-btn { border: 2px solid ButtonText; }
-  .floor-btn[aria-pressed="true"] { background: Highlight; color: HighlightText; }
-}
-/* 큰 화면: .floors-track 이 스크롤 공간(100svh + 9층 × 18svh)을 처음부터 갖고, 그 안에서 섹션이 화면에 붙어 있다(sticky).
+.floors__dots { display: flex; justify-content: center; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+.floors__dots li { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .28); transition: background .3s, transform .3s; }
+.floors__dots li.is-current { background: var(--c-gold-light); box-shadow: 0 0 8px rgba(255, 200, 80, .8); transform: scale(1.35); }
+.floors__stage:focus-visible { outline: 3px solid var(--c-gold-light); outline-offset: 4px; }
+/* 큰 화면: .floors-track 이 스크롤 공간(100svh + 9층 × 6svh)을 처음부터 갖고, 그 안에서 섹션이 화면에 붙어 있다(sticky).
    floors.js 의 SCROLL_MQ 와 같은 조건. 동작 줄이기·스크립트 꺼짐(<noscript>)이면 공간 없이 보통 섹션 */
 @media (min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
-  .floors-track { height: calc(100svh + 9 * 18svh); }
+  .floors-track { height: calc(100svh + 9 * 6svh); }
   .floors { position: sticky; top: 0; display: grid; align-items: center; min-height: 100svh; padding-block: calc(var(--nav-h) + 20px) 24px; }
-}
-@media (min-width: 1024px) and (max-height: 799px) {
-  .floors__shot { display: none; } /* 낮은 화면에서는 붙어 있는 동안 잘리지 않게 로비 캡처를 뺀다 */
 }
 @media (max-width: 1023px) {
   .floors__grid { grid-template-columns: 1fr; }
   .floors__stage { grid-template-columns: 1fr; align-content: start; min-height: 0; padding: 20px 14px; }
-  .floors__panel { order: -1; justify-self: center; grid-template-columns: repeat(5, 40px); grid-auto-flow: row; }
-  .floor-btn { width: 40px; height: 40px; font-size: .9375rem; }
   .floor__slots { max-width: 600px; }
   .floor__slots li { width: clamp(72px, 19vw, 132px); }
 }

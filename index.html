@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/sections.css">
-  <noscript><style>.elevator{display:block}.floor:not(.is-current){visibility:visible}.floor+.floor{margin-top:36px}.floors__panel{display:none}.floors-track{height:auto!important}</style></noscript>
+  <noscript><style>.elevator{display:block}.floor:not(.is-current){visibility:visible}.floor+.floor{margin-top:36px}.floors__dots{display:none}.floors-track{height:auto!important}</style></noscript>
 
   <script defer src="assets/js/analytics.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JJDZ3R7EH"></script>
@@ -215,11 +215,9 @@
           <div class="floors__copy">
             <h2 class="gold-title" id="floors-title">Grow Your Chips. Unlock New Floors.</h2>
             <p data-reveal>The lobby has ten floors. Each one opens when your virtual chip balance reaches its mark, from 5M for the 2nd floor to 10B for the 10th, and brings new slot machines with bigger bets.</p>
-            <p class="floors__hint" data-reveal>Tap a floor on the panel to jump straight there.</p>
-            <figure class="shot floors__shot" data-reveal><img src="assets/img/features/lobby-floors-960.webp" srcset="assets/img/features/lobby-floors-960.webp 960w, assets/img/features/lobby-floors-1600.webp 1600w" sizes="(min-width: 1024px) 420px, 92vw" alt="The 1st and 2nd floors in the Golden Hour lobby" width="1600" height="720" loading="lazy" decoding="async"></figure>
           </div>
           <!-- floors:start -->
-          <div class="floors__stage" data-elevator data-current="1">
+          <div class="floors__stage" data-elevator data-current="1" tabindex="0" role="region" aria-label="Lobby floors. Swipe, or use the left and right arrow keys, to change floors.">
           <div class="floors__bg" aria-hidden="true">
             <img data-bg="1" src="assets/img/bg/aurora-1-960.webp" srcset="assets/img/bg/aurora-1-960.webp 960w, assets/img/bg/aurora-1-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">
             <img data-bg="2" src="assets/img/bg/aurora-2-960.webp" srcset="assets/img/bg/aurora-2-960.webp 960w, assets/img/bg/aurora-2-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">
@@ -355,18 +353,18 @@
               <img class="floor__lock" src="assets/img/icons/lock.webp" alt="" width="64" height="92" loading="lazy">
             </li>
           </ol>
-          <div class="floors__panel" role="group" aria-label="Pick a floor">
-            <button class="floor-btn" type="button" data-go="10" aria-controls="floor-10" aria-label="Floor 10">10</button>
-            <button class="floor-btn" type="button" data-go="9" aria-controls="floor-9" aria-label="Floor 9">9</button>
-            <button class="floor-btn" type="button" data-go="8" aria-controls="floor-8" aria-label="Floor 8">8</button>
-            <button class="floor-btn" type="button" data-go="7" aria-controls="floor-7" aria-label="Floor 7">7</button>
-            <button class="floor-btn" type="button" data-go="6" aria-controls="floor-6" aria-label="Floor 6">6</button>
-            <button class="floor-btn" type="button" data-go="5" aria-controls="floor-5" aria-label="Floor 5">5</button>
-            <button class="floor-btn" type="button" data-go="4" aria-controls="floor-4" aria-label="Floor 4">4</button>
-            <button class="floor-btn" type="button" data-go="3" aria-controls="floor-3" aria-label="Floor 3">3</button>
-            <button class="floor-btn" type="button" data-go="2" aria-controls="floor-2" aria-label="Floor 2">2</button>
-            <button class="floor-btn" type="button" data-go="1" aria-controls="floor-1" aria-label="Floor 1">1</button>
-          </div>
+          <ol class="floors__dots" aria-hidden="true">
+            <li data-dot="1" class="is-current"></li>
+            <li data-dot="2"></li>
+            <li data-dot="3"></li>
+            <li data-dot="4"></li>
+            <li data-dot="5"></li>
+            <li data-dot="6"></li>
+            <li data-dot="7"></li>
+            <li data-dot="8"></li>
+            <li data-dot="9"></li>
+            <li data-dot="10"></li>
+          </ol>
           </div>
           <!-- floors:end -->
         </div>

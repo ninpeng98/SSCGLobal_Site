@@ -30,19 +30,19 @@ function floorItem({ floor, minChip, minBet, games }) {
 
 export function renderFloors() {
   const bg = [1, 2, 3, 4].map((i) => `${I}  <img data-bg="${i}" src="assets/img/bg/aurora-${i}-960.webp" srcset="assets/img/bg/aurora-${i}-960.webp 960w, assets/img/bg/aurora-${i}-1920.webp 1920w" sizes="(min-width: 1024px) 760px, 100vw" alt="" width="1920" height="720" loading="lazy" decoding="async">`);
-  const buttons = [...FLOORS].reverse().map(({ floor }) => `${I}  <button class="floor-btn" type="button" data-go="${floor}" aria-controls="floor-${floor}" aria-label="Floor ${floor}">${floor}</button>`);
+  const dots = FLOORS.map(({ floor }) => `${I}  <li data-dot="${floor}"${floor === 1 ? ' class="is-current"' : ''}></li>`);
   return [
     FLOORS_START,
-    `${I}<div class="floors__stage" data-elevator data-current="1">`,
+    `${I}<div class="floors__stage" data-elevator data-current="1" tabindex="0" role="region" aria-label="Lobby floors. Swipe, or use the left and right arrow keys, to change floors.">`,
     `${I}<div class="floors__bg" aria-hidden="true">`,
     ...bg,
     `${I}</div>`,
     `${I}<ol class="elevator" aria-label="The ten floors of the lobby">`,
     ...FLOORS.map(floorItem),
     `${I}</ol>`,
-    `${I}<div class="floors__panel" role="group" aria-label="Pick a floor">`,
-    ...buttons,
-    `${I}</div>`,
+    `${I}<ol class="floors__dots" aria-hidden="true">`,
+    ...dots,
+    `${I}</ol>`,
     `${I}</div>`,
     `${I}${FLOORS_END}`,
   ].join('\n');
