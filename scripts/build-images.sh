@@ -21,12 +21,13 @@ webp() {
   local src="$1" dst="$2" w="$3" q="${4:-82}" sw
   sw=$(sips -g pixelWidth "$src" | awk '/pixelWidth/{print $2}')
   if (( w > sw )); then w=$sw; fi
-  cwebp -quiet -q "$q" -alpha_q 90 -metadata none -resize "$w" 0 "$src" -o "$dst"
+  cwebp -quiet -q "$q" -m 6 -alpha_q 90 -metadata none -resize "$w" 0 "$src" -o "$dst"
 }
 
 # 첫 화면·설치 섹션 키 아트
-for w in 960 1440 1914; do webp "$BRAND/splash_wide_1914x822.png" "$OUT/hero/splash-wide-$w.webp" "$w" 84; done
-for w in 600 900 1254; do webp "$BRAND/title_keyart_1254.png" "$OUT/hero/keyart-square-$w.webp" "$w" 84; done
+# 첫 화면 그림은 LCP 라서 품질 76(인코딩 노력 최대)으로 가볍게. 750 은 휴대폰(375px × 2배) 용
+for w in 960 1440 1914; do webp "$BRAND/splash_wide_1914x822.png" "$OUT/hero/splash-wide-$w.webp" "$w" 76; done
+for w in 600 750 900 1254; do webp "$BRAND/title_keyart_1254.png" "$OUT/hero/keyart-square-$w.webp" "$w" 76; done
 for w in 960 1920; do webp "$BRAND/title_keyart_16x9_lastframe.png" "$OUT/hero/keyart-16x9-$w.webp" "$w" 80; done
 
 # 릴: 정사각 키 아트의 가운데 릴 창(7)을 잘라 쓴다. 측정값: x 502, y 535, 244×435(양옆 금색 칸막이 제외, sips 는 y, x 순서)

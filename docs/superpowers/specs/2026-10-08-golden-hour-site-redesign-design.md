@@ -2,7 +2,7 @@
 
 - 작성일: 2026-10-08
 - 브랜치: `claude/slot-game-site-redesign-9f68ce`
-- 상태: 설계 검토 대기
+- 상태: 구현 완료(Task 1~10). 새 UI 캡처 교체(Task 11)는 남음. 구현 중 바뀐 점은 14절
 
 ## 1. 배경과 목표
 
@@ -291,9 +291,9 @@ connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.c
 img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com;
 style-src 'self' 'unsafe-inline';
 font-src 'self';
-object-src 'none'; base-uri 'self'; form-action 'none';
-upgrade-insecure-requests
+object-src 'none'; base-uri 'self'; form-action 'none'
 ```
+(`upgrade-insecure-requests`는 뺐다. 14절 참고.)
 
 - 인라인 `<script>`(GA 초기화, 이미지 로딩 코드)와 `onclick` 속성을 모두 없앤다. JSON-LD(`type="application/ld+json"`)는 실행되는 코드가 아니라서 CSP의 차단 대상이 아니다.
 - `style-src 'unsafe-inline'`은 Swiper와 GSAP가 요소에 스타일을 직접 쓰는 경우를 대비해 둔다. 스크립트 실행 권한과는 관계가 없어서 위험이 낮다.
@@ -409,3 +409,25 @@ taste-skill(`Leonxlnx/taste-skill`, MIT)에서 이 사이트에 맞는 규칙만
 - **GSAP 라이선스**: OSI 승인 오픈소스 라이선스가 아니라 Webflow가 조건을 정한다. 현재 조건으로는 문제가 없다. 다음에 버전을 올릴 때 조건을 다시 확인한다.
 - **릴 겹침 정렬**: 키 아트가 바뀌면 백분율 좌표도 다시 맞춰야 한다. 좌표는 `hero-reels.js` 맨 위 상수 한 곳에 둔다.
 - **Google Play 배지**: 공식 배지 그림을 받아 쓴다(Google Play 배지 생성 페이지, 영어). 배지 둘레 장식이 가이드라인의 여백 규칙을 침범하지 않게 한다.
+
+## 14. 구현 중 바뀐 점(2026-10-08)
+
+구현하면서 이 문서와 다르게 정한 것이다. 이 절이 앞 절들보다 우선한다. 근거와 판단 기록은 실행 기록(ledger)의 `Ruling:` 줄에 있다.
+
+| 절 | 바뀐 점 | 이유 |
+|---|---|---|
+| 4.1, 6.2 | 럭키 타임 & 잭팟 섹션의 그림을 "왕관 + MAJOR JACKPOT 글자 판"에서 **데일리 잭팟 기계 그림 + 등급 카드 4장**으로 바꿨다. 등급은 GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버이고, 굴러가는 숫자는 GRAND 카드에 있다 | 사용자가 새 데일리 보너스 잭팟 슬롯 디자인이 잘 나왔다고 알려 줬다. 클라이언트 리뉴얼 UI를 그대로 보여 줄 수 있다 |
+| 4.3 | FAQ 6번을 "How is my data handled?"로 바꾸고 정책 페이지로 안내한다 | 개인정보처리방침에 삭제 절차가 없다. 법률 내용을 지어내지 않기 위해서다 |
+| 5.3 | 금색 제목은 본문 글자가 갈색 외곽선을 맡고, `::after`가 금 그라데이션을 위에 덮는다 | 요소 배경으로 칠하면 쌓임 순서상 외곽선 층에 가려진다 |
+| 5.5 | 주황 사탕 버튼을 쓰지 않는다. 404도 보라 버튼이다 | 흰 글자와의 대비가 2.8:1로 기준 미달이다 |
+| 5.5 | 설치 배지 장식은 배지 **뒤쪽**의 빛만 쓴다(테두리, 위로 지나가는 빛 없음) | Google 배지 가이드라인 때문이다 |
+| 5.5 | 회사 로고는 흰 캔버스에서 로고 부분만 잘라 `invert + screen`으로 흰 글자로 보인다 | 원본이 투명 배경이 아니다 |
+| 6.2 | 로고 빛 스침은 생략했다(잭팟 간판 글자 스침도 빠짐) | 로고가 키 아트 그림에 포함되어 있고, 잭팟 간판은 기계 그림이 대신한다 |
+| 6.3 | 첫 화면 그림은 품질 76으로 줄이고 750px 크기를 더했다. 연출 라이브러리 `<script>`에는 `fetchpriority="low"`를 붙였다 | 느린 4G 모바일 LCP를 3.5초에서 약 2.0초로 줄였다 |
+| 7.1 | 점검 스크립트는 `scripts/verify.mjs`(Node)다. 테스트는 `tests/`, 개발 도구 설정은 `package.json`·`playwright.config.mjs`·`_config.yml`이다 | 링크·해시·예산 점검을 셸로 쓰기 어렵다 |
+| 7.4 | CSP에서 `upgrade-insecure-requests`를 뺐다 | 로컬 http 서버에서 자원이 https로 바뀌어 깨진다. 외부 자원은 이미 모두 https다 |
+| 7.4 | GA `gtag.js`에는 SRI를 붙이지 않는다 | Google이 수시로 바꾸는 파일이라 해시를 고정하면 GA가 멈춘다. CSP로 출처만 제한한다 |
+| 9.1 | 릴의 7 그림은 244×435로 잘랐다 | 양옆 금색 칸막이를 빼기 위해서다 |
+| 9.2 | 팝업 계열 새 UI(잭팟, Top 25, 선물함, 메시지함, 보상)는 웹 시안(Popup Lab)에서 직접 캡처하기로 했다. 클라이언트 세션에는 인게임 2장(로비 층 화면, 럭키 타임)만 요청했다 | 사용자가 새 UI는 모두 웹 시안에 있다고 알려 줬다 |
+| 10 | 지원 이메일은 `vglobalinfo24@gmail.com`으로 통일한다. 개인정보처리방침 본문의 `vglobalinfo2024@gmail.com`도 바꿨다 | 사용자가 결정했다 |
+

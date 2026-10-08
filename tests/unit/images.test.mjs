@@ -9,6 +9,7 @@ const WEBP = [
   ['assets/img/hero/splash-wide-1440.webp', 1440, 1914 / 822],
   ['assets/img/hero/splash-wide-1914.webp', 1914, 1914 / 822],
   ['assets/img/hero/keyart-square-600.webp', 600, 1],
+  ['assets/img/hero/keyart-square-750.webp', 750, 1],
   ['assets/img/hero/keyart-square-900.webp', 900, 1],
   ['assets/img/hero/keyart-square-1254.webp', 1254, 1],
   ['assets/img/hero/keyart-16x9-960.webp', 960, 16 / 9],
