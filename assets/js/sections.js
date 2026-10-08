@@ -2,7 +2,7 @@
 // 라이브러리가 없거나 동작 줄이기면 모든 블록을 최종 상태로 둔다.
 import { DUR, EASE } from './motion.js';
 import { ringPose } from './lib/ring.js';
-import { toGlyphs, digitOffsetPercent, nextJackpot } from './lib/odometer.js';
+import { toGlyphs, digitOffsetPercent, forwardRow, nextJackpot } from './lib/odometer.js';
 import { initElevator } from './floors.js';
 
 const TICK_MS = 1600;
@@ -98,11 +98,12 @@ function buildOdometer(el, glyphs) {
     digit.className = 'odo__digit';
     const column = document.createElement('span');
     column.className = 'odo__reel';
-    for (let d = 0; d <= 9; d += 1) {
+    for (let d = 0; d < 20; d += 1) {
       const n = document.createElement('span');
-      n.textContent = String(d);
+      n.textContent = String(d % 10);
       column.append(n);
     }
+    column.dataset.digit = '0';
     digit.append(column);
     return digit;
   }));
@@ -127,7 +128,14 @@ function initOdometer(root, { animated }) {
     }
     const columns = el.querySelectorAll('.odo__reel');
     glyphs.filter((g) => /\d/.test(g)).forEach((g, i) => {
-      gsap.to(columns[i], { yPercent: digitOffsetPercent(g), duration, ease: 'power3.out', delay: duration ? i * 0.04 : 0, overwrite: true });
+      const col = columns[i];
+      const to = Number(g);
+      const row = forwardRow(Number(col.dataset.digit), to);
+      col.dataset.digit = String(to);
+      gsap.to(col, {
+        yPercent: digitOffsetPercent(row), duration, ease: 'power3.out', delay: duration ? i * 0.04 : 0, overwrite: true,
+        onComplete: () => gsap.set(col, { yPercent: digitOffsetPercent(to) }),
+      });
     });
     el.dataset.value = String(n);
   };
