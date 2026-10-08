@@ -41,6 +41,26 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
+/* 페이지 바탕: 게임 새 로비의 몽환적인 빛 물결(1–3층 배경)을 어둡게 깔고 그 위에 점무늬. 화면에 고정 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(var(--c-dot) 1.5px, transparent 1.6px) 0 0 / 13px 13px,
+    linear-gradient(180deg, rgba(21, 8, 48, .7), rgba(21, 8, 48, .82)),
+    url("../img/bg/aurora-1-1920.webp") center / cover no-repeat var(--c-bg);
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  body::before {
+    background:
+      radial-gradient(var(--c-dot) 1.5px, transparent 1.6px) 0 0 / 13px 13px,
+      linear-gradient(180deg, rgba(21, 8, 48, .7), rgba(21, 8, 48, .82)),
+      url("../img/bg/aurora-1-960.webp") center / cover no-repeat var(--c-bg);
+  }
+}
 
 img, picture, svg, canvas { display: block; max-width: 100%; }
 img { height: auto; }
