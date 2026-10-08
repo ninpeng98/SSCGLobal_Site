@@ -88,8 +88,17 @@
 .lucky__copy > p { color: var(--c-text-dim); font-size: 1.125rem; }
 .lucky__badge { width: 192px; }
 .lucky__shots { display: grid; gap: 16px; }
-.lucky__pair { display: grid; gap: 16px; } /* 슬롯 안 화면 두 장(럭키 타임 작동 중, 잭팟 당첨)을 크게 위아래로 */
-.lucky__pair .shot:nth-child(2) { width: 88%; justify-self: end; margin-top: -6%; position: relative; box-shadow: 0 18px 40px rgba(0, 0, 0, .6); }
+.lucky__pair { display: grid; } /* 슬롯 안 화면 두 장(럭키 타임 작동 중, 잭팟 당첨)을 같은 크기로 어긋나게 겹친다 */
+.lucky__pair .shot { /* 같은 금빛 그림끼리 겹쳐도 경계가 보이게: 짙은 보라 액자 + 바깥 금테 + 진한 그림자 */
+  width: 78%;
+  padding: 6px;
+  border-radius: var(--r-inset);
+  background: linear-gradient(180deg, #34145f, #16072e);
+  box-shadow: 0 0 0 2px #ffd257, 0 0 18px rgba(255, 200, 80, .35), 0 26px 50px rgba(0, 0, 0, .75);
+}
+.lucky__pair .shot img { border-radius: calc(var(--r-inset) - 6px); }
+.lucky__pair .shot:nth-child(1) { justify-self: start; transform: rotate(-2deg); }
+.lucky__pair .shot:nth-child(2) { position: relative; justify-self: end; margin-top: -16%; transform: rotate(1.5deg); }
 .progressive { /* 일반 슬롯의 누적 잭팟: GRAND 숫자가 계속 커진다 */
   display: grid;
   justify-items: center;
