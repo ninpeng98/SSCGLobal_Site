@@ -83,8 +83,7 @@ test('social and bonus sections show the new-UI captures from the web prototype'
     'assets/img/features/gifts-960.webp',
     'assets/img/features/messages-960.webp',
   ]);
-  const bonus = await page.locator('#bonus .shot img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
-  expect(bonus).toEqual(['assets/img/features/collect-ready-800.webp', 'assets/img/features/collect-paid-800.webp']);
+  await expect(page.locator('#bonus .collect-demo__plate img').first()).toHaveAttribute('src', 'assets/img/collect/plate-wait.webp');
 });
 
 test('rankings explain Peerage: win 1st place, climb six shield tiers, boost the Daily Jackpot', async ({ page }) => {

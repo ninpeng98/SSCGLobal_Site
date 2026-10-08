@@ -160,39 +160,74 @@ function initOdometer(root, { animated }) {
   });
 }
 
-// 콜렉트 보너스: 보이는 동안 "받기 전 → (누름) → 받은 순간"을 세 번 보여 주고 받은 순간 그림에서 멈춘다
-// (계속 움직이는 내용이 되지 않게). 동작 줄이기면 처음부터 받은 순간 그림.
-const COLLECT_READY_MS = 2200;
-const COLLECT_TAP_MS = 450;
-const COLLECT_PAID_MS = 2600;
-const COLLECT_ROUNDS = 3;
+// 콜렉트 보너스(가상의 로비 한 조각): 2시간 타이머가 빨리 감기로 0 이 되고(wait) → 판이 빛나고(ready) → 누르고(tap)
+// → +5,000,000 과 칩이 잔액으로 날아가 잔액이 오른다(paid). 보이는 동안 세 번 보여 주고 받은 순간에서 멈춘다.
+// 동작 줄이기면 처음부터 받은 순간 그림. GSAP 없이도 돈다(시간은 setTimeout).
+const COLLECT = { wait: 2200, ready: 1200, tap: 450, paid: 2600, rounds: 3, gain: 5000000, hours: 2 };
+
+const hms = (sec) => [sec / 3600, (sec % 3600) / 60, sec % 60].map((v) => String(Math.floor(v)).padStart(2, '0')).join(':');
 
 function initBonus(root, { reduced }) {
   const el = root.querySelector('[data-collect]');
   if (!el) return;
+  const timer = el.querySelector('[data-timer]');
+  const balanceEl = el.querySelector('[data-balance]');
+  let balance = Number(balanceEl.textContent.replace(/,/g, ''));
+  const full = COLLECT.hours * 3600;
   if (reduced) {
     el.dataset.state = 'paid';
+    balanceEl.textContent = (balance + COLLECT.gain).toLocaleString('en-US');
     return;
   }
-  let timer = 0;
+  let timeouts = [];
+  let ticker = 0;
   let rounds = 0;
-  const step = (state, ms, next) => {
-    el.dataset.state = state;
-    timer = setTimeout(next, ms);
+  const later = (fn, ms) => timeouts.push(setTimeout(fn, ms));
+  const clearAll = () => { timeouts.forEach(clearTimeout); timeouts = []; clearInterval(ticker); };
+  // 타이머 빨리 감기: 02:00:00 → 00:00:00 (처음엔 빠르게, 끝에서 느리게)
+  const fastForward = (ms) => {
+    const t0 = performance.now();
+    clearInterval(ticker);
+    ticker = setInterval(() => {
+      const p = Math.min(1, (performance.now() - t0) / ms);
+      timer.textContent = hms(Math.round(full * (1 - p) ** 2));
+      if (p >= 1) clearInterval(ticker);
+    }, 40);
   };
-  const loop = () => {
-    if (rounds >= COLLECT_ROUNDS) {
+  const countUp = (from, to, ms) => {
+    const t0 = performance.now();
+    const step = () => {
+      const p = Math.min(1, (performance.now() - t0) / ms);
+      balanceEl.textContent = Math.round(from + (to - from) * (1 - (1 - p) ** 3)).toLocaleString('en-US');
+      if (p < 1) later(step, 30);
+    };
+    step();
+  };
+  const round = () => {
+    if (rounds >= COLLECT.rounds) {
       el.dataset.state = 'paid';
       io.disconnect();
       return;
     }
     rounds += 1;
-    step('ready', COLLECT_READY_MS, () => step('tap', COLLECT_TAP_MS, () => step('paid', COLLECT_PAID_MS, loop)));
+    el.dataset.state = 'wait';
+    timer.textContent = hms(full);
+    fastForward(COLLECT.wait - 300);
+    later(() => { el.dataset.state = 'ready'; }, COLLECT.wait);
+    later(() => { el.dataset.state = 'tap'; }, COLLECT.wait + COLLECT.ready);
+    later(() => {
+      el.dataset.state = 'paid';
+      timer.textContent = hms(full);
+      const from = balance;
+      balance += COLLECT.gain;
+      later(() => countUp(from, balance, 900), 600); // 칩이 잔액에 닿을 즈음 오르기 시작
+    }, COLLECT.wait + COLLECT.ready + COLLECT.tap);
+    later(round, COLLECT.wait + COLLECT.ready + COLLECT.tap + COLLECT.paid);
   };
   const io = new IntersectionObserver(([entry]) => {
-    clearTimeout(timer);
-    if (entry.isIntersecting) loop();
-    else if (rounds < COLLECT_ROUNDS) el.dataset.state = 'ready';
+    clearAll();
+    if (entry.isIntersecting) round();
+    else if (rounds < COLLECT.rounds && el.dataset.state !== 'paid') el.dataset.state = 'wait';
   }, { threshold: 0.4 });
   io.observe(el);
 }

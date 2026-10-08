@@ -27,6 +27,9 @@ const WEBP = [
   ...['machine', 'glass', 'bulbs-0', 'bulbs-1', 'bulbs-2', 'jack-mask'].flatMap((n) => [600, 1200].map((w) => [`assets/img/jackpot/${n}-${w}.webp`, w, 600 / 740])),
   // 등급 판(네온·상금 숫자 없음)과 네온 테만: 360×304 의 2배 그림을 360 폭으로
   ...['grand', 'major', 'minor', 'mini'].flatMap((n) => ['meter', 'neon', 'pill'].map((k) => [`assets/img/jackpot/${k}-${n}.webp`, 360, 360 / 304])),
+  // 콜렉트 보너스 연출: 게임 로비의 COLLECT BONUS 판(받을 수 있음·기다림)과 로비 칩
+  ...['plate', 'plate-wait'].map((n) => [`assets/img/collect/${n}.webp`, 732, 1464 / 512]),
+  ['assets/img/collect/chip.webp', 112, 1],
   // peerage 방패(6등급, 1단계)
   ...['bronze', 'silver', 'sapphire', 'ruby', 'royalgold', 'diamond'].map((t) => [`assets/img/peerage/${t}.webp`, 160, 1]),
   // 새 로비 배경(층 묶음 1–3F, 4–6F, 7–9F, 10F) 2880×1080
@@ -45,8 +48,6 @@ const WEBP = [
   ]),
   // 웹 시안의 새 로비(1600×720 무대 전체): 층 화면, 럭키 타임 표시
   ...['lobby-floors', 'lobby-lucky'].flatMap((n) => [960, 1600].map((w) => [`assets/img/features/${n}-${w}.webp`, w, 1600 / 720])),
-  // 새 콜렉트 보너스(룰렛 없음): 받기 전·받은 순간, 800×340 영역
-  ...['collect-ready', 'collect-paid'].flatMap((n) => [800, 1600].map((w) => [`assets/img/features/${n}-${w}.webp`, w, 800 / 340])),
   // peerage 팝업 944×604 영역
   ...[960, 1600].map((w) => [`assets/img/features/peerage-${w}.webp`, w, 944 / 604]),
 ];

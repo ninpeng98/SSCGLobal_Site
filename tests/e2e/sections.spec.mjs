@@ -80,29 +80,36 @@ test('grand jackpot counter rolls up to its start value and keeps growing', asyn
   await expect(odo).toHaveAttribute('aria-label', 'Grand jackpot counter in virtual chips');
 });
 
-test('Collect Bonus shows the button, then the chips landing right away, every 2 hours', async ({ page }) => {
+test('Collect Bonus explains itself: the 2-hour timer runs out, the button lights up, a tap pays at once', async ({ page }) => {
   await page.goto('/');
   const collect = page.locator('[data-collect]');
   await collect.scrollIntoViewIfNeeded();
   await expect(page.locator('#bonus-title')).toHaveText('Bonus Chips Every 2 Hours');
-  await expect(collect).toHaveAttribute('data-state', 'ready');
-  await expect(collect).toHaveAttribute('data-state', 'paid', { timeout: 5_000 });
-  await expect(collect).toHaveAttribute('data-state', 'ready', { timeout: 6_000 });
+  await expect(page.locator('#bonus .shot')).toHaveCount(0);
+  await expect(collect).toHaveAttribute('data-state', 'wait');
+  await expect(collect.locator('[data-timer]')).toContainText(/0\d:\d\d:\d\d/);
+  const balance = async () => Number((await collect.locator('[data-balance]').textContent()).replace(/,/g, ''));
+  const before = await balance();
+  await expect(collect).toHaveAttribute('data-state', 'ready', { timeout: 4_000 });
+  await expect(collect).toHaveAttribute('data-state', 'paid', { timeout: 4_000 });
+  await expect(collect.locator('.collect-demo__gain')).toHaveText('+5,000,000');
+  await expect.poll(balance, { timeout: 3_000 }).toBe(before + 5_000_000);
+  await expect(collect).toHaveAttribute('data-state', 'wait', { timeout: 6_000 });
   await expect(page.locator('#bonus')).not.toContainText(/wheel spin|spin the wheel|roulette/i);
 });
 
 test('the Collect Bonus loop plays a few times, then rests on the paid frame', async ({ page }, info) => {
-  // 가짜 시계로 17초를 돌리면 화면 연출 프레임이 모두 실행돼 느리다. 반복 횟수 논리는 화면 크기와 무관해 한 번만 본다
+  // 가짜 시계로 돌리면 화면 연출 프레임이 모두 실행돼 느리다. 반복 횟수 논리는 화면 크기와 무관해 한 번만 본다
   test.skip(info.project.name !== 'desktop', 'one run is enough');
   await page.clock.install();
   await page.goto('/');
   const collect = page.locator('[data-collect]');
   await collect.scrollIntoViewIfNeeded();
-  await expect(collect).toHaveAttribute('data-state', 'ready');
-  // 한 바퀴 5.25초 × 3 = 15.75초 뒤에는 받은 순간 그림에 멈춰 있어야 한다
-  await page.clock.runFor(17_000);
+  await expect(collect).toHaveAttribute('data-state', 'wait');
+  // 한 바퀴 6.45초 × 3 = 19.35초 뒤에는 받은 순간 그림에 멈춰 있어야 한다
+  await page.clock.runFor(21_000);
   await expect(collect).toHaveAttribute('data-state', 'paid');
-  await page.clock.runFor(6_000);
+  await page.clock.runFor(7_000);
   await expect(collect).toHaveAttribute('data-state', 'paid');
 });
 

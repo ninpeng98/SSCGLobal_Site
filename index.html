@@ -419,10 +419,29 @@
           <li>Up to 15M chips</li>
           <li>VIP ×2 (up to 30M)</li>
         </ul>
-        <div class="collect" data-collect data-state="ready" data-reveal>
-          <figure class="shot collect__shot collect__shot--ready"><img src="assets/img/features/collect-ready-800.webp" srcset="assets/img/features/collect-ready-800.webp 800w, assets/img/features/collect-ready-1600.webp 1600w" sizes="(min-width: 760px) 680px, 92vw" alt="The COLLECT BONUS button in the lobby, ready to tap" width="1600" height="680" loading="lazy" decoding="async"></figure>
-          <figure class="shot collect__shot collect__shot--paid"><img src="assets/img/features/collect-paid-800.webp" srcset="assets/img/features/collect-paid-800.webp 800w, assets/img/features/collect-paid-1600.webp 1600w" sizes="(min-width: 760px) 680px, 92vw" alt="5,000,000 virtual chips added the moment COLLECT BONUS is tapped" width="1600" height="680" loading="lazy" decoding="async"></figure>
-          <span class="collect__tap" aria-hidden="true"></span>
+        <div class="collect-demo" data-collect data-state="wait" data-reveal>
+          <p class="collect-demo__balance"><img src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy"><span data-balance>12,065,000</span></p>
+          <div class="collect-demo__air" aria-hidden="true">
+            <span class="collect-demo__gain">+5,000,000</span>
+            <img class="collect-demo__fly" style="--i:0" src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy">
+            <img class="collect-demo__fly" style="--i:1" src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy">
+            <img class="collect-demo__fly" style="--i:2" src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy">
+            <img class="collect-demo__fly" style="--i:3" src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy">
+            <img class="collect-demo__fly" style="--i:4" src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy">
+            <img class="collect-demo__fly" style="--i:5" src="assets/img/collect/chip.webp" alt="" width="112" height="112" loading="lazy">
+          </div>
+          <div class="collect-demo__plate">
+            <img src="assets/img/collect/plate-wait.webp" alt="" width="732" height="256" loading="lazy">
+            <img class="collect-demo__lit" src="assets/img/collect/plate.webp" alt="" width="732" height="256" loading="lazy">
+            <span class="collect-demo__left"><span class="collect-demo__wait-label">COLLECT BONUS</span><span class="collect-demo__timer" data-timer>02:00:00</span><span class="collect-demo__ready-label">COLLECT<br>BONUS</span></span>
+            <span class="collect-demo__right"><span class="collect-demo__upto">UP TO</span><span class="collect-demo__max">15M</span></span>
+            <span class="collect-demo__tap" aria-hidden="true"></span>
+          </div>
+          <ol class="collect-demo__steps">
+            <li data-step="wait">The 2-hour timer runs out</li>
+            <li data-step="ready">Tap COLLECT BONUS</li>
+            <li data-step="paid">Chips land instantly</li>
+          </ol>
         </div>
       </div>
     </section>

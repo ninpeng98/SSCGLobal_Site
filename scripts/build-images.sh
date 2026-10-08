@@ -78,8 +78,6 @@ while read -r name src sizes; do
 done <<'LAB2'
 lobby-floors lab_lobby 960 1600
 lobby-lucky lab_lucky 960 1600
-collect-ready lab_collect_ready 800 1600
-collect-paid lab_collect_paid 800 1600
 peerage lab_peerage 960 1600
 LAB2
 
@@ -105,6 +103,12 @@ done
 for s in Spade Heart Diamond Clover Cherry; do
   webp "$(from_ref "docs/tools/popup-lab/src/jackpot/Icon$s.png")" "$OUT/jackpot/sym-$(echo "$s" | tr '[:upper:]' '[:lower:]').webp" 160 88
 done
+
+# 콜렉트 보너스 연출: 새 로비의 COLLECT BONUS 판(빈 판, 글자는 사이트가 얹는다)과 로비 칩
+mkdir -p "$OUT/collect"
+webp "$(from_ref docs/tools/popup-lab/src/lobby/collect_plate_purple.png)" "$OUT/collect/plate.webp" 732 88
+webp "$(from_ref docs/tools/popup-lab/src/lobby/collect_plate_purple_wait.png)" "$OUT/collect/plate-wait.webp" 732 88
+webp "$(from_ref docs/tools/popup-lab/src/lobby/chip_crown_front.png)" "$OUT/collect/chip.webp" 112 90
 
 # peerage 방패(6등급의 1단계)
 for t in bronze silver sapphire ruby royalgold diamond; do
