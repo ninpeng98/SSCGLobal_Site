@@ -54,7 +54,7 @@ test('content blocks have the planned counts', async ({ page }) => {
   expect(await page.locator('.bento > .bento__cell').count()).toBe(4);
   expect(await page.locator('[data-elevator] .floor').count()).toBe(10);
   expect(await page.locator('[data-elevator] .floor__slots > li').count()).toBe(47);
-  expect(await page.locator('.faq__item').count()).toBe(6);
+  expect(await page.locator('.faq__item').count()).toBe(7);
 });
 
 test('jackpot areas use chips, never currency or live wording', async ({ page }) => {
