@@ -14,5 +14,5 @@ test('renderManifest lists every library and round-trips through parseVendorMani
 });
 
 test('SOURCES pins the versions from the spec', () => {
-  assert.deepEqual(SOURCES.map((s) => s.npm), ['gsap@3.15.0', 'lenis@1.3.26', 'swiper@14.3.0', 'canvas-confetti@1.9.4']);
+  assert.deepEqual(SOURCES.map((s) => s.npm), ['gsap@3.15.0', 'lenis@1.3.26', 'canvas-confetti@1.9.4']);
 });

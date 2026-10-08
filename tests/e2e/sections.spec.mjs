@@ -4,7 +4,7 @@ const hiddenRevealCount = (page) => page.locator('[data-reveal]')
   .evaluateAll((els) => els.filter((e) => getComputedStyle(e).opacity !== '1').length);
 
 // 보이는 카드마다 [가운데로부터의 가로 거리, 회전 sin, 회전 cos, 깊이]를 읽는다(DOMMatrix: m31 = sinθ, m33 = cosθ, m43 = z)
-const ringCards = (page) => page.locator('[data-slots] .swiper-slide').evaluateAll((slides) => {
+const ringCards = (page) => page.locator('[data-slots] .ring__slide').evaluateAll((slides) => {
   const box = document.querySelector('[data-slots]').getBoundingClientRect();
   const mid = box.left + box.width / 2;
   return slides
@@ -12,7 +12,7 @@ const ringCards = (page) => page.locator('[data-slots] .swiper-slide').evaluateA
     .map((s) => {
       const m = new DOMMatrix(getComputedStyle(s).transform);
       const r = s.getBoundingClientRect();
-      return { dx: r.left + r.width / 2 - mid, sin: m.m31, cos: m.m33, z: m.m43, active: s.classList.contains('swiper-slide-active') };
+      return { dx: r.left + r.width / 2 - mid, sin: m.m31, cos: m.m33, z: m.m43, active: s.classList.contains('is-active') };
     });
 });
 
@@ -21,6 +21,7 @@ test('slot carousel is a convex ring: centre card nearest, side cards turn outwa
   const carousel = page.locator('[data-slots]');
   await expect(carousel).toHaveClass(/is-ring/);
   await page.waitForTimeout(800);
+  await carousel.evaluate((el) => { el.ringPause?.(true); el.ringSnap?.(); }); // 재는 동안 멈추고 카드 한 장을 가운데에 맞춘다
   const cards = await ringCards(page);
   const left = cards.filter((c) => c.dx < -5);
   const right = cards.filter((c) => c.dx > 5);
@@ -43,6 +44,8 @@ test('the ring stays centred and balanced on a very wide screen', async ({ page 
   await page.goto('/#slots');
   await expect(page.locator('[data-slots]')).toHaveClass(/is-ring/);
   await page.waitForTimeout(800);
+  await page.locator('[data-slots]').evaluate((el) => el.ringPause?.(true));
+  await page.locator('[data-slots]').evaluate((el) => el.ringSnap?.());
   const cards = await ringCards(page);
   const lefts = cards.filter((c) => c.dx < -5).map((c) => -c.dx).sort((a, b) => a - b);
   const rights = cards.filter((c) => c.dx > 5).map((c) => c.dx).sort((a, b) => a - b);
@@ -50,23 +53,51 @@ test('the ring stays centred and balanced on a very wide screen', async ({ page 
   lefts.forEach((d, i) => expect(Math.abs(d - rights[i])).toBeLessThan(3));
 });
 
-test('the ring has no arrow buttons: it turns slowly by itself and by swiping', async ({ page }, info) => {
+const theta = (page) => page.locator('[data-slots]').evaluate((el) => el.ringTheta);
+
+test('the ring keeps turning slowly on its own, pauses only while dragged, then carries on', async ({ page }) => {
   await page.goto('/#slots');
-  const carousel = page.locator('[data-slots]');
-  await expect(carousel).toHaveClass(/swiper-initialized/);
+  const ring = page.locator('[data-slots]');
+  await expect(ring).toHaveClass(/is-ring/);
   await expect(page.locator('.slots__nav, .slots__prev, .slots__next')).toHaveCount(0);
-  const active = () => carousel.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index');
-  const first = await active();
-  await expect.poll(active, { timeout: 6_000 }).not.toBe(first);
-  // 끌어서 넘기기
-  const box = await carousel.boundingBox();
-  const before = await active();
+  // 계속 돈다: 2초 간격으로 두 번 재도 늘어난다(한 번 돌고 멈추지 않는다)
+  const t0 = await theta(page);
+  await page.waitForTimeout(2_000);
+  const t1 = await theta(page);
+  await page.waitForTimeout(2_000);
+  const t2 = await theta(page);
+  expect(t1).toBeGreaterThan(t0);
+  expect(t2).toBeGreaterThan(t1);
+  // 마우스를 올리기만 해서는 멈추지 않는다
+  const box = await ring.boundingBox();
   const y = box.y + box.height / 2;
-  await page.mouse.move(box.x + box.width * 0.7, y);
+  await page.mouse.move(box.x + box.width / 2, y);
+  const h0 = await theta(page);
+  await page.waitForTimeout(1_000);
+  expect(await theta(page)).toBeGreaterThan(h0);
+  // 끄는 동안은 손을 따라가고, 손을 멈추면 그대로 멈춰 있다
   await page.mouse.down();
   await page.mouse.move(box.x + box.width * 0.3, y, { steps: 8 });
+  const held = await theta(page);
+  await page.waitForTimeout(1_000);
+  expect(Math.abs((await theta(page)) - held)).toBeLessThan(0.01);
+  // 놓으면 다시 돈다
   await page.mouse.up();
-  await expect.poll(active).not.toBe(before);
+  await page.waitForTimeout(1_500);
+  const r0 = await theta(page);
+  await page.waitForTimeout(1_200);
+  expect(await theta(page)).toBeGreaterThan(r0);
+});
+
+test('arrow keys turn the ring a card at a time', async ({ page }) => {
+  await page.goto('/#slots');
+  const ring = page.locator('[data-slots]');
+  await expect(ring).toHaveClass(/is-ring/);
+  await ring.focus();
+  const active = () => ring.locator('.ring__slide.is-active').getAttribute('data-index');
+  const before = Number(await active());
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(async () => Number(await active())).not.toBe(before);
 });
 
 test('grand jackpot counter rolls up to its start value and keeps growing', async ({ page }) => {
@@ -176,7 +207,9 @@ test('reduced motion shows every section in its final state', async ({ page }) =
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(page.locator('[data-collect]')).toHaveAttribute('data-state', 'paid');
-  expect(await page.locator('[data-slots]').evaluate((el) => el.swiper?.autoplay?.running ?? false)).toBe(false);
+  const t0 = await page.locator('[data-slots]').evaluate((el) => el.ringTheta);
+  await page.waitForTimeout(1_000);
+  expect(await page.locator('[data-slots]').evaluate((el) => el.ringTheta)).toBe(t0);
   await expect(page.locator('html')).not.toHaveClass(/lenis/);
   expect(await hiddenRevealCount(page)).toBe(0);
 });
@@ -201,8 +234,8 @@ test('jumping straight past blocks (anchor jump, restored scroll) still shows th
     { timeout: 3_000 }).toBe(true);
 });
 
-test('with only the animation scripts blocked, every slot card can still be scrolled into view', async ({ page }) => {
-  await page.route('**/assets/vendor/**/*.js', (route) => route.abort());
+test('if the site script never runs, every slot card can still be scrolled into view', async ({ page }) => {
+  await page.route('**/assets/js/main.js', (route) => route.abort());
   await page.goto('/#slots');
   const last = page.locator('.slot-card').last();
   await last.scrollIntoViewIfNeeded();

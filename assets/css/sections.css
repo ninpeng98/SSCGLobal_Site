@@ -63,21 +63,24 @@
   .hero .play-badge--lg { --badge-w: 180px; }
 }
 
-/* ── 45+ 슬롯(볼록한 원통 넘김: 카드 위치는 JS 가 transform 으로 정한다) ───────────────── */
+/* ── 45+ 슬롯(볼록한 원통 넘김: 카드 위치는 slots-ring.js 가 transform 으로 정한다) ───────────────── */
 .slots { overflow: hidden; background: radial-gradient(60% 50% at 50% 45%, rgba(124, 78, 230, .28), transparent 70%); }
-.slots__carousel { overflow: visible; padding-block: 24px 8px; perspective: 1400px; }
-.slots__carousel .swiper-slide { width: clamp(180px, 22vw, 280px); }
-.slots__carousel.is-ring .swiper-wrapper { transform-style: preserve-3d; }
-.slots__carousel.is-ring .swiper-slide { backface-visibility: hidden; transition-property: transform, opacity; }
+.ring { position: relative; padding-block: 24px 8px; perspective: 1400px; touch-action: pan-y; user-select: none; }
+.ring.is-ring { cursor: grab; }
+.ring.is-dragging { cursor: grabbing; }
+.ring:focus-visible { outline: 3px solid var(--c-gold-light); outline-offset: 6px; border-radius: var(--r-panel); }
+.ring__slide { width: clamp(180px, 22vw, 280px); }
+.ring.is-ring .ring__track { position: relative; transform-style: preserve-3d; }
+.ring.is-ring .ring__slide { position: absolute; left: 0; top: 0; backface-visibility: hidden; will-change: transform; }
+/* 스크립트가 돌지 않으면 카드 줄을 가로 스크롤로 보여 준다 */
+.ring:not(.is-ring) .ring__track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding-inline: var(--gutter); }
+.ring:not(.is-ring) .ring__slide { flex: none; scroll-snap-align: center; }
 .slot-card { display: grid; justify-items: center; gap: 12px; }
-.slot-card img { width: 100%; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .55)); transition: filter .4s; }
-.swiper-slide-active .slot-card img { filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .55)) drop-shadow(0 0 22px rgba(255, 196, 80, .35)); }
+.slot-card img { width: 100%; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .55)); transition: filter .4s; pointer-events: none; }
+.ring__slide.is-active .slot-card img { filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .55)) drop-shadow(0 0 22px rgba(255, 196, 80, .35)); }
 .slot-card figcaption { display: grid; justify-items: center; gap: 6px; text-align: center; }
 .slot-card__name { font-family: var(--font-display); font-size: 1.125rem; }
-.swiper-slide:not(.swiper-slide-active) .slot-card figcaption { opacity: .55; transition: opacity .3s; }
-/* Swiper 가 뜨지 않으면(스크립트 차단 등) 카드 줄을 가로 스크롤로 보여 주고, 동작하지 않는 이전/다음 버튼은 숨긴다 */
-.slots__carousel:not(.swiper-initialized) .swiper-wrapper { overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding-inline: var(--gutter); }
-.slots__carousel:not(.swiper-initialized) .swiper-slide { scroll-snap-align: center; }
+.ring.is-ring .ring__slide:not(.is-active) .slot-card figcaption { opacity: .55; transition: opacity .3s; }
 
 /* ── 럭키 타임 & 잭팟(일반 슬롯 이야기: 글·누적 잭팟 | 로비·슬롯 화면) ───────────────── */
 .lucky__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: center; }

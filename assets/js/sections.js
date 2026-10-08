@@ -1,7 +1,7 @@
 // 메인 페이지 섹션 연출: 제목·블록 등장, 슬롯 넘김, 잭팟 숫자, 층 엘리베이터(floors.js), 보너스, 버튼 누름.
 // 라이브러리가 없거나 동작 줄이기면 모든 블록을 최종 상태로 둔다.
 import { DUR, EASE } from './motion.js';
-import { ringPose } from './lib/ring.js';
+import { initSlotRing } from './slots-ring.js';
 import { toGlyphs, digitOffsetPercent, forwardRow, nextJackpot } from './lib/odometer.js';
 import { initElevator } from './floors.js';
 
@@ -9,7 +9,7 @@ const TICK_MS = 1600;
 
 export function initSections(root = document, { reduced = false } = {}) {
   const animated = !reduced && Boolean(window.gsap && window.ScrollTrigger);
-  initSlots(root, { reduced });
+  initSlotRing(root.querySelector('[data-slots]'), { reduced });
   initOdometer(root, { animated });
   initElevator(root, { reduced });
   initBonus(root, { reduced });
@@ -40,50 +40,6 @@ function initReveals(root) {
   const show = (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: DUR.reveal, ease: EASE.out, stagger: 0.08, overwrite: true });
   // 링크 이동·스크롤 위치 복원처럼 한 번에 건너뛰어 지나간 블록(onLeave)도 보이게 한다
   ScrollTrigger.batch(items, { start: 'top 90%', onEnter: show, onLeave: show, onEnterBack: show });
-}
-
-// 슬롯 넘김: 볼록한 원통(가운데가 가장 가깝다). Swiper 는 끌기·키보드·무한 반복만 맡고,
-// 카드 위치는 lib/ring.js 가 정한다(virtualTranslate: 줄 전체를 옮기지 않고 카드마다 놓는다).
-const RING_RADIUS = 3.3; // 원통 반지름 = 카드 폭 × 이 값(카드 사이가 넉넉하게)
-
-function placeRing(swiper) {
-  const width = swiper.width;
-  for (const slide of swiper.slides) {
-    const size = slide.swiperSlideSize;
-    const pose = ringPose(slide.progress, { radius: size * RING_RADIUS, step: 19 });
-    const x = -slide.swiperSlideOffset + (width - size) / 2 + pose.x;
-    slide.style.transform = `translate3d(${x}px, 0, ${pose.z}px) rotateY(${pose.rotateY}deg)`;
-    slide.style.opacity = String(pose.opacity);
-    slide.style.zIndex = String(pose.zIndex);
-    slide.style.visibility = pose.opacity === 0 ? 'hidden' : '';
-  }
-}
-
-function initSlots(root, { reduced }) {
-  const el = root.querySelector('[data-slots]');
-  if (!el || !window.Swiper) return;
-  el.classList.add('is-ring');
-  new window.Swiper(el, {
-    slidesPerView: 'auto',
-    centeredSlides: true,
-    loop: true,
-    grabCursor: true,
-    speed: reduced ? 0 : 1100,
-    virtualTranslate: true,
-    watchSlidesProgress: true,
-    keyboard: { enabled: true, onlyInViewport: true },
-    // 화살표 버튼 없이 천천히 저절로 돈다. 끌어서(스와이프) 넘길 수 있고, 놓으면 다시 돈다. 마우스를 올리면 멈춘다
-    autoplay: reduced ? false : { delay: 1600, pauseOnMouseEnter: true, disableOnInteraction: false },
-    a11y: { enabled: true, prevSlideMessage: 'Previous slot', nextSlideMessage: 'Next slot' },
-    on: {
-      setTranslate: placeRing,
-      progress: placeRing,
-      resize: placeRing,
-      setTransition(swiper, ms) {
-        for (const slide of swiper.slides) slide.style.transitionDuration = `${ms}ms`;
-      },
-    },
-  });
 }
 
 function buildOdometer(el, glyphs) {

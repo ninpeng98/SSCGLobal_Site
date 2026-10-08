@@ -9,7 +9,6 @@ import { sha384 } from './verify.mjs';
 export const SOURCES = [
   { dir: 'gsap-3.15.0', name: 'GSAP (core, ScrollTrigger, SplitText)', npm: 'gsap@3.15.0', license: 'GSAP Standard "No Charge" License — https://gsap.com/standard-license' },
   { dir: 'lenis-1.3.26', name: 'Lenis', npm: 'lenis@1.3.26', license: 'MIT' },
-  { dir: 'swiper-14.3.0', name: 'Swiper', npm: 'swiper@14.3.0', license: 'MIT' },
   { dir: 'canvas-confetti-1.9.4', name: 'canvas-confetti', npm: 'canvas-confetti@1.9.4', license: 'ISC' },
 ];
 

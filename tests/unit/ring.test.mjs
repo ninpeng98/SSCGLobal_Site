@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ringPose } from '../../assets/js/lib/ring.js';
+import { ringPose, ringOffset } from '../../assets/js/lib/ring.js';
 
-// Swiper 의 slide.progress: 가운데 0, 왼쪽 카드가 양수, 오른쪽 카드가 음수
+// p: 가운데 0, 왼쪽 카드가 양수, 오른쪽 카드가 음수
 test('the centre card sits at the front, facing the viewer', () => {
   const p = ringPose(0);
   assert.equal(p.x, 0);
@@ -50,4 +50,24 @@ test('nearer cards stack on top', () => {
   assert.ok(ringPose(0).zIndex > ringPose(1).zIndex);
   assert.ok(ringPose(1).zIndex > ringPose(2).zIndex);
   assert.equal(ringPose(1).zIndex, ringPose(-1).zIndex);
+});
+
+test('cards turn less than their place on the ring, so the outer cards are never nearly edge-on', () => {
+  const p3 = ringPose(3);
+  assert.ok(Math.abs(p3.rotateY) <= 40, `rotateY at 3 = ${p3.rotateY}`);
+  assert.ok(Math.abs(ringPose(1).rotateY) < 22 && Math.abs(ringPose(1).rotateY) > 5);
+});
+
+test('ringOffset wraps every card into the window around the centre (left positive, right negative)', () => {
+  // 14장, 가운데가 0번
+  assert.equal(ringOffset(0, 0, 14), 0);
+  assert.equal(ringOffset(1, 0, 14), -1);   // 다음 카드는 오른쪽
+  assert.equal(ringOffset(13, 0, 14), 1);   // 마지막 카드는 왼쪽으로 이어진다
+  assert.equal(ringOffset(7, 0, 14), -7);
+  assert.equal(ringOffset(0, 0.25, 14), 0.25);  // 원통이 돌면 0번이 왼쪽으로
+  assert.equal(ringOffset(0, 13.5, 14), -0.5);
+  for (let t = -20; t <= 20; t += 0.37) for (let i = 0; i < 14; i += 1) {
+    const p = ringOffset(i, t, 14);
+    assert.ok(p >= -7 && p < 7, `i=${i} t=${t} p=${p}`);
+  }
 });
