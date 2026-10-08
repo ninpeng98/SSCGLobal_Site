@@ -23,9 +23,10 @@ const WEBP = [
   // 데일리 잭팟 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버, 작은 상금 체리)
   ...['spade', 'heart', 'diamond', 'clover', 'cherry'].map((s) => [`assets/img/jackpot/sym-${s}.webp`, 160, 1]),
   // 데일리 잭팟 기계(웹 시안에서 배경·빛살 없이 투명하게 뽑은 600×740 의 2배 그림): 빈 릴 창 기계와 유리 덮개
-  ...['machine', 'glass'].flatMap((n) => [600, 1200].map((w) => [`assets/img/jackpot/${n}-${w}.webp`, w, 600 / 740])),
-  // 등급 판(상금 숫자 없음) 360×304 의 2배 그림을 360 폭으로
-  ...['grand', 'major', 'minor', 'mini'].map((n) => [`assets/img/jackpot/meter-${n}.webp`, 360, 360 / 304]),
+  // 같은 크기로 겹치는 움직임 층: 켜진 전구 세 박자, JACKPOT 글자 모양
+  ...['machine', 'glass', 'bulbs-0', 'bulbs-1', 'bulbs-2', 'jack-mask'].flatMap((n) => [600, 1200].map((w) => [`assets/img/jackpot/${n}-${w}.webp`, w, 600 / 740])),
+  // 등급 판(네온·상금 숫자 없음)과 네온 테만: 360×304 의 2배 그림을 360 폭으로
+  ...['grand', 'major', 'minor', 'mini'].flatMap((n) => ['meter', 'neon', 'pill'].map((k) => [`assets/img/jackpot/${k}-${n}.webp`, 360, 360 / 304])),
   // peerage 방패(6등급, 1단계)
   ...['bronze', 'silver', 'sapphire', 'ruby', 'royalgold', 'diamond'].map((t) => [`assets/img/peerage/${t}.webp`, 160, 1]),
   // 새 로비 배경(층 묶음 1–3F, 4–6F, 7–9F, 10F) 2880×1080

@@ -4,8 +4,8 @@ export const JACKPOT_SYMBOLS = ['spade', 'heart', 'diamond', 'clover', 'cherry']
 export const TIERS = { grand: 'spade', major: 'heart', minor: 'diamond', mini: 'clover', cherry: 'cherry' };
 // 릴 창 높이 ÷ 칸 높이(웹 시안: 창 262, 칸 90). 위아래 칸이 조금 잘려 보인다
 export const VISIBLE_ROWS = 262 / 90;
-// 다시 돌리기 결과의 비율(데모): 작은 상금일수록 자주
-const TIER_WEIGHTS = [['grand', 0.06], ['major', 0.11], ['minor', 0.18], ['mini', 0.25], ['cherry', 0.40]];
+// 다시 돌리기 결과의 비율(데모): 네 등급과 체리가 고르게 나온다
+const TIER_WEIGHTS = [['grand', 0.16], ['major', 0.18], ['minor', 0.2], ['mini', 0.2], ['cherry', 0.26]];
 
 export function shuffle(list, rng = Math.random) {
   const a = [...list];

@@ -95,6 +95,10 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
       tl.to(strip, { yPercent: stripYPercent(ids.length - 2, ids.length), duration: durations[i], ease: 'back.out(0.6)' }, 0);
       tl.call(() => strip.parentElement.classList.add('is-stopped'), null, durations[i] * BLUR_OFF_AT);
     });
+    // 앞 두 릴이 같은 심볼로 멈추면(늘 그렇다) 셋째 릴이 멈출 때까지 금색 테가 깜박인다(시안의 긴장 연출)
+    const last = strips.at(-1).parentElement;
+    tl.call(() => last.classList.add('is-tension'), null, durations.at(-2));
+    tl.call(() => last.classList.remove('is-tension'), null, durations.at(-1) - 0.05);
     delete machine.dataset.result;
     machine.dataset.state = 'spinning';
 
@@ -123,6 +127,19 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
     img.src = src;
     return img.decode().catch(() => {});
   }));
+  // 등급 판 상금: 처음 보일 때 0 에서 금액까지 굴러 올라간다
+  const prizes = [...section.querySelectorAll('.meter__prize')];
+  const fmt = (n) => Math.round(n).toLocaleString('en-US');
+  prizes.forEach((p) => { p.textContent = '0'; });
+  let rolled = false;
+  const rollPrizes = () => {
+    if (rolled) return;
+    rolled = true;
+    prizes.forEach((p, i) => {
+      const v = { n: 0 };
+      gsap.to(v, { n: Number(p.dataset.prize), duration: 1.4, delay: i * 0.08, ease: 'power2.out', onUpdate: () => { p.textContent = fmt(v.n); } });
+    });
+  };
   let visible = false;
   let queued = false;
   const firstSpin = () => {
@@ -138,6 +155,7 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
   };
   const io = new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
+    if (visible) rollPrizes();
     firstSpin();
   }, { threshold: 0.5 });
   io.observe(machine);

@@ -56,11 +56,14 @@ test('stripYPercent centres the given cell in the window', () => {
   assert.equal(stripYPercent(3, 4, 3), -50);
 });
 
-test('pickTier covers both ends and favours the small prizes', () => {
+test('pickTier covers both ends and gives every tier a fair share (each 10% or more, cherries under a third)', () => {
   assert.equal(pickTier(() => 0), 'grand');
   assert.equal(pickTier(() => 0.9999), 'cherry');
   const rng = seeded(11);
-  const counts = {};
-  for (let i = 0; i < 2000; i += 1) { const t = pickTier(rng); counts[t] = (counts[t] || 0) + 1; }
-  assert.ok(counts.cherry > counts.mini && counts.mini > counts.minor && counts.minor > counts.major && counts.major > counts.grand, JSON.stringify(counts));
+  const counts = { grand: 0, major: 0, minor: 0, mini: 0, cherry: 0 };
+  const N = 4000;
+  for (let i = 0; i < N; i += 1) counts[pickTier(rng)] += 1;
+  for (const [tier, n] of Object.entries(counts)) assert.ok(n / N >= 0.1, `${tier} ${n / N}`);
+  assert.ok(counts.cherry / N < 1 / 3, JSON.stringify(counts));
+  assert.ok(counts.grand + counts.major >= N * 0.3, JSON.stringify(counts));
 });

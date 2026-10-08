@@ -387,18 +387,25 @@
       </div>
       <div class="container daily__stage">
         <ul class="daily__meters" aria-label="Daily Jackpot tiers">
-          <li class="meter" data-tier="grand"><img src="assets/img/jackpot/meter-grand.webp" alt="Grand: three spades" width="360" height="304" loading="lazy" decoding="async"></li>
-          <li class="meter" data-tier="major"><img src="assets/img/jackpot/meter-major.webp" alt="Major: three hearts" width="360" height="304" loading="lazy" decoding="async"></li>
-          <li class="meter" data-tier="minor"><img src="assets/img/jackpot/meter-minor.webp" alt="Minor: three diamonds" width="360" height="304" loading="lazy" decoding="async"></li>
-          <li class="meter" data-tier="mini"><img src="assets/img/jackpot/meter-mini.webp" alt="Mini: three clovers" width="360" height="304" loading="lazy" decoding="async"></li>
+          <li class="meter" data-tier="grand"><img class="meter__base" src="assets/img/jackpot/meter-grand.webp" alt="Grand: three spades" width="360" height="304" loading="lazy" decoding="async"><img class="meter__neon" src="assets/img/jackpot/neon-grand.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><img class="meter__pill" src="assets/img/jackpot/pill-grand.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><span class="meter__prize" data-prize="1200000000">1,200,000,000</span></li>
+          <li class="meter" data-tier="major"><img class="meter__base" src="assets/img/jackpot/meter-major.webp" alt="Major: three hearts" width="360" height="304" loading="lazy" decoding="async"><img class="meter__neon" src="assets/img/jackpot/neon-major.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><img class="meter__pill" src="assets/img/jackpot/pill-major.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><span class="meter__prize" data-prize="1650000000">1,650,000,000</span></li>
+          <li class="meter" data-tier="minor"><img class="meter__base" src="assets/img/jackpot/meter-minor.webp" alt="Minor: three diamonds" width="360" height="304" loading="lazy" decoding="async"><img class="meter__neon" src="assets/img/jackpot/neon-minor.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><img class="meter__pill" src="assets/img/jackpot/pill-minor.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><span class="meter__prize" data-prize="5000000">5,000,000</span></li>
+          <li class="meter" data-tier="mini"><img class="meter__base" src="assets/img/jackpot/meter-mini.webp" alt="Mini: three clovers" width="360" height="304" loading="lazy" decoding="async"><img class="meter__neon" src="assets/img/jackpot/neon-mini.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><img class="meter__pill" src="assets/img/jackpot/pill-mini.webp" alt="" width="360" height="304" loading="lazy" decoding="async"><span class="meter__prize" data-prize="1000000">1,000,000</span></li>
         </ul>
         <div class="machine" data-machine data-state="idle">
           <img class="machine__body" src="assets/img/jackpot/machine-600.webp" srcset="assets/img/jackpot/machine-600.webp 600w, assets/img/jackpot/machine-1200.webp 1200w" sizes="(min-width: 900px) 440px, 82vw" alt="The Daily Jackpot slot machine" width="600" height="740" loading="lazy" decoding="async">
+          <div class="machine__bulbs" aria-hidden="true">
+            <img src="assets/img/jackpot/bulbs-0-600.webp" srcset="assets/img/jackpot/bulbs-0-600.webp 600w, assets/img/jackpot/bulbs-0-1200.webp 1200w" sizes="(min-width: 900px) 440px, 82vw" alt="" width="600" height="740" loading="lazy" decoding="async">
+            <img src="assets/img/jackpot/bulbs-1-600.webp" srcset="assets/img/jackpot/bulbs-1-600.webp 600w, assets/img/jackpot/bulbs-1-1200.webp 1200w" sizes="(min-width: 900px) 440px, 82vw" alt="" width="600" height="740" loading="lazy" decoding="async">
+            <img src="assets/img/jackpot/bulbs-2-600.webp" srcset="assets/img/jackpot/bulbs-2-600.webp 600w, assets/img/jackpot/bulbs-2-1200.webp 1200w" sizes="(min-width: 900px) 440px, 82vw" alt="" width="600" height="740" loading="lazy" decoding="async">
+          </div>
+          <span class="machine__shine" aria-hidden="true"></span>
           <div class="machine__window" aria-hidden="true">
             <div class="machine__reel"><div class="machine__strip"></div></div>
             <div class="machine__reel"><div class="machine__strip"></div></div>
             <div class="machine__reel"><div class="machine__strip"></div></div>
           </div>
+          <span class="machine__payline" aria-hidden="true"></span>
           <img class="machine__glass" src="assets/img/jackpot/glass-600.webp" srcset="assets/img/jackpot/glass-600.webp 600w, assets/img/jackpot/glass-1200.webp 1200w" sizes="(min-width: 900px) 440px, 82vw" alt="" width="600" height="740" loading="lazy" decoding="async">
           <button class="machine__spin" type="button" data-machine-spin data-track="jackpot_spin" data-track-location="daily_jackpot" aria-label="Spin the Daily Jackpot demo" aria-disabled="true"></button>
           <p class="machine__result" data-machine-result aria-live="polite"></p>

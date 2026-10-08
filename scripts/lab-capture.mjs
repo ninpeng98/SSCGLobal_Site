@@ -20,31 +20,12 @@ const SHOTS = {
   'lab_peerage': { key: 'rankPeerage', t: 2.5, rect: [328, 68, 944, 604] },
 };
 
-// 데일리 잭팟 기계를 배경·빛살 없이 투명하게 뽑는다.
-// base: 릴 창을 비운 기계 / glass: 릴 위에 덮이는 유리 반사와 가운데 줄 / meter-*: 등급 판(상금 숫자 제외)
+// 데일리 잭팟 기계를 배경·빛살 없이 투명하게 뽑는다. 움직이는 부분은 층을 나눠 뽑고 사이트에서 CSS 로 움직인다.
+// jp_machine_base: 릴 창을 비우고 간판 전구를 모두 끈 기계 / jp_machine_glass: 릴 위에 덮이는 유리 반사와 가운데 줄
+// jp_bulbs_0~2: 켜진 전구만(시안처럼 세 개 중 하나씩 켜지며 돈다) / jp_jack_mask: JACKPOT 글자 모양(빛 스침을 글자 안으로 가둔다)
+// jp_meter_<등급>: 네온 테·이름표·상금 숫자를 뺀 등급 판 / jp_neon_<등급>: 네온 테만(밝기를 바꿔 숨 쉬게) / jp_pill_<등급>: 이름표만(맨 위)
 const MACHINE_FRAME = [-300, -368, 600, 740];
 const METER_FRAME = [-180, -152, 360, 304];
-
-async function shot(page, { key, t, rect, film }) {
-  return page.evaluate(async ({ key, t, rect, film }) => {
-    if (film) {
-      const [x, y, w, h] = rect, PAD = 20;
-      const sheet = await window.lab.film(key, [t], [x, y - PAD, w, h + PAD], 1, 2);
-      window.lab.unzoom();
-      window.lab.setSpeed(1);
-      const out = Object.assign(document.createElement('canvas'), { width: w * 2, height: h * 2 });
-      out.getContext('2d').drawImage(sheet, 0, PAD * 2, w * 2, h * 2, 0, 0, w * 2, h * 2);
-      return out.toDataURL('image/png');
-    }
-    await window.lab.film(key, [t], [0, 0, 1600, 720], 1, 1);
-    window.lab.unzoom();
-    window.lab.zoom(...rect);
-    const url = document.querySelector('#zoomv canvas').toDataURL('image/png');
-    window.lab.unzoom();
-    window.lab.setSpeed(1);
-    return url;
-  }, { key, t, rect, film });
-}
 
 async function jackpotParts(page) {
   return page.evaluate(async ({ MACHINE_FRAME, METER_FRAME }) => {
@@ -57,26 +38,51 @@ async function jackpotParts(page) {
     const pc = K.sceneLayer.children.at(-1).children[1];
     const meters = pc.children.slice(2, 6);
     const mc = pc.children[6];
-    const rw = mc.children[4];
+    const [, , , top, rw] = mc.children;
+    const bulbs = top.children.filter((c) => typeof c.set === 'function');
+    const jack = top.children[1];
+    const shine = top.children.at(-1);
     const grab = (target, [x, y, w, h]) => K.app.renderer.extract.canvas({
       target, frame: new PIXI.Rectangle(x, y, w, h), resolution: 2, clearColor: [0, 0, 0, 0],
     }).toDataURL('image/png');
-    const keep = (list, visible) => list.forEach((o) => { o.visible = visible; });
+    const show = (list, visible) => list.forEach((o) => { o.visible = visible; });
     const out = {};
-    // 릴 창을 비운 기계: 심볼(2)·유리(5)·가운데 줄(7)·릴 입자(8)를 숨긴다
-    keep([rw.children[2], rw.children[5], rw.children[7], rw.children[8]], false);
-    out['jp_machine_base'] = grab(mc, MACHINE_FRAME);
-    // 유리 반사와 가운데 줄만: 기계의 나머지와 릴 창 바탕을 숨긴다
-    keep(mc.children, false);
+    // 기계: 심볼(2)·유리(5)·가운데 줄(7)·릴 입자(8)를 숨기고 전구는 모두 끈다(빛 스침도 숨김)
+    show([rw.children[2], rw.children[5], rw.children[7], rw.children[8], shine], false);
+    bulbs.forEach((b) => b.set(false));
+    out.jp_machine_base = grab(mc, MACHINE_FRAME);
+    // 유리와 가운데 줄만
+    show(mc.children, false);
     rw.visible = true;
-    keep(rw.children, false);
-    keep([rw.children[5], rw.children[7]], true);
-    out['jp_machine_glass'] = grab(mc, MACHINE_FRAME);
-    // 등급 판 4개: 바깥 번짐(0)과 상금 숫자(8)를 숨긴다. 순서는 GRAND, MAJOR, MINOR, MINI
+    show(rw.children, false);
+    show([rw.children[5], rw.children[7]], true);
+    out.jp_machine_glass = grab(mc, MACHINE_FRAME);
+    // 켜진 전구만(시안: (i + phase) % 3 === 0 인 전구가 켜진다)
+    rw.visible = false;
+    top.visible = true;
+    show(top.children, false);
+    for (let phase = 0; phase < 3; phase += 1) {
+      bulbs.forEach((b, i) => { const on = (i + phase) % 3 === 0; b.visible = on; b.set(on); });
+      out[`jp_bulbs_${phase}`] = grab(mc, MACHINE_FRAME);
+    }
+    // JACKPOT 글자만
+    show(top.children, false);
+    jack.visible = true;
+    out.jp_jack_mask = grab(mc, MACHINE_FRAME);
+    // 등급 판(GRAND, MAJOR, MINOR, MINI): 판·이름표·심볼만 / 네온 테만
     ['grand', 'major', 'minor', 'mini'].forEach((name, i) => {
       const m = meters[i];
-      keep([m.children[0], m.children[8]], false);
+      show(m.children, true);
+      show([m.children[0], m.children[2], m.children[3], m.children[4], m.children[8]], false);
       out[`jp_meter_${name}`] = grab(m, METER_FRAME);
+      show(m.children, false);
+      m.children[2].visible = true;
+      m.children[2].alpha = 1;
+      out[`jp_neon_${name}`] = grab(m, METER_FRAME);
+      // 이름표(GRAND 등)는 시안처럼 네온 테 위에 놓이도록 따로
+      show(m.children, false);
+      m.children[4].visible = true;
+      out[`jp_pill_${name}`] = grab(m, METER_FRAME);
     });
     lab.setSpeed(1);
     return out;

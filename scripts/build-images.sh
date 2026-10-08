@@ -84,16 +84,26 @@ peerage lab_peerage 960 1600
 LAB2
 
 # 데일리 잭팟 기계: 웹 시안에서 배경·빛살 없이 투명하게 뽑은 빈 릴 창 기계와, 릴 위에 덮는 유리·가운데 줄
+# 움직이는 부분은 층을 나눠 뽑았다: 켜진 전구(세 박자), JACKPOT 글자 모양(빛 스침 가림), 등급 판 네온 테
 while read -r name src; do
   for w in 600 1200; do webp "$IN/$src.png" "$OUT/jackpot/$name-$w.webp" "$w" 86; done
 done <<'JP'
 machine jp_machine_base
 glass jp_machine_glass
+bulbs-0 jp_bulbs_0
+bulbs-1 jp_bulbs_1
+bulbs-2 jp_bulbs_2
+jack-mask jp_jack_mask
 JP
-for n in grand major minor mini; do webp "$IN/jp_meter_$n.png" "$OUT/jackpot/meter-$n.webp" 360 86; done
-# 잭팟 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버, 작은 상금 체리): 게임에 들어가는 180×180 그림
-for s in spade heart diamond clover cherry; do
-  webp "$CLIENT/Assets/Texture/UI/JackpotKit/sym_$s.png" "$OUT/jackpot/sym-$s.webp" 160 88
+for n in grand major minor mini; do
+  webp "$IN/jp_meter_$n.png" "$OUT/jackpot/meter-$n.webp" 360 86
+  webp "$IN/jp_neon_$n.png" "$OUT/jackpot/neon-$n.webp" 360 86
+  webp "$IN/jp_pill_$n.png" "$OUT/jackpot/pill-$n.webp" 360 88
+done
+# 잭팟 심볼(GRAND 스페이드, MAJOR 하트, MINOR 다이아몬드, MINI 클로버, 작은 상금 체리): 웹 시안 릴과 같은 252×252 그림
+# (둘레 여백이 시안 그대로라 같은 칸 크기에서 시안과 같은 크기로 보인다)
+for s in Spade Heart Diamond Clover Cherry; do
+  webp "$(from_ref "docs/tools/popup-lab/src/jackpot/Icon$s.png")" "$OUT/jackpot/sym-$(echo "$s" | tr '[:upper:]' '[:lower:]').webp" 160 88
 done
 
 # peerage 방패(6등급의 1단계)

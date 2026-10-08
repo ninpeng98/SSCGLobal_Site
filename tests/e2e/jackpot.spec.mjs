@@ -111,12 +111,54 @@ test('SPIN by keyboard keeps focus on the button, and the result is announced', 
 test('the first spin waits until the machine is actually on screen', async ({ page }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  // 기계를 잠깐 지나쳐 FAQ 로 바로 건너뛴다
-  await machine(page).evaluate((el) => el.scrollIntoView({ block: 'center' }));
-  await page.locator('#faq').evaluate((el) => el.scrollIntoView());
+  // 기계를 잠깐(50ms) 지나쳐 FAQ 로 바로 건너뛴다 — 브라우저 안에서 한 번에 해서 테스트 부하에 흔들리지 않게
+  await page.evaluate(() => new Promise((resolve) => {
+    document.querySelector('[data-machine]').scrollIntoView({ block: 'center', behavior: 'instant' });
+    setTimeout(() => { document.getElementById('faq').scrollIntoView({ behavior: 'instant' }); resolve(); }, 50);
+  }));
   await page.waitForTimeout(2_500);
   await expect(machine(page)).toHaveAttribute('data-state', 'idle');
   await machine(page).scrollIntoViewIfNeeded();
   await landed(page);
   await expect(machine(page)).toHaveAttribute('data-result', 'grand');
+});
+
+test('each tier meter shows its prize, rolling up to the amount when it comes into view', async ({ page }) => {
+  await page.goto('/');
+  await machine(page).scrollIntoViewIfNeeded();
+  const prizes = page.locator('.meter .meter__prize');
+  await expect(prizes).toHaveCount(4);
+  await expect.poll(() => prizes.evaluateAll((els) => els.map((e) => e.textContent === Number(e.dataset.prize).toLocaleString('en-US'))),
+    { timeout: 5_000 }).toEqual([true, true, true, true]);
+  for (const p of await prizes.all()) await expect(p).toBeVisible();
+});
+
+test('the machine head chases its bulbs and sweeps a shine over JACKPOT; the meters breathe neon', async ({ page }) => {
+  await page.goto('/');
+  await machine(page).scrollIntoViewIfNeeded();
+  const anim = (sel) => page.locator(sel).evaluateAll((els) => els.map((e) => getComputedStyle(e).animationName));
+  expect(await anim('.machine__bulbs img')).toEqual(['bulb-chase', 'bulb-chase', 'bulb-chase']);
+  expect((await anim('.machine__shine'))[0]).toBe('jackpot-shine');
+  for (const name of await anim('.meter__neon')) expect(name).toContain('neon-breathe');
+});
+
+test('reduced motion keeps the bulbs, shine and neon still', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const anim = (sel) => page.locator(sel).evaluateAll((els) => els.map((e) => getComputedStyle(e).animationName));
+  for (const sel of ['.machine__bulbs img', '.machine__shine', '.meter__neon']) {
+    for (const name of await anim(sel)) expect(name, sel).toBe('none');
+  }
+  await expect(page.locator('.meter .meter__prize').first()).toHaveText('1,200,000,000');
+});
+
+test('reel symbols keep the prototype spacing: 81 of every 90 in the column, never touching', async ({ page }) => {
+  await page.goto('/');
+  await machine(page).scrollIntoViewIfNeeded();
+  const sizes = await page.locator('.machine__reel').first().evaluate((reel) => {
+    const cell = reel.querySelector('.machine__cell').getBoundingClientRect();
+    const img = reel.querySelector('.machine__cell img').getBoundingClientRect();
+    return { cell: cell.height, img: img.height };
+  });
+  expect(sizes.img / sizes.cell).toBeCloseTo(0.9, 1);
 });
