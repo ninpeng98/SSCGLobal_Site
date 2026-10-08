@@ -46,7 +46,6 @@ webp "$TMP/seven.png" "$OUT/reels/seven.webp" 244 88
 
 # 아이콘(받은 소재)
 webp "$IN/icon_chip.png" "$OUT/icons/chip.webp" 152 88
-webp "$IN/extra_crown_chip_purple_1024.png" "$OUT/icons/crown-chip.webp" 256 85
 webp "$IN/icon_lock_closed.png" "$OUT/icons/lock.webp" 64 90
 cwebp -quiet -lossless -metadata none "$IN/coin_spin_sheet.png" -o "$OUT/icons/coin-sheet.webp"
 

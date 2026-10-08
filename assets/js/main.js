@@ -67,3 +67,7 @@ function initJackpot() {
     },
   });
 }
+
+// 페이지 로드가 끝나면 꾸밈용 바탕 그림(빛 물결)을 받는다(base.css 의 .is-loaded)
+const markLoaded = () => document.documentElement.classList.add('is-loaded');
+if (document.readyState === 'complete') markLoaded(); else window.addEventListener('load', markLoaded, { once: true });

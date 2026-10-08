@@ -36,6 +36,13 @@ const centre = (strip, index, length) => { strip.style.transform = `translateY($
 export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
   const machine = section?.querySelector('[data-machine]');
   if (!machine) return null;
+  // 화면 가까이(600px 안) 오면 .is-near: 간판 빛 스침의 글자 모양 그림을 그때 받는다
+  const near = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    machine.classList.add('is-near');
+    near.disconnect();
+  }, { rootMargin: '600px 0px' });
+  near.observe(machine);
   const strips = [...machine.querySelectorAll('.machine__strip')];
   const spinBtn = machine.querySelector('[data-machine-spin]');
   const resultEl = machine.querySelector('[data-machine-result]');

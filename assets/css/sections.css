@@ -274,9 +274,14 @@
   background: linear-gradient(110deg, transparent 42%, rgba(255, 255, 255, .95) 50%, transparent 58%) no-repeat;
   background-size: 300% 100%;
   background-position: 150% 0;
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+}
+/* 글자 모양 그림(44KB)은 기계가 화면 가까이 왔을 때만 받는다(.is-near, jackpot.js) — 첫 화면 그림과 다투지 않게 */
+.machine.is-near .machine__shine {
   -webkit-mask: url("../img/jackpot/jack-mask-1200.webp") 0 0 / 100% 100% no-repeat;
   mask: url("../img/jackpot/jack-mask-1200.webp") 0 0 / 100% 100% no-repeat;
-  mix-blend-mode: plus-lighter;
+  opacity: 1;
   animation: jackpot-shine 4.5s ease-in-out 2.2s infinite;
 }
 @keyframes jackpot-shine { 0% { background-position: 150% 0; } 17%, 100% { background-position: -50% 0; } }

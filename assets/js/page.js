@@ -11,3 +11,7 @@ if (jam && window.gsap && !prefersReducedMotion()) {
     .to(jam, { rotate: -4, duration: 0.12, ease: 'power2.out' })
     .to(jam, { rotate: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
 }
+
+// 페이지 로드가 끝나면 꾸밈용 바탕 그림(빛 물결)을 받는다(base.css 의 .is-loaded)
+const markLoaded = () => document.documentElement.classList.add('is-loaded');
+if (document.readyState === 'complete') markLoaded(); else window.addEventListener('load', markLoaded, { once: true });
