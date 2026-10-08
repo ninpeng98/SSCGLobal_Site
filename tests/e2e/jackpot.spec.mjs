@@ -35,10 +35,10 @@ test('pressing SPIN on the machine spins again and lines up one tier', async ({ 
   await machine(page).scrollIntoViewIfNeeded();
   await landed(page);
   const spin = page.locator('[data-machine-spin]');
-  await expect(spin).toBeEnabled();
+  await expect(spin).toHaveAttribute('aria-disabled', 'false');
   await spin.click();
   await expect(machine(page)).toHaveAttribute('data-state', 'spinning');
-  await expect(spin).toBeDisabled();
+  await expect(spin).toHaveAttribute('aria-disabled', 'true');
   await landed(page);
   const result = await machine(page).getAttribute('data-result');
   expect(Object.keys(TIERS)).toContain(result);
@@ -89,4 +89,34 @@ test('Lucky Time section is about the regular slots only, not the Daily Jackpot 
   await expect(lucky.locator('img[src*="jackpot/"]')).toHaveCount(0);
   await expect(lucky.locator('[data-odometer]')).toHaveCount(1);
   await expect(page.locator('#daily-jackpot')).not.toContainText('Lucky Time');
+});
+
+test('SPIN by keyboard keeps focus on the button, and the result is announced', async ({ page }, info) => {
+  test.skip(info.project.name !== 'desktop', 'keyboard check on desktop');
+  await page.goto('/');
+  await machine(page).scrollIntoViewIfNeeded();
+  await landed(page);
+  const spin = page.locator('[data-machine-spin]');
+  await spin.focus();
+  await page.keyboard.press('Enter');
+  await expect(machine(page)).toHaveAttribute('data-state', 'spinning');
+  await expect(spin).toBeFocused();
+  // 결과 안내 문단은 도는 동안에도 접근성 트리에 남아 있어야 내용이 바뀔 때 읽힌다
+  expect(await page.locator('[data-machine-result]').evaluate((el) => getComputedStyle(el).display)).not.toBe('none');
+  await landed(page);
+  await expect(spin).toBeFocused();
+  await expect(page.locator('[data-machine-result]')).not.toBeEmpty();
+});
+
+test('the first spin waits until the machine is actually on screen', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  // 기계를 잠깐 지나쳐 FAQ 로 바로 건너뛴다
+  await machine(page).evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await page.locator('#faq').evaluate((el) => el.scrollIntoView());
+  await page.waitForTimeout(2_500);
+  await expect(machine(page)).toHaveAttribute('data-state', 'idle');
+  await machine(page).scrollIntoViewIfNeeded();
+  await landed(page);
+  await expect(machine(page)).toHaveAttribute('data-result', 'grand');
 });

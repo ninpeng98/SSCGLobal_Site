@@ -62,12 +62,15 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
   }
 
   if (still) {
+    // 멈춘 그림: GRAND 줄과 GRAND 판 빛만(보이지 않는 결과 문구는 넣지 않는다 — 화면 낭독기가 읽지 않게)
     machine.dataset.state = 'static';
     machine.dataset.result = 'grand';
-    showWin('grand', false);
+    meters.get('grand')?.classList.add('is-hit');
     return null;
   }
 
+  // disabled 대신 aria-disabled: 키보드로 누른 뒤에도 포커스가 버튼에 남는다(겹침은 busy 가 막는다)
+  const setLocked = (locked) => spinBtn.setAttribute('aria-disabled', String(locked));
   let busy = false;
   let spins = 0;
   function spin(tier) {
@@ -75,7 +78,7 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
     busy = true;
     spins += 1;
     machine.dataset.spins = String(spins);
-    spinBtn.disabled = true;
+    setLocked(true);
     clearWin();
 
     const target = TIERS[tier];
@@ -101,7 +104,7 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
         rows = next;
         machine.dataset.state = 'landed';
         machine.dataset.result = tier;
-        spinBtn.disabled = false;
+        setLocked(false);
         showWin(tier, true);
         onWin?.(tier, machine.querySelector('.machine__window').getBoundingClientRect());
         resolve(tier);
@@ -109,18 +112,33 @@ export function initDailyJackpot(section, { reduced = false, onWin } = {}) {
     });
   }
 
-  spinBtn.addEventListener('click', () => spin(pickTier()));
+  spinBtn.addEventListener('click', () => {
+    if (spinBtn.getAttribute('aria-disabled') !== 'true') spin(pickTier());
+  });
 
-  // 처음 화면에 들어올 때 한 번: 심볼 그림을 다 받은 뒤 GRAND 로 돌린다
+  // 처음 화면에 들어올 때 한 번: 심볼 그림을 다 받은 뒤, 그때도 기계가 보이면 GRAND 로 돌린다
+  // (빠르게 지나쳐 화면 밖에 있으면 다음에 보일 때 돈다)
   const ready = Promise.all(Object.values(SYMBOL_SRC).map((src) => {
     const img = new Image();
     img.src = src;
     return img.decode().catch(() => {});
   }));
+  let visible = false;
+  let queued = false;
+  const firstSpin = () => {
+    if (spins > 0 || queued || !visible) return;
+    queued = true;
+    ready.then(() => gsap.delayedCall(0.3, () => {
+      queued = false;
+      if (visible && spins === 0) {
+        io.disconnect();
+        spin('grand');
+      }
+    }));
+  };
   const io = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
-    io.disconnect();
-    ready.then(() => gsap.delayedCall(0.3, () => spin('grand')));
+    visible = entry.isIntersecting;
+    firstSpin();
   }, { threshold: 0.5 });
   io.observe(machine);
 

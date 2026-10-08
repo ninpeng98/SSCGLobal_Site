@@ -153,10 +153,12 @@ function initOdometer(root, { animated }) {
   });
 }
 
-// 콜렉트 보너스: 보이는 동안 "받기 전 → (누름) → 받은 순간"을 되풀이한다. 동작 줄이기면 받은 순간 그림에 멈춘다.
+// 콜렉트 보너스: 보이는 동안 "받기 전 → (누름) → 받은 순간"을 세 번 보여 주고 받은 순간 그림에서 멈춘다
+// (계속 움직이는 내용이 되지 않게). 동작 줄이기면 처음부터 받은 순간 그림.
 const COLLECT_READY_MS = 2200;
 const COLLECT_TAP_MS = 450;
 const COLLECT_PAID_MS = 2600;
+const COLLECT_ROUNDS = 3;
 
 function initBonus(root, { reduced }) {
   const el = root.querySelector('[data-collect]');
@@ -166,15 +168,24 @@ function initBonus(root, { reduced }) {
     return;
   }
   let timer = 0;
+  let rounds = 0;
   const step = (state, ms, next) => {
     el.dataset.state = state;
     timer = setTimeout(next, ms);
   };
-  const loop = () => step('ready', COLLECT_READY_MS, () => step('tap', COLLECT_TAP_MS, () => step('paid', COLLECT_PAID_MS, loop)));
+  const loop = () => {
+    if (rounds >= COLLECT_ROUNDS) {
+      el.dataset.state = 'paid';
+      io.disconnect();
+      return;
+    }
+    rounds += 1;
+    step('ready', COLLECT_READY_MS, () => step('tap', COLLECT_TAP_MS, () => step('paid', COLLECT_PAID_MS, loop)));
+  };
   const io = new IntersectionObserver(([entry]) => {
     clearTimeout(timer);
     if (entry.isIntersecting) loop();
-    else el.dataset.state = 'ready';
+    else if (rounds < COLLECT_ROUNDS) el.dataset.state = 'ready';
   }, { threshold: 0.4 });
   io.observe(el);
 }

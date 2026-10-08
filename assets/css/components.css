@@ -56,7 +56,8 @@
 .gold-title.is-split { background: none; }
 .gold-title .gw { display: inline-block; }
 @media (forced-colors: active) {
-  .gold-title, .gold-title .gw { color: CanvasText; background: none; }
+  /* 고대비 모드: 그라데이션·그림자를 끄고, 칠하는 상자를 넓히던 여백도 되돌린다(넓힌 상자가 윗줄을 덮지 않게) */
+  .gold-title, .gold-title .gw { color: CanvasText; background: none; padding-block: 0; margin-block: 0; filter: none; }
 }
 .gold-title--xl { font-size: clamp(2.25rem, 1.2rem + 4.4vw, 4.5rem); }
 

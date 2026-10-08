@@ -82,6 +82,21 @@ test('Collect Bonus shows the button, then the chips landing right away, every 2
   await expect(page.locator('#bonus')).not.toContainText(/wheel spin|spin the wheel|roulette/i);
 });
 
+test('the Collect Bonus loop plays a few times, then rests on the paid frame', async ({ page }, info) => {
+  // 가짜 시계로 17초를 돌리면 화면 연출 프레임이 모두 실행돼 느리다. 반복 횟수 논리는 화면 크기와 무관해 한 번만 본다
+  test.skip(info.project.name !== 'desktop', 'one run is enough');
+  await page.clock.install();
+  await page.goto('/');
+  const collect = page.locator('[data-collect]');
+  await collect.scrollIntoViewIfNeeded();
+  await expect(collect).toHaveAttribute('data-state', 'ready');
+  // 한 바퀴 5.25초 × 3 = 15.75초 뒤에는 받은 순간 그림에 멈춰 있어야 한다
+  await page.clock.runFor(17_000);
+  await expect(collect).toHaveAttribute('data-state', 'paid');
+  await page.clock.runFor(6_000);
+  await expect(collect).toHaveAttribute('data-state', 'paid');
+});
+
 test('section titles are split into gold words and keep their label', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#slots-title .gw').first()).toHaveText('45+');

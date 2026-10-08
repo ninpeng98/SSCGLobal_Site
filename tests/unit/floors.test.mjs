@@ -44,7 +44,7 @@ test('index.html carries the floors exactly as rendered from the client data', (
 });
 
 test('every floor lists its real slots by name, in lobby order', () => {
-  const blocks = renderFloors().split('<li class="floor"').slice(1);
+  const blocks = renderFloors().split('<li class="floor').slice(1);
   assert.equal(blocks.length, FLOORS.length);
   for (const [i, f] of FLOORS.entries()) {
     const block = blocks[i];

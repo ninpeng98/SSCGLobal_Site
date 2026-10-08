@@ -7,7 +7,7 @@ import { shortChips } from '../assets/js/lib/floors.js';
 export const FLOORS_START = '<!-- floors:start -->';
 export const FLOORS_END = '<!-- floors:end -->';
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/</g, '&lt;');
-const I = '        '; // 들여쓰기(무대가 놓이는 자리)
+const I = '          '; // 들여쓰기(무대가 놓이는 자리)
 
 function floorItem({ floor, minChip, minBet, games }) {
   const req = minChip === 0 ? 'Open from the start' : `Unlocks at <b>${shortChips(minChip)}</b> chips`;
@@ -16,7 +16,7 @@ function floorItem({ floor, minChip, minBet, games }) {
     return `${I}      <li><img src="assets/img/slots/${slugOf(name)}.webp" alt="" width="273" height="282" loading="lazy" decoding="async"><span class="floor__name">${esc(name)}</span></li>`;
   });
   return [
-    `${I}  <li class="floor" id="floor-${floor}" data-floor="${floor}">`,
+    `${I}  <li class="floor${floor === 1 ? ' is-current' : ''}" id="floor-${floor}" data-floor="${floor}">`,
     `${I}    <p class="floor__plate"><span class="floor__label">Floor</span> <span class="floor__no">${floor}</span> <span class="floor__bet">Min bet <b>${shortChips(minBet)}</b></span></p>`,
     `${I}    <p class="floor__req">${req}</p>`,
     `${I}    <ul class="floor__slots">`,
