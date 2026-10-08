@@ -5,7 +5,7 @@
 
 /* ── 첫 화면 ─────────────────────────────────────────────────────────────
    키 아트(.hero__stage)는 그림 비율을 지키며 "남은 높이"에 맞춰 커진다. 가로 화면은 1914×822, 세로 화면(가로 ≤ 세로)은 1254×1254.
-   릴 겹침 좌표는 그림 크기에 대한 백분율이다(측정: 가로 그림 릴 x 737–1185, y 565–782 / 정사각 그림 릴 x 200–1050, y 535–970). */
+   키 아트 속 기계는 비스듬히 그려져 있어 그 위에 릴을 겹치지 않는다(스핀 연출은 데일리 잭팟 섹션의 정면 기계에서). */
 .hero {
   --art-ratio: 1914 / 822;
   --art-ratio-n: 2.3285;
@@ -34,12 +34,6 @@
   background: linear-gradient(180deg, rgba(21, 8, 48, .25) 0%, rgba(21, 8, 48, 0) 35%, var(--c-bg) 100%);
 }
 .hero__stage {
-  --reels-x: 38.5%;
-  --reels-y: 68.7%;
-  --reels-w: 23.4%;
-  --reels-h: 26.4%;
-  --reel-cols: 153fr 136fr 135fr;
-  --reel-gap: 2.7%;
   position: relative;
   z-index: 1;
   width: clamp(50%, (100dvh - var(--nav-h) - var(--hero-copy-h)) * var(--art-ratio-n), 100%);
@@ -51,73 +45,22 @@
 }
 .hero__title { line-height: 0; }
 .hero__art { width: 100%; height: 100%; object-fit: cover; }
-.hero__fx, .hero__confetti { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.hero__fx { z-index: 2; }
-.hero__confetti { z-index: 4; }
+.hero__fx { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
 
 @media (max-aspect-ratio: 1/1) {
   .hero { --art-ratio: 1 / 1; --art-ratio-n: 1; }
-  .hero__stage {
-    --reels-x: 15.9%;
-    --reels-y: 42.7%;
-    --reels-w: 67.8%;
-    --reels-h: 34.7%;
-    --reel-cols: 285fr 252fr 282fr;
-    --reel-gap: 1.8%;
-  }
 }
 @media (max-width: 767px) {
   .hero { --hero-copy-h: 270px; }
 }
 
-/* 릴 겹침: 쉬는 동안(idle, 777 로 멈춤)은 투명해서 그림의 777 이 보인다 */
-.reels {
-  position: absolute;
-  left: var(--reels-x);
-  top: var(--reels-y);
-  width: var(--reels-w);
-  height: var(--reels-h);
-  display: grid;
-  grid-template-columns: var(--reel-cols);
-  column-gap: var(--reel-gap);
-  opacity: 0;
-  pointer-events: none;
-}
-.reels[data-state="spinning"],
-.reels[data-state="landed"]:not([data-result="seven"]) { opacity: 1; }
-.reels[data-state="landed"][data-result="seven"] { transition: opacity .2s ease .12s; }
-.reel {
-  position: relative;
-  overflow: hidden;
-  container-type: size;
-  border-radius: 6% / 4%;
-  background: linear-gradient(90deg, #cdb894 0%, #f6ead2 22%, #fff9ec 50%, #f6ead2 78%, #cdb894 100%);
-}
-.reel::after { /* 원통의 위아래 그늘 */
-  content: "";
-  position: absolute;
-  inset: 0;
-  box-shadow: inset 0 22px 16px -14px rgba(90, 45, 0, .55), inset 0 -22px 16px -14px rgba(90, 45, 0, .55);
-  pointer-events: none;
-}
-.reel__strip { display: flex; flex-direction: column; will-change: transform; }
-.reel__cell { flex: none; display: grid; place-items: center; height: 100cqh; }
-.reel__cell img { width: 76%; height: 76%; object-fit: contain; }
-.reel__cell--seven img { width: 100%; height: 100%; object-fit: cover; }
-.reels[data-state="spinning"] .reel:not(.is-stopped) .reel__strip { filter: blur(1.6px); }
-
 .hero__copy { position: relative; z-index: 3; display: grid; justify-items: center; gap: 16px; padding-block: 4px 40px; text-align: center; }
 .hero__lede { max-width: 36ch; font-size: clamp(1.0625rem, .95rem + .5vw, 1.3125rem); font-weight: 600; text-shadow: 0 2px 12px rgba(0, 0, 0, .6); }
 .hero__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 18px; }
-.hero__spin { visibility: hidden; }
-.hero.is-interactive .hero__spin { visibility: visible; }
-.hero__legal { color: var(--c-text-dim); font-size: .9375rem; }
-.hero__legal .pill { margin-right: 8px; vertical-align: middle; }
+.hero__legal { color: var(--c-text-dim); font-size: .875rem; }
+.hero__legal .age-mark { margin-right: 6px; }
 @media (max-width: 767px) {
   .hero .play-badge--lg { --badge-w: 180px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero__spin { display: none; }
 }
 
 /* ── 60+ 슬롯(넘김) ──────────────────────────────────────────────────── */

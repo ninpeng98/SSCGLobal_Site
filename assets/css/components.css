@@ -136,10 +136,18 @@
   font-size: .8125rem;
   letter-spacing: .02em;
 }
-.pill--age {
-  background: var(--g-badge-gold);
-  color: #4a1d00;
-  box-shadow: var(--shadow-pill), inset 0 1px 0 rgba(255, 255, 255, .7);
+/* 18+ 표시: 눈에 띄는 배지가 아니라 고지 문장 앞의 작은 글자 */
+.age-mark {
+  display: inline-block;
+  padding: .05em .45em;
+  border: 1px solid rgba(185, 168, 232, .45);
+  border-radius: var(--r-pill);
+  color: var(--c-text-dim);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .02em;
+  vertical-align: .1em;
 }
 .tag {
   display: inline-block;

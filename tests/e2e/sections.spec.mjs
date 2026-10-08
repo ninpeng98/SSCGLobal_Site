@@ -119,7 +119,6 @@ test('reduced motion shows every section in its final state', async ({ page }) =
 test('content stays readable when the animation libraries fail to load', async ({ page }) => {
   await page.route('**/assets/vendor/**', (route) => route.abort());
   await page.goto('/');
-  await expect(page.locator('[data-reels]')).toHaveAttribute('data-state', 'static');
   await expect(page.locator('[data-tower]')).toHaveAttribute('data-unlocked', '5');
   await expect(page.locator('[data-bonus]')).toHaveAttribute('data-state', 'full');
   expect(await hiddenRevealCount(page)).toBe(0);

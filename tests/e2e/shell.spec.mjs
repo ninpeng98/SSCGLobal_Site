@@ -42,7 +42,7 @@ test.describe('page shell', () => {
   test('footer shows the 18+ notice and the no-cash-value disclaimer', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('footer.site-footer');
-    await expect(footer.locator('.pill--age')).toHaveText('18+');
+    await expect(footer.locator('.age-mark')).toHaveText('18+');
     await expect(footer).toContainText('no cash value');
     await expect(footer).toContainText('© 2026 Vglobal Co., Ltd.');
   });

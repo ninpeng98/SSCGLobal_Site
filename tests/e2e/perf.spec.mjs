@@ -18,9 +18,10 @@ test('LCP stays under 2.5s on a throttled phone', async ({ page }, info) => {
   expect(lcp).toBeLessThan(2500);
 });
 
-test('layout shift stays under 0.1 during the hero animation', async ({ page }) => {
+test('layout shift stays under 0.1 while the page settles', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('[data-reels]')).toHaveAttribute('data-state', /landed|static/, { timeout: 10_000 });
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1500);
   const cls = await page.evaluate(() => new Promise((resolve) => {
     let total = 0;
     new PerformanceObserver((list) => {
