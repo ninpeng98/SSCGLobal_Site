@@ -26,10 +26,18 @@ const WEBP = [
   ...['spade', 'heart', 'diamond', 'clover'].map((s) => [`assets/img/icons/sym-${s}.webp`, 120, 1]),
   ['assets/img/brand/app-icon-128.webp', 128, 1],
   ['assets/img/brand/vglobal-logo.webp', 500, 500 / 310],
-  ...['jackpot', 'lucky-time', 'floors', 'ranking', 'lobby'].flatMap((n) => [
+  // 스토어 홍보 화면(16:9) — 인게임 새 촬영본이 오면 바뀐다
+  ...['jackpot', 'lucky-time', 'floors', 'lobby'].flatMap((n) => [
     [`assets/img/features/${n}-960.webp`, 960, 16 / 9],
     [`assets/img/features/${n}-1600.webp`, 1600, 16 / 9],
   ]),
+  // 웹 시안(Popup Lab)에서 캡처한 새 UI 팝업(2080×1380 으로 자른 것)
+  ...['ranking', 'gifts', 'messages'].flatMap((n) => [
+    [`assets/img/features/${n}-960.webp`, 960, 2080 / 1380],
+    [`assets/img/features/${n}-1600.webp`, 1600, 2080 / 1380],
+  ]),
+  ['assets/img/features/time-bonus-700.webp', 700, 1400 / 1360],
+  ['assets/img/features/time-bonus-1400.webp', 1400, 1400 / 1360],
 ];
 
 export const SLOTS = [
@@ -55,8 +63,10 @@ test('PNG icons have the declared sizes', () => {
   }
 });
 
-test('the Daily Jackpot machine image exists and is at least 400px wide', () => {
-  assert.ok(webpSize(readFileSync('assets/img/features/jackpot-machine.webp')).width >= 400);
+test('the Daily Jackpot machine image is the 880px web-lab render', () => {
+  const size = webpSize(readFileSync('assets/img/features/jackpot-machine.webp'));
+  assert.equal(size.width, 880);
+  assert.ok(Math.abs(size.width / size.height - 1120 / 1380) < 0.01, `${size.width}×${size.height}`);
 });
 
 test('official Google Play badge, social image and favicon exist', () => {

@@ -71,3 +71,14 @@ test('FAQ answers open', async ({ page }) => {
   await expect(first).toHaveAttribute('open', '');
   await expect(first.locator('.faq__answer')).toContainText('No.');
 });
+
+test('social and bonus sections show the new-UI captures from the web prototype', async ({ page }) => {
+  await page.goto('/');
+  const shots = await page.locator('.bento__cell--shot > img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
+  expect(shots).toEqual([
+    'assets/img/features/ranking-960.webp',
+    'assets/img/features/gifts-960.webp',
+    'assets/img/features/messages-960.webp',
+  ]);
+  await expect(page.locator('#bonus .shot img')).toHaveAttribute('src', 'assets/img/features/time-bonus-700.webp');
+});

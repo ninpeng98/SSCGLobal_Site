@@ -1,6 +1,6 @@
 # Third-party notices
 
-## Lucide icons (inline SVG: menu, x, chevron-down, chevron-left, chevron-right, message-circle)
+## Lucide icons (inline SVG: menu, x, chevron-down, chevron-left, chevron-right)
 
 Source: lucide-static 1.53.0 — https://lucide.dev
 

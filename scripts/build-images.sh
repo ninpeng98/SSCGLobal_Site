@@ -66,12 +66,21 @@ while read -r name src; do
   for w in 960 1600; do webp "$STORE/$src.png" "$OUT/features/$name-$w.webp" "$w" 80; done
 done <<'SHOTS'
 jackpot 01_titan_major_jackpot
-ranking 03_ranking_social
 floors 04_level_up_floors
 lucky-time 05_excalibur_lucky_time
 lobby 06_lobby_60_slots
 SHOTS
 webp "$UI/lucky_time_badge.png" "$OUT/features/lucky-time-badge.webp" 384 88
+
+# 웹 시안(Popup Lab, 새 UI)에서 캡처해 _incoming 에 둔 팝업 화면(Task 11). 2배 해상도로 찍어 2080×1380 / 1400×1360 으로 잘랐다
+while read -r name src; do
+  for w in 960 1600; do webp "$IN/$src.png" "$OUT/features/$name-$w.webp" "$w" 80; done
+done <<'LAB'
+ranking shot_top25
+gifts shot_gifts
+messages shot_messages
+LAB
+for w in 700 1400; do webp "$IN/shot_time_bonus.png" "$OUT/features/time-bonus-$w.webp" "$w" 80; done
 
 # 데일리 잭팟 기계: 클라이언트 세션의 투명 렌더가 있으면 그것을, 없으면 Popup Lab 캡처에서 기계 부분을 잘라 쓴다(임시)
 if [[ -f "$IN/jackpot_machine.png" ]]; then
