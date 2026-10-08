@@ -17,6 +17,10 @@
 .legal__panel ul,
 .legal__panel ol { margin: 0 0 14px 1.25em; padding: 0; }
 .legal__panel a { color: var(--c-gold-light); overflow-wrap: anywhere; }
+.legal__panel a.btn { color: #fff; overflow-wrap: normal; }
+.legal__panel .delete-steps li { margin-bottom: 8px; }
+.delete-request { margin: 20px 0 8px; }
+.delete-request .btn { padding-inline: clamp(1em, 4vw, 1.6em); font-size: clamp(1rem, .9rem + .5vw, 1.125rem); white-space: nowrap; }
 
 /* ── 404 ─────────────────────────────────────────────────────────────── */
 .page-404 .site-nav .play-badge { margin-left: auto; }

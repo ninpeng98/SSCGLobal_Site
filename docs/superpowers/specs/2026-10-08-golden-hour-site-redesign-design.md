@@ -452,7 +452,7 @@ taste-skill(`Leonxlnx/taste-skill`, MIT)에서 이 사이트에 맞는 규칙만
 | peerage | 랭킹 섹션에 사이트 전용 방패 계단(6등급 × 레벨 5) + 등급별 데일리 잭팟 보너스(Bronze 0–40%, Silver 60–120%, Sapphire 150–230%, Ruby 270–350%, Royal Gold 390–470%, Diamond 520–600%). 1등을 해야 포인트 | 사용자가 준 등급·레벨별 상승률 표(최대 +600%) |
 | 바탕 | 새 로비 배경(빛 물결, bg_1)을 어둡게 깔아 페이지 전체 바탕으로 고정 | 사용자가 준 추가 소재 |
 | 소재 | 웹 시안 캡처는 `scripts/lab-capture.mjs`(시안 파일·bake 폴더에 쓰지 않음), 배경·방패는 `build-images.sh` 가 `CLIENT_REF`(기본 origin/develop)에서 `git show` 로 꺼낸다 | 다시 만들 수 있게 |
-| 섹션 순서 | 첫 화면 → 슬롯 → 럭키 타임 → 층 → 데일리 잭팟 → 콜렉트 보너스 → 랭킹 → FAQ(7개, "무료 칩" 추가) → 설치 | 무료 칩 기능을 한데 모았다 |
+| 섹션 순서 | 첫 화면 → 슬롯 → 럭키 타임 → 층 → 데일리 잭팟 → 콜렉트 보너스 → 랭킹 → FAQ(8개, "무료 칩"·"계정 삭제" 추가) → 설치 | 무료 칩 기능을 한데 모았다 |
 
 ### 15.1 3차 수정(사용자 검토)
 
@@ -467,3 +467,5 @@ taste-skill(`Leonxlnx/taste-skill`, MIT)에서 이 사이트에 맞는 규칙만
 | 랭킹·소셜 | 닉네임을 바꿔 다시 찍은 팝업 안쪽 화면으로 같은 크기 카드 3장. peerage 는 위 표 |
 | 이메일 | 고객 지원은 `vglobalcs24@gmail.com`(꼬리말·FAQ·구조화 데이터). 정책 본문 연락처는 그대로 |
 | 캐시 | 페이지의 로컬 CSS·JS 주소와 JS 모듈의 상대 import 에 내용 버전(`?v=` 해시 8자리)을 붙인다(`npm run stamp`, `verify.mjs` 의 stamps 점검). 브라우저가 캐시한 옛 JS 와 새 HTML 이 섞여 슬롯 넘김 등이 깨지는 일을 막는다 |
+| 계정 삭제 | `delete-account.html`(Google Play 계정·데이터 삭제 요청 주소): 설정의 MEMBER ID 를 `vglobalcs24@gmail.com` 으로 보내면 본인 확인 뒤 30일 안에 삭제. 손님은 REGISTER 로 MEMBER ID 를 받은 뒤 요청. 결제 기록만 법이 정한 기간 동안 따로 보관. 꼬리말·FAQ·sitemap·llms.txt 에서 연결. 앱 안 삭제(클라 v2 설정의 [Delete account], 유예 기간 미정)는 출시되면 페이지에 더한다 |
+| AI 검색 | FAQPage 구조화 데이터(화면 FAQ 와 같은 문구), `llms.txt`(사이트 요약과 링크) |

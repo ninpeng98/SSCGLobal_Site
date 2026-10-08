@@ -54,7 +54,7 @@ test('content blocks have the planned counts', async ({ page }) => {
   expect(await page.locator('.social-cards > .social-card').count()).toBe(3);
   expect(await page.locator('[data-elevator] .floor').count()).toBe(10);
   expect(await page.locator('[data-elevator] .floor__slots > li').count()).toBe(47);
-  expect(await page.locator('.faq__item').count()).toBe(7);
+  expect(await page.locator('.faq__item').count()).toBe(8); // 계정 삭제 질문 포함
 });
 
 test('jackpot areas use chips, never currency or live wording', async ({ page }) => {

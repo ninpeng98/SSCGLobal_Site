@@ -18,6 +18,7 @@
 ## Pages
 
 - [Home](https://sscgl.vglobal.site/): features, FAQ and download link
-- [FAQ](https://sscgl.vglobal.site/#faq): real-money gambling, free play, free chips, age, devices, support, data
+- [FAQ](https://sscgl.vglobal.site/#faq): real-money gambling, free play, free chips, age, devices, support, data, account deletion
 - [Privacy Policy](https://sscgl.vglobal.site/privacy-policy.html)
 - [Terms of Service](https://sscgl.vglobal.site/terms-of-service.html)
+- [Delete your account](https://sscgl.vglobal.site/delete-account.html): how to request deletion of your account and data

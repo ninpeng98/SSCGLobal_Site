@@ -14,7 +14,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stampSite } from './stamp-assets.mjs';
 
-export const PAGES = ['index.html', 'privacy-policy.html', 'terms-of-service.html', '404.html'];
+export const PAGES = ['index.html', 'privacy-policy.html', 'terms-of-service.html', 'delete-account.html', '404.html'];
 export const JS_BUDGET_GZIP = 130 * 1024;
 const ALL_CHECKS = ['refs', 'inline', 'vendor', 'budget', 'abs404', 'stamps'];
 const SKIP = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i; // http:, https:, mailto:, data:, //host, #anchor
