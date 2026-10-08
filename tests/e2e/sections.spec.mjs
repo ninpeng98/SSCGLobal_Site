@@ -71,11 +71,15 @@ test('grand jackpot counter rolls up to its start value and keeps growing', asyn
   await expect(odo).toHaveAttribute('aria-label', 'Grand jackpot counter in virtual chips');
 });
 
-test('the 4-hour ring fills when it comes into view', async ({ page }) => {
+test('Collect Bonus shows the button, then the chips landing right away, every 2 hours', async ({ page }) => {
   await page.goto('/');
-  const bonus = page.locator('[data-bonus]');
-  await bonus.scrollIntoViewIfNeeded();
-  await expect(bonus).toHaveAttribute('data-state', 'full', { timeout: 5_000 });
+  const collect = page.locator('[data-collect]');
+  await collect.scrollIntoViewIfNeeded();
+  await expect(page.locator('#bonus-title')).toHaveText('Bonus Chips Every 2 Hours');
+  await expect(collect).toHaveAttribute('data-state', 'ready');
+  await expect(collect).toHaveAttribute('data-state', 'paid', { timeout: 5_000 });
+  await expect(collect).toHaveAttribute('data-state', 'ready', { timeout: 6_000 });
+  await expect(page.locator('#bonus')).not.toContainText(/wheel spin|spin the wheel|roulette/i);
 });
 
 test('section titles are split into gold words and keep their label', async ({ page }) => {
@@ -141,7 +145,7 @@ test('keyboard reaches the badge, the carousel buttons and the FAQ', async ({ pa
 test('reduced motion shows every section in its final state', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await expect(page.locator('[data-bonus]')).toHaveAttribute('data-state', 'full');
+  await expect(page.locator('[data-collect]')).toHaveAttribute('data-state', 'paid');
   expect(await page.locator('[data-slots]').evaluate((el) => el.swiper?.autoplay?.running ?? false)).toBe(false);
   await expect(page.locator('html')).not.toHaveClass(/lenis/);
   expect(await hiddenRevealCount(page)).toBe(0);
@@ -150,7 +154,7 @@ test('reduced motion shows every section in its final state', async ({ page }) =
 test('content stays readable when the animation libraries fail to load', async ({ page }) => {
   await page.route('**/assets/vendor/**', (route) => route.abort());
   await page.goto('/');
-  await expect(page.locator('[data-bonus]')).toHaveAttribute('data-state', 'full');
+  await expect(page.locator('[data-collect] img').first()).toBeVisible();
   expect(await hiddenRevealCount(page)).toBe(0);
   await expect(page.locator('.slot-card').first()).toBeVisible();
 });

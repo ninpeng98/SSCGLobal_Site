@@ -83,5 +83,6 @@ test('social and bonus sections show the new-UI captures from the web prototype'
     'assets/img/features/gifts-960.webp',
     'assets/img/features/messages-960.webp',
   ]);
-  await expect(page.locator('#bonus .shot img')).toHaveAttribute('src', 'assets/img/features/time-bonus-700.webp');
+  const bonus = await page.locator('#bonus .shot img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
+  expect(bonus).toEqual(['assets/img/features/collect-ready-800.webp', 'assets/img/features/collect-paid-800.webp']);
 });

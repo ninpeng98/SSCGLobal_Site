@@ -12,7 +12,7 @@ export function initSections(root = document, { reduced = false } = {}) {
   initSlots(root, { reduced });
   initOdometer(root, { animated });
   initElevator(root, { reduced });
-  initBonus(root, { animated });
+  initBonus(root, { reduced });
   if (animated) {
     initReveals(root);
     initPressFeedback(root);
@@ -153,24 +153,30 @@ function initOdometer(root, { animated }) {
   });
 }
 
-function initBonus(root, { animated }) {
-  const el = root.querySelector('[data-bonus]');
+// 콜렉트 보너스: 보이는 동안 "받기 전 → (누름) → 받은 순간"을 되풀이한다. 동작 줄이기면 받은 순간 그림에 멈춘다.
+const COLLECT_READY_MS = 2200;
+const COLLECT_TAP_MS = 450;
+const COLLECT_PAID_MS = 2600;
+
+function initBonus(root, { reduced }) {
+  const el = root.querySelector('[data-collect]');
   if (!el) return;
-  if (!animated) {
-    el.dataset.state = 'full';
+  if (reduced) {
+    el.dataset.state = 'paid';
     return;
   }
-  const { gsap } = window;
-  const progress = el.querySelector('.bonus__progress');
-  const chip = el.querySelector('.bonus__chip');
-  gsap.set(progress, { strokeDashoffset: 100 });
-  gsap.set(chip, { scale: 0, opacity: 0 });
-  gsap.timeline({
-    scrollTrigger: { trigger: el, start: 'top 70%', once: true },
-    onComplete: () => { el.dataset.state = 'full'; },
-  })
-    .to(progress, { strokeDashoffset: 0, duration: 1.2, ease: EASE.inOut })
-    .to(chip, { scale: 1, opacity: 1, duration: 0.5, ease: EASE.pop });
+  let timer = 0;
+  const step = (state, ms, next) => {
+    el.dataset.state = state;
+    timer = setTimeout(next, ms);
+  };
+  const loop = () => step('ready', COLLECT_READY_MS, () => step('tap', COLLECT_TAP_MS, () => step('paid', COLLECT_PAID_MS, loop)));
+  const io = new IntersectionObserver(([entry]) => {
+    clearTimeout(timer);
+    if (entry.isIntersecting) loop();
+    else el.dataset.state = 'ready';
+  }, { threshold: 0.4 });
+  io.observe(el);
 }
 
 /* 사탕 버튼 누름: 0.94배로 눌렸다가 튕겨 돌아온다(클라이언트 값). 설치 배지는 그림을 바꾸지 않기 위해 제외. */

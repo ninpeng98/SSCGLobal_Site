@@ -409,20 +409,18 @@
 
     <section class="section bonus" id="bonus" aria-labelledby="bonus-title" data-bonus>
       <div class="container bonus__inner">
-        <div class="bonus__ring" aria-hidden="true" data-reveal>
-          <svg viewBox="0 0 220 220">
-            <defs><linearGradient id="ring-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff5c6"/><stop offset=".5" stop-color="#ffc53a"/><stop offset="1" stop-color="#e27d00"/></linearGradient></defs>
-            <circle class="bonus__track" cx="110" cy="110" r="96"/>
-            <circle class="bonus__progress" cx="110" cy="110" r="96" pathLength="100"/>
-          </svg>
-          <div class="bonus__face">
-            <img class="bonus__chip" src="assets/img/icons/chip.webp" alt="" width="152" height="152" loading="lazy">
-            <span class="bonus__time">4:00:00</span>
-          </div>
+        <h2 class="gold-title" id="bonus-title">Bonus Chips Every 2 Hours</h2>
+        <p class="section__lede" data-reveal>Every two hours, tap COLLECT BONUS in the lobby and the chips go straight into your balance. No wheel to spin and nothing to wait for.</p>
+        <ul class="bonus__facts" data-reveal>
+          <li>Every 2 hours</li>
+          <li>Up to 15M chips</li>
+          <li>VIP ×2 (up to 30M)</li>
+        </ul>
+        <div class="collect" data-collect data-state="ready" data-reveal>
+          <figure class="shot collect__shot collect__shot--ready"><img src="assets/img/features/collect-ready-800.webp" srcset="assets/img/features/collect-ready-800.webp 800w, assets/img/features/collect-ready-1600.webp 1600w" sizes="(min-width: 760px) 680px, 92vw" alt="The COLLECT BONUS button in the lobby, ready to tap" width="1600" height="680" loading="lazy" decoding="async"></figure>
+          <figure class="shot collect__shot collect__shot--paid"><img src="assets/img/features/collect-paid-800.webp" srcset="assets/img/features/collect-paid-800.webp 800w, assets/img/features/collect-paid-1600.webp 1600w" sizes="(min-width: 760px) 680px, 92vw" alt="5,000,000 virtual chips added the moment COLLECT BONUS is tapped" width="1600" height="680" loading="lazy" decoding="async"></figure>
+          <span class="collect__tap" aria-hidden="true"></span>
         </div>
-        <h2 class="gold-title" id="bonus-title">Bonus Chips Every 4 Hours</h2>
-        <p class="section__lede" data-reveal>Check in every four hours to collect a virtual chip bonus and keep playing your favorite slots and events.</p>
-        <figure class="shot bonus__shot" data-reveal><img src="assets/img/features/time-bonus-700.webp" srcset="assets/img/features/time-bonus-700.webp 700w, assets/img/features/time-bonus-1400.webp 1400w" sizes="(min-width: 640px) 520px, 92vw" alt="Collecting a Time Bonus of virtual chips" width="1400" height="1360" loading="lazy" decoding="async"></figure>
       </div>
     </section>
 

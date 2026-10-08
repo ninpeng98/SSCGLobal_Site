@@ -380,26 +380,41 @@
   .bento__cell--rank, .bento__cell--messages { grid-column: auto; }
 }
 
-/* ── 4시간 보너스(가운데) ─────────────────────────────────────────────── */
-.bonus { text-align: center; background: radial-gradient(50% 60% at 50% 30%, rgba(255, 197, 58, .16), transparent 70%); }
-.bonus__inner { display: grid; justify-items: center; gap: 20px; }
-.bonus__ring { position: relative; display: grid; place-items: center; width: clamp(180px, 22vw, 240px); aspect-ratio: 1; }
-.bonus__ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-.bonus__track { fill: none; stroke: rgba(10, 3, 26, .62); stroke-width: 14; }
-.bonus__progress {
-  fill: none;
-  stroke: url(#ring-gold);
-  stroke-width: 14;
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 0;
-  filter: drop-shadow(0 0 8px rgba(255, 197, 58, .6));
+/* ── 콜렉트 보너스(2시간마다, 룰렛 없이 바로 지급): 받기 전 ↔ 받은 순간 화면이 번갈아 나온다 ──────── */
+.bonus__inner { display: grid; justify-items: center; gap: 18px; text-align: center; }
+.bonus__facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.bonus__facts li {
+  padding: .35em 1em;
+  border-radius: var(--r-pill);
+  background: var(--c-inset);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 210, 87, .45);
+  color: #fff4c9;
+  font-family: var(--font-display);
+  font-size: .9375rem;
 }
-.bonus__face { position: relative; display: grid; justify-items: center; gap: 4px; }
-.bonus__chip { width: clamp(72px, 9vw, 104px); }
-.bonus__time { color: #fff4c9; font-family: var(--font-display); font-size: 1.125rem; font-variant-numeric: tabular-nums; }
-.bonus__shot { width: min(520px, 100%); margin-top: 12px; }
-.bonus__shot img { aspect-ratio: 1400 / 1360; }
+.collect { position: relative; display: grid; width: min(680px, 100%); margin-top: 10px; }
+.collect__shot { grid-area: 1 / 1; transition: opacity .45s ease; }
+.collect[data-state="ready"] .collect__shot--paid,
+.collect[data-state="tap"] .collect__shot--paid,
+.collect[data-state="paid"] .collect__shot--ready { opacity: 0; }
+/* 누르는 손끝 자리: 받기 전 화면의 COLLECT BONUS 판 가운데(그림의 50%, 82%) */
+.collect__tap {
+  position: absolute;
+  left: 50%;
+  top: 82%;
+  width: 64px;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, .9);
+  opacity: 0;
+  pointer-events: none;
+}
+.collect[data-state="tap"] .collect__tap { animation: collect-tap .5s ease-out; }
+@keyframes collect-tap { from { opacity: 1; scale: .4; } to { opacity: 0; scale: 1.6; } }
+@media (prefers-reduced-motion: reduce) {
+  .collect__shot { transition: none; }
+}
 
 /* ── 제작팀 띠 ───────────────────────────────────────────────────────── */
 .team { padding-block: 40px; border-block: 1px solid rgba(255, 210, 87, .18); background: rgba(10, 3, 26, .5); }
