@@ -469,3 +469,4 @@ taste-skill(`Leonxlnx/taste-skill`, MIT)에서 이 사이트에 맞는 규칙만
 | 캐시 | 페이지의 로컬 CSS·JS 주소와 JS 모듈의 상대 import 에 내용 버전(`?v=` 해시 8자리)을 붙인다(`npm run stamp`, `verify.mjs` 의 stamps 점검). 브라우저가 캐시한 옛 JS 와 새 HTML 이 섞여 슬롯 넘김 등이 깨지는 일을 막는다 |
 | 계정 삭제 | `delete-account.html`(Google Play 계정·데이터 삭제 요청 주소): 설정의 MEMBER ID 를 `vglobalcs24@gmail.com` 으로 보내면 본인 확인 뒤 30일 안에 삭제. 손님은 REGISTER 로 MEMBER ID 를 받은 뒤 요청. 결제 기록만 법이 정한 기간 동안 따로 보관. 꼬리말·FAQ·sitemap·llms.txt 에서 연결. 앱 안 삭제(클라 v2 설정의 [Delete account], 유예 기간 미정)는 출시되면 페이지에 더한다 |
 | AI 검색 | FAQPage 구조화 데이터(화면 FAQ 와 같은 문구), `llms.txt`(사이트 요약과 링크) |
+| 첫 화면 경계 | 흐린 키 아트 배경은 아래로 갈수록 투명해져(마스크) 다음 섹션과 같은 오로라·점무늬 배경으로 이어진다. 단색으로 끝나면 경계선이 생긴다 |
