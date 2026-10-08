@@ -86,3 +86,14 @@ test.describe('navigation', () => {
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 });
+
+test('customer support goes to the CS address on every page', async ({ page }) => {
+  for (const path of ['/', '/privacy-policy.html', '/terms-of-service.html']) {
+    await page.goto(path);
+    await expect(page.locator('footer a', { hasText: 'Support' }), path).toHaveAttribute('href', 'mailto:vglobalcs24@gmail.com');
+  }
+  await page.goto('/');
+  await expect(page.locator('.faq__answer a[href^="mailto:"]')).toHaveAttribute('href', 'mailto:vglobalcs24@gmail.com');
+  const data = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  expect(JSON.stringify(data)).toContain('vglobalcs24@gmail.com');
+});
