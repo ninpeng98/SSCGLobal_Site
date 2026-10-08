@@ -97,3 +97,26 @@ test('customer support goes to the CS address on every page', async ({ page }) =
   const data = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
   expect(JSON.stringify(data)).toContain('vglobalcs24@gmail.com');
 });
+
+test('FAQ structured data repeats the visible questions and answers word for word', async ({ page }) => {
+  await page.goto('/');
+  const data = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  const faq = data.find((d) => d['@type'] === 'FAQPage');
+  const visible = await page.locator('.faq__item').evaluateAll((items) => items.map((d) => ({
+    q: d.querySelector('summary').textContent.trim(),
+    a: d.querySelector('.faq__answer').textContent.trim(),
+  })));
+  expect(visible.length).toBeGreaterThan(0);
+  expect(faq.mainEntity.map((e) => ({ q: e.name, a: e.acceptedAnswer.text }))).toEqual(visible);
+});
+
+test('llms.txt sums up the site for AI tools and every site link in it works', async ({ request }) => {
+  const res = await request.get('/llms.txt');
+  expect(res.status()).toBe(200);
+  const text = await res.text();
+  expect(text.split('\n')[0]).toBe('# Golden Hour – Slots Casino');
+  expect(text).toContain('https://play.google.com/store/apps/details?id=site.vglobal.android.casinog');
+  const links = [...text.matchAll(/\]\((https:\/\/sscgl\.vglobal\.site\/[^)]*)\)/g)].map((m) => m[1]);
+  expect(links.length).toBeGreaterThan(2);
+  for (const url of links) expect((await request.get(url.replace('https://sscgl.vglobal.site', ''))).status(), url).toBe(200);
+});
