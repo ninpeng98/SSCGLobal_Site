@@ -25,9 +25,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-# site tooling
-/test-results/
-/playwright-report/
-/assets/img/_incoming/
-/.venv/
-/.claude/
