@@ -30,7 +30,7 @@ for (const page of ['privacy-policy.html', 'terms-of-service.html']) {
 // Google 로그인 OAuth 동의 화면·Play 심사: 수정일과 Google 로그인 때 다루는 정보(서버 세션이 알려 준 사실, 2026-10-08)
 test('privacy policy shows when it was last updated', () => {
   const html = readFileSync('privacy-policy.html', 'utf8');
-  assert.match(mainText(html), /^Privacy Policy Last updated: 2026\. 10\. 08 /);
+  assert.match(mainText(html), /^Privacy Policy Last updated: 2026\. 10\. 25 /);
 });
 
 test('privacy policy explains Google Sign-In: only the Google account identifier, why, and what happens on deletion', () => {
@@ -46,5 +46,24 @@ test('privacy policy explains Google Sign-In: only the Google account identifier
     'not use it for advertising or marketing',
     'only one game account',
     'deleted with it',
+  ]) assert.ok(text.includes(fact), `missing: ${fact}`);
+});
+
+// App Store 심사(가이드라인 5.1.1): Apple 로그인 때 다루는 정보(서버 Go main 확인, 2026-10-25)
+test('privacy policy explains Sign in with Apple: only the Apple identifier and an encrypted refresh token for revoking', () => {
+  const section = readFileSync('privacy-policy.html', 'utf8').match(/<section\b[^>]*id="apple-sign-in"[^>]*>([\s\S]*?)<\/section>/);
+  assert.ok(section, 'no #apple-sign-in section');
+  const text = mainText(`<main>${section[1]}</main>`);
+  for (const fact of [
+    'identity token and an authorization code issued by Apple',
+    'only the unique identifier that Apple assigns to your Apple ID',
+    'encrypted Apple refresh token',
+    'solely to revoke the link',
+    'do not store or use your Apple ID email address or name',
+    'Hide My Email',
+    'to sign you in and to restore your account',
+    'not use it for advertising or marketing',
+    'only one game account',
+    'ask Apple to revoke the link',
   ]) assert.ok(text.includes(fact), `missing: ${fact}`);
 });

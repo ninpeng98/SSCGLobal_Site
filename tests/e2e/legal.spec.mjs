@@ -58,6 +58,7 @@ test('account deletion page names the app and developer and shows how to request
   await expect(main.locator('#what-we-delete + ul')).toContainText('virtual chips');
   await expect(main.locator('#what-we-keep + ul')).toContainText('as long as the law requires');
   await expect(main.locator('#what-we-delete + ul')).toContainText('Google account');
+  await expect(main.locator('#what-we-delete + ul')).toContainText('Apple ID');
   await expect(main.locator('#guests')).toHaveCount(0);
   await expect(main).not.toContainText('REGISTER');
   await expect(main).toContainText('Uninstalling the app does not delete your account');
